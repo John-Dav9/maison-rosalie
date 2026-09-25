@@ -1,4 +1,3 @@
-<?php
 <footer>
 <p> Maison Rosalie  </p>
 
