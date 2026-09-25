@@ -15,11 +15,10 @@
     --hero-gold: #cda45e;
 }
 
-/* Empêche la scrollbar horizontale sur tout le site.
-   Utile car certains éléments du héro (vignette --sm) débordent volontairement
-   du conteneur pour l'effet visuel "coupée par le bord". */
-html,
-body {
+/* Empêche la scrollbar horizontale.
+   On cible #app-wrapper (la div qui enveloppe tout le contenu du site)
+   au lieu de html/body, pour ne pas toucher directement au body. */
+#app-wrapper {
     overflow-x: hidden;
 }
 
