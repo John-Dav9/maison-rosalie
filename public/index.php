@@ -8,6 +8,6 @@
 <body>
     
 
-<?php require_once "./view/publicView/inc/footer.php" ?>
+<?php require_once "./../view/publicView/inc/footer.php" ?>
 </body>
 </html>
