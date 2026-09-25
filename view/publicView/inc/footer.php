@@ -4,7 +4,7 @@
     
     
 
-    <p class="text-[#C9A45C] text-3xl" style="font-family: 'Great Vibes', cursive;"> Maison Rosalie</p>
+    <p class="text-[#C9A45C] text-5xl" style="font-family: 'Allura', cursive;"> Maison Rosalie</p>
         <!------ligne de séparation----->
    <hr class="my-10 border-[#5C3A2A]"/> 
 

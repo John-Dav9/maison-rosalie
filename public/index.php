@@ -7,6 +7,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Font Awesome : nous donne les icônes (YouTube, Facebook, Instagram...) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Police manuscrite pour le logo / Footer /  Maison Rosalie -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&display=swap">
+
     <title>Document</title>
 </head>
 <body>
