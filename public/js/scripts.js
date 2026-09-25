@@ -33,10 +33,10 @@ document.addEventListener('DOMContentLoaded', function () {
   let hero = document.getElementById('hero');
   if (!hero) return;
 
-  // Les 3 images du carousel (empilées, une seule visible à la fois)
+  // Les images du carousel (empilées, une seule visible à la fois)
   let slides = hero.querySelectorAll('.hero__slide');
 
-  // Les 3 dots de navigation à gauche (un par slide)
+  // Les dots de navigation à gauche (un par slide)
   let dots = hero.querySelectorAll('.hero__dot');
 
   // Les 2 vignettes en bas à droite (aperçu des slides suivantes)
@@ -45,6 +45,12 @@ document.addEventListener('DOMContentLoaded', function () {
   // Les flèches < et > en bas au centre
   let prevBtn = hero.querySelector('.hero__arrow--prev');
   let nextBtn = hero.querySelector('.hero__arrow--next');
+
+  // Le bloc texte (titre + accroche + bouton) et le voile sombre :
+  // ils ne s'affichent QUE sur la slide 0 (couple en terrasse).
+  // Sur les autres slides, l'image occupe tout l'espace sans texte par-dessus.
+  let content = hero.querySelector('.hero__content');
+  let overlay = hero.querySelector('.hero__overlay');
 
   // 2. VARIABLES D'ÉTAT
 
@@ -90,6 +96,18 @@ document.addEventListener('DOMContentLoaded', function () {
     dots.forEach(function (dot, i) {
       dot.classList.toggle('is-active', i === current);
     });
+
+    // 4c. CONTENU + VOILE : visibles uniquement sur la slide 0 (couple).
+    // Sur les autres slides, on les masque pour laisser l'image en plein écran.
+    // On utilise style.display plutôt qu'une classe pour que ce soit immédiat
+    // (pas de transition de fondu sur le texte, juste apparition/disparition).
+    if (current === 0) {
+      content.style.display = 'flex';  // flex car le conteneur est en flexbox
+      overlay.style.display = 'block';
+    } else {
+      content.style.display = 'none';
+      overlay.style.display = 'none';
+    }
 
     // 4c. VIGNETTES : mise à jour dynamique des images et des data-slide
     // Chaque vignette montre la (i+1)ème slide APRÈS la slide courante,
