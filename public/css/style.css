@@ -1,0 +1,364 @@
+/* STYLES DE LA SECTION HÉRO — Maison Rosalie
+   Aucune dépendance externe (pas de Tailwind, pas de FlyonUI).
+
+   IMPORTANT : tous les sélecteurs sont préfixés par #hero pour que ces
+   styles ne s'appliquent QU'À la section héro et n'entrent pas en conflit
+   avec les styles des autres pages ou sections du site.
+
+   Convention de nommage : BEM (Block Element Modifier)
+     - #hero .hero__slide      = un élément du bloc héro (une image du carousel)
+     - #hero .hero__thumb--lg  = un modifier (variante grande de la vignette) */
+
+/* Variable CSS globale : la couleur dorée utilisée partout dans le héro.
+   Définie dans :root pour être réutilisable dans d'autres sections si besoin. */
+:root {
+    --hero-gold: #cda45e;
+}
+
+/* Empêche la scrollbar horizontale.
+   On cible #app-wrapper (la div qui enveloppe tout le contenu du site)
+   au lieu de html/body, pour ne pas toucher directement au body. */
+#app-wrapper {
+    overflow-x: hidden;
+}
+
+/* CONTENEUR PRINCIPAL (#hero)
+   La section prend toute la largeur et toute la hauteur de l'écran.
+   C'est le "cadre" dans lequel tout le reste est positionné en absolute.
+   L'ID #hero sert à la fois d'ancre (lien interne) et de scope CSS. */
+#hero {
+    position: relative;
+    /* référence pour tous les éléments en position: absolute à l'intérieur */
+    width: 100%;
+    /* toute la largeur */
+    height: 100vh;
+    /* toute la hauteur de la fenêtre */
+    min-height: 600px;
+    /* hauteur minimum si l'écran est très petit */
+    overflow: hidden;
+    /* cache ce qui dépasse (vignette coupée à droite, titre trop large, etc.) */
+    background: #000;
+    /* fond noir visible pendant le chargement des images */
+}
+
+/* SLIDES DU CAROUSEL
+   Les 3 images sont empilées les unes sur les autres (position absolute).
+   Elles sont toutes invisibles (opacity: 0) sauf celle qui a la
+   classe .is-active (opacity: 1). Le changement se fait en fondu
+   grâce à transition: opacity. */
+#hero .hero__slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Chaque slide occupe tout l'espace et est invisible par défaut */
+#hero .hero__slide {
+    position: absolute;
+    inset: 0;
+    /* raccourci pour top:0 right:0 bottom:0 left:0 */
+    opacity: 0;
+    /* invisible par défaut */
+    transition: opacity .8s ease;
+    /* fondu de 0.8 secondes */
+}
+
+/* La slide active devient visible et passe devant les autres */
+#hero .hero__slide.is-active {
+    opacity: 1;
+    z-index: 1;
+}
+
+/* L'image à l'intérieur de chaque slide remplit tout l'espace
+   sans déformation grâce à object-fit: cover (elle est recadrée si besoin) */
+#hero .hero__slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* supprime l'espace fantôme sous les images inline */
+}
+
+/* VOILE SOMBRE (OVERLAY)
+   Un dégradé semi-transparent par-dessus l'image, plus opaque à gauche
+   et plus transparent à droite. Ça permet au texte blanc d'être lisible
+   même sur des images claires.
+   pointer-events: none = les clics passent à travers le voile. */
+#hero .hero__overlay {
+    position: absolute;
+    inset: 0;
+    /* couvre toute la section */
+    z-index: 2;
+    /* au-dessus des slides (z-index: 1) */
+    pointer-events: none;
+    /* ne bloque pas les clics sur les éléments en-dessous */
+    background: linear-gradient(to right,
+            rgba(0, 0, 0, .65) 0%,
+            /* gauche : assez sombre */
+            rgba(0, 0, 0, .45) 40%,
+            rgba(0, 0, 0, .25) 65%,
+            rgba(0, 0, 0, .15) 100%
+            /* droite : presque transparent */
+        );
+}
+
+/* BLOC TEXTE (titre + accroche + bouton)
+   Positionné en absolute sur la partie droite de l'image,
+   centré verticalement avec top + translateY(-50%).
+   Flexbox en colonne pour empiler titre, texte et bouton. */
+#hero .hero__content {
+    position: absolute;
+    top: 30%;
+    /* remonté pour laisser de l'espace entre le bouton et les vignettes */
+    right: 2rem;
+    /* marge à droite (mobile) */
+    transform: translateY(-50%);
+    /* astuce pour centrer verticalement */
+    z-index: 3;
+    /* au-dessus du voile */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* tout aligné à gauche dans le bloc */
+    gap: 1.5rem;
+    /* espacement entre titre, texte et bouton */
+    /* PAS de max-width ici : c'est le titre qui décide de la largeur du bloc,
+     sinon "Maison Rosalie" en nowrap serait coupé par l'overflow. */
+}
+
+/* Sur grand écran : plus de marge à droite */
+@media (min-width: 1024px) {
+    #hero .hero__content {
+        right: 3.5rem;
+    }
+}
+
+/* Titre "Maison Rosalie"
+   clamp() rend la taille responsive : elle s'adapte à la largeur du viewport
+   (5vw) mais ne descend jamais sous 2.5rem et ne dépasse jamais 5.5rem.
+   Comme ça le titre reste sur une ligne sans déborder de l'écran. */
+#hero .hero__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    /* police élégante, avec fallback */
+    font-weight: 400;
+    font-size: clamp(2.5rem, 5vw, 5.5rem);
+    /* responsive : min 2.5rem, idéal 5vw, max 5.5rem */
+    color: #fff;
+    line-height: 1.1;
+    /* interligne serré pour un rendu "display" */
+    white-space: nowrap;
+    /* empêche le titre de passer sur 2 lignes */
+}
+
+/* On supprime les media queries pour le titre : clamp() gère tout seul */
+
+/* Trait doré horizontal sous le titre */
+#hero .hero__divider {
+    display: block;
+    width: 6rem;
+    /* largeur du trait */
+    height: 2px;
+    /* épaisseur du trait */
+    margin-top: 1rem;
+    /* espace entre le titre et le trait */
+    background: var(--hero-gold);
+    /* couleur dorée définie dans :root */
+}
+
+/* Paragraphe d'accroche
+   max-width ici (pas sur le conteneur parent) pour que le texte reste lisible
+   sans empêcher le titre d'occuper toute sa largeur naturelle. */
+#hero .hero__text {
+    color: rgba(255, 255, 255, .85);
+    /* blanc légèrement transparent */
+    font-size: .95rem;
+    line-height: 1.75;
+    /* interligne aéré pour la lisibilité */
+    text-align: left;
+    max-width: 28rem;
+    /* largeur max du paragraphe uniquement */
+}
+
+/* Bouton "découvrir"
+   Forme "pilule" (border-radius très grand), bordure blanche au repos,
+   fond doré au survol. align-self: center le centre dans la colonne flex. */
+#hero .hero__cta {
+    align-self: center;
+    /* centré horizontalement dans le bloc */
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, .6);
+    /* bordure blanche semi-transparente */
+    color: #fff;
+    text-decoration: none;
+    /* pas de soulignement (c'est un <a>) */
+    padding: 1rem 3.5rem;
+    /* grand padding pour un bouton bien visible */
+    border-radius: 999px;
+    /* forme "pilule" */
+    font-size: 1.1rem;
+    letter-spacing: .04em;
+    /* léger espacement entre les lettres */
+    transition: background .25s ease, color .25s ease, border-color .25s ease;
+}
+
+/* Au survol : fond doré, texte foncé */
+#hero .hero__cta:hover {
+    background: var(--hero-gold);
+    border-color: var(--hero-gold);
+    color: #111;
+}
+
+/* DOTS DE NAVIGATION (colonne verticale à gauche)
+   3 petits cercles indiquant la slide active.
+   Celui avec .is-active est rempli en doré, les autres sont vides. */
+#hero .hero__dots {
+    position: absolute;
+    top: 50%;
+    /* centré verticalement */
+    left: 2rem;
+    /* à gauche de l'image */
+    transform: translateY(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    /* empilés verticalement */
+    gap: .85rem;
+    /* espace entre chaque dot */
+}
+
+/* Chaque dot : petit cercle avec contour blanc, fond transparent */
+#hero .hero__dot {
+    width: .7rem;
+    height: .7rem;
+    border-radius: 50%;
+    /* forme ronde */
+    border: 1px solid rgba(255, 255, 255, .5);
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    transition: background .2s ease, border-color .2s ease;
+}
+
+/* Dot actif : rempli et bordé en doré */
+#hero .hero__dot.is-active {
+    background: var(--hero-gold);
+    border-color: var(--hero-gold);
+}
+
+/* VIGNETTES (en bas à droite)
+   2 miniatures cliquables :
+     - la 1re (--lg) est grande et bien visible
+     - la 2e (--sm) est plus petite et dépasse du bord droit
+   Masquées en mobile (display: none) car pas assez de place.
+   max-width empêche les vignettes de déborder du viewport
+   (même principe que pour le paragraphe). */
+#hero .hero__thumbs {
+    position: absolute;
+    bottom: 3rem;
+    right: 2rem;
+    /* marge à droite pour rester dans la section */
+    z-index: 3;
+    display: none;
+    /* masqué en mobile */
+    align-items: flex-end;
+    /* les 2 vignettes sont alignées en bas */
+    gap: .75rem;
+    max-width: 45%;
+    /* ne dépasse jamais 45% de la largeur du héro */
+}
+
+/* Affichées à partir de 768px (tablette et desktop) */
+@media (min-width: 768px) {
+    #hero .hero__thumbs {
+        display: flex;
+    }
+}
+
+/* Style commun aux 2 vignettes */
+#hero .hero__thumb {
+    padding: 0;
+    border: 3px solid transparent;
+    /* bordure invisible par défaut */
+    border-radius: .35rem;
+    /* coins légèrement arrondis */
+    overflow: hidden;
+    /* l'image est recadrée dans le cadre */
+    cursor: pointer;
+    background: none;
+    transition: border-color .2s ease;
+}
+
+/* La vignette active a une bordure dorée */
+#hero .hero__thumb.is-active {
+    border-color: var(--hero-gold);
+}
+
+/* Image à l'intérieur des vignettes */
+#hero .hero__thumb img {
+    display: block;
+    object-fit: cover;
+    /* recadrée sans déformation */
+}
+
+/* Grande vignette (1re)
+   Tailles en vw pour s'adapter à l'écran, avec un max pour ne pas devenir énorme */
+#hero .hero__thumb--lg {
+    width: clamp(8rem, 12vw, 13rem);
+    height: clamp(10rem, 16vw, 17rem);
+}
+
+#hero .hero__thumb--lg img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Petite vignette (2e)
+   Plus petite, partiellement coupée par le bord droit grâce au
+   overflow: hidden du conteneur #hero */
+#hero .hero__thumb--sm {
+    width: clamp(5rem, 8vw, 9rem);
+    height: clamp(7rem, 11vw, 13rem);
+}
+
+#hero .hero__thumb--sm img {
+    width: 100%;
+    height: 100%;
+}
+
+/* FLÈCHES < > (centrées en bas de la section)
+   Deux petits boutons carrés avec une bordure fine, centrés
+   horizontalement grâce à left: 50% + translateX(-50%). */
+#hero .hero__arrows {
+    position: absolute;
+    bottom: .75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    /* centrage horizontal */
+    z-index: 3;
+    display: flex;
+    gap: .15rem;
+    /* petit espace entre les 2 flèches */
+}
+
+/* Chaque flèche : carré, bordure fine, fond transparent */
+#hero .hero__arrow {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid rgba(255, 255, 255, .3);
+    border-radius: 0;
+    /* coins carrés (pas arrondis) */
+    background: transparent;
+    color: rgba(255, 255, 255, .6);
+    font-size: .85rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s ease;
+}
+
+/* Au survol : léger fond blanc */
+#hero .hero__arrow:hover {
+    background: rgba(255, 255, 255, .1);
+}
