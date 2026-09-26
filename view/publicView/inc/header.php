@@ -31,8 +31,7 @@
 
        Le script script.js synchronise slides, dots et vignettes
        sur le même index : quand on clique sur un dot ou une vignette,
-       la slide correspondante s'affiche.
-  -->
+       la slide correspondante s'affiche. -->
     <section id="hero">
 
       <!-- 1. IMAGES DU CAROUSEL -->
@@ -55,6 +54,11 @@
         <!-- Slide 3 : tablette de chocolat artisanal -->
         <div class="hero__slide">
           <img src="/public/assets/images/d43577a012cd4c1e75acb3d4408c1fa3.jpg" alt="Tablette de chocolat artisanal" />
+        </div>
+
+        <!-- Slide 4 : fèves de cacao -->
+        <div class="hero__slide">
+          <img src="/public/assets/images/9b07e4197347cb2dd46373d336f41a31.jpg" alt="Fèves de cacao" />
         </div>
 
       </div>
@@ -84,11 +88,12 @@
       </div>
 
       <!-- 4. DOTS VERTICAUX (gauche) -->
-      <!-- 3 petits cercles, un par slide. Celui avec .is-active est doré. -->
+      <!-- 4 petits cercles, un par slide. Celui avec .is-active est doré. -->
       <div class="hero__dots">
         <button type="button" class="hero__dot is-active" aria-label="Slide 1"></button>
         <button type="button" class="hero__dot" aria-label="Slide 2"></button>
         <button type="button" class="hero__dot" aria-label="Slide 3"></button>
+        <button type="button" class="hero__dot" aria-label="Slide 4"></button>
       </div>
 
       <!-- 5. VIGNETTES (bas droite)
@@ -127,7 +132,7 @@
 
     </section>
 
-  </div> <!-- /#app-wrapper -->
+  </div><!-- /#app-wrapper -->
 
   <!-- Script JS du carousel (slides, dots, vignettes, flèches synchronisés) -->
   <script src="../../../public/js/scripts.js"></script>

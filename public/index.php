@@ -35,7 +35,9 @@ require_once __DIR__ . '/../controller/navbarController.php';
             --color-gold: #c8b273;
         }
     </style>
-    <title>Document</title>
+    <!-- Police manuscrite pour le logo / Footer /  Maison Rosalie -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&display=swap">
+    <title>Maison Rosalie</title>
 </head>
 <body>
 
