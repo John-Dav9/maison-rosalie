@@ -83,7 +83,7 @@
         </p>
 
         <!-- Bouton d'appel à l'action -->
-        <a href="#decouvrir" class="hero__cta">découvrir</a>
+        <a href="../about.php" class="hero__cta">découvrir</a>
 
       </div>
 
