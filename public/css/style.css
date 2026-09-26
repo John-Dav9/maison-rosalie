@@ -293,11 +293,15 @@
     border-color: var(--hero-gold);
 }
 
-/* Image à l'intérieur des vignettes */
+/* Image à l'intérieur des vignettes.
+   La transition d'opacité crée un fondu quand l'image change :
+   le JS passe l'opacité à 0, change le src, puis repasse à 1. */
 #hero .hero__thumb img {
     display: block;
     object-fit: cover;
     /* recadrée sans déformation */
+    transition: opacity .3s ease;
+    /* fondu de 0.3 secondes */
 }
 
 /* Grande vignette (1re)

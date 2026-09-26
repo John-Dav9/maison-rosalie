@@ -7,21 +7,23 @@
        en ajoutant/retirant la classe .is-active sur les 3 groupes d'éléments.
      - Les vignettes sont DYNAMIQUES : elles affichent toujours les 2 slides
        suivantes dans l'ordre (pas la slide active). Quand la slide change,
-       les images et les data-slide des vignettes sont mis à jour.
+       les images des vignettes sont mises à jour avec un effet de fondu.
      - Les dots, vignettes et flèches appellent goTo() au clic.
-     - Un autoplay fait défiler les slides toutes les 6 secondes.
+     - Un autoplay fait défiler les slides toutes les 8 secondes.
        Il se relance après chaque interaction (clic) pour éviter un changement
        de slide juste après que l'utilisateur ait cliqué.
 
    Relation entre les éléments :
      - Slides et dots → liés par index (dot 0 = slide 0, dot 1 = slide 1, etc.)
-     - Vignettes → liées dynamiquement via data-slide (mis à jour à chaque goTo)
-       car elles montrent les slides SUIVANTES, pas la slide active.
+     - Vignettes → la cible est CALCULÉE au moment du clic avec la formule
+       (current + i + 1) % total, ce qui garantit que le clic mène toujours
+       à l'image affichée, sans décalage possible.
 
-   Exemple avec 3 slides (couple=0, chocolatier=1, tablette=2) :
+   Exemple avec 4 slides (couple=0, chocolatier=1, tablette=2, fèves=3) :
      - Slide 0 active → vignette grande = slide 1, vignette petite = slide 2
-     - Slide 1 active → vignette grande = slide 2, vignette petite = slide 0
-     - Slide 2 active → vignette grande = slide 0, vignette petite = slide 1 */
+     - Slide 1 active → vignette grande = slide 2, vignette petite = slide 3
+     - Slide 2 active → vignette grande = slide 3, vignette petite = slide 0
+     - Slide 3 active → vignette grande = slide 0, vignette petite = slide 1 */
 
 // On attend que tout le DOM soit chargé avant d'exécuter le script
 document.addEventListener('DOMContentLoaded', function () {
@@ -54,25 +56,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 2. VARIABLES D'ÉTAT
 
-  // Index de la slide actuellement affichée (0, 1 ou 2)
+  // Index de la slide actuellement affichée (0, 1, 2 ou 3)
   let current = 0;
 
-  // Nombre total de slides (3 dans notre cas)
+  // Nombre total de slides (4 dans notre cas)
   let total = slides.length;
 
   // Référence du setInterval pour l'autoplay (null = pas d'autoplay en cours)
   let timer = null;
 
-  // 3. COLLECTE DES SOURCES D'IMAGES
+  // 3. COLLECTE ET PRÉCHARGEMENT DES IMAGES
+
   // On récupère le chemin (src) de l'image de chaque slide et on le stocke
   // dans un tableau. Ce tableau sera utilisé dans goTo() pour mettre à jour
   // dynamiquement les images des vignettes quand on change de slide.
-  // Exemple : slideSources[0] = "/public/assets/images/couple.png"
-  //           slideSources[1] = "/public/assets/images/chocolatier.png"
-  //           slideSources[2] = "/public/assets/images/tablette.jpg"
   let slideSources = [];
   slides.forEach(function (slide) {
     slideSources.push(slide.querySelector('img').getAttribute('src'));
+  });
+
+  // On précharge toutes les images dans le cache du navigateur.
+  // Ça permet que le changement d'image dans les vignettes soit instantané
+  // (pas d'attente de chargement réseau).
+  slideSources.forEach(function (src) {
+    let img = new Image();
+    img.src = src;
   });
 
   // 4. FONCTION PRINCIPALE : goTo(index)
@@ -82,8 +90,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function goTo(index) {
 
     // Calcul de l'index avec boucle circulaire
-    // Ex : goTo(3) avec 3 slides → (3 + 3) % 3 = 0 → retour à la 1re
-    // Ex : goTo(-1) avec 3 slides → (-1 + 3) % 3 = 2 → dernière slide
+    // Ex : goTo(4) avec 4 slides → (4 + 4) % 4 = 0 → retour à la 1re
+    // Ex : goTo(-1) avec 4 slides → (-1 + 4) % 4 = 3 → dernière slide
     current = (index + total) % total;
 
     // 4a. SLIDES : ajouter .is-active sur la slide courante, retirer des autres
@@ -99,33 +107,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 4c. CONTENU + VOILE : visibles uniquement sur la slide 0 (couple).
     // Sur les autres slides, on les masque pour laisser l'image en plein écran.
-    // On utilise style.display plutôt qu'une classe pour que ce soit immédiat
-    // (pas de transition de fondu sur le texte, juste apparition/disparition).
     if (current === 0) {
-      content.style.display = 'flex';  // flex car le conteneur est en flexbox
+      content.style.display = 'flex';
       overlay.style.display = 'block';
     } else {
       content.style.display = 'none';
       overlay.style.display = 'none';
     }
 
-    // 4c. VIGNETTES : mise à jour dynamique des images et des data-slide
-    // Chaque vignette montre la (i+1)ème slide APRÈS la slide courante,
-    // en boucle circulaire. La première vignette (i=0) montre la slide
-    // juste après, la deuxième (i=1) montre celle d'encore après.
+    // 4d. VIGNETTES : mise à jour avec effet de fondu.
+    // Étape 1 : on passe l'opacité de l'image à 0 (fondu sortant, 0.3s via CSS)
+    // Étape 2 : après 300ms, on change le src et on repasse l'opacité à 1 (fondu entrant)
+    // Comme ça l'ancienne image disparaît avant que la nouvelle apparaisse,
+    // et il n'y a jamais de décalage entre l'image visible et la slide cible.
     thumbs.forEach(function (thumb, i) {
 
-      // Calcul de l'index de la slide que cette vignette doit montrer
-      // Ex : current=0, i=0 → (0+0+1) % 3 = 1 → montre slide 1
-      // Ex : current=0, i=1 → (0+1+1) % 3 = 2 → montre slide 2
-      // Ex : current=2, i=0 → (2+0+1) % 3 = 0 → montre slide 0
+      // L'index de la slide que cette vignette doit montrer :
+      // la (i+1)ème slide après la slide courante, en boucle
       let targetIndex = (current + i + 1) % total;
 
-      // On remplace le src de l'image de la vignette par celui de la slide cible
-      thumb.querySelector('img').setAttribute('src', slideSources[targetIndex]);
+      // Récupérer l'élément <img> de la vignette
+      let thumbImg = thumb.querySelector('img');
 
-      // On met à jour le data-slide pour que le clic mène à la bonne slide
-      thumb.setAttribute('data-slide', targetIndex);
+      // Fondu sortant : rendre l'image transparente
+      thumbImg.style.opacity = '0';
+
+      // Après la durée du fondu (300ms), changer l'image et la faire réapparaître
+      setTimeout(function () {
+        thumbImg.setAttribute('src', slideSources[targetIndex]);
+        thumbImg.style.opacity = '1';
+      }, 300);
 
       // La première vignette (i=0) a toujours la bordure dorée (.is-active)
       // car c'est la "prochaine" slide dans l'ordre
@@ -143,10 +154,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 6. AUTOPLAY
 
-  // Lance le défilement automatique : change de slide toutes les 6 secondes
+  // Lance le défilement automatique : change de slide toutes les 8 secondes
   function startAutoplay() {
     stopAutoplay();                  // on arrête l'ancien timer s'il existe
-    timer = setInterval(next, 6000); // toutes les 6000ms = 6 secondes
+    timer = setInterval(next, 7000); // toutes les 8000ms = 8 secondes
   }
 
   // Arrête le défilement automatique
@@ -165,11 +176,16 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Clic sur une vignette → lire son data-slide (mis à jour dynamiquement
-  // par goTo) pour savoir vers quelle slide naviguer
-  thumbs.forEach(function (thumb) {
+  // Clic sur une vignette → on CALCULE la cible directement à partir de
+  // l'index de la vignette (i) et de la slide courante (current).
+  // Formule : (current + i + 1) % total
+  // C'est la MÊME formule que dans goTo() pour mettre à jour les vignettes,
+  // donc l'image affichée et la slide cible sont TOUJOURS synchronisées.
+  // On n'utilise PAS data-slide car il peut être désynchronisé de l'image
+  // visible (si l'image n'a pas fini de charger quand data-slide a déjà changé).
+  thumbs.forEach(function (thumb, i) {
     thumb.addEventListener('click', function () {
-      let target = parseInt(thumb.getAttribute('data-slide'), 10);
+      let target = (current + i + 1) % total;
       goTo(target);
       startAutoplay();
     });
