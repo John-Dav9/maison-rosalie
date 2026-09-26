@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- Styles du héro (carousel, texte, vignettes, dots, flèches) -->
-  <link rel="stylesheet" href="../../../public/css/style.css">
+  <link rel="stylesheet" href="/public/assets/css/style.css">
 </head>
 
 <body>
@@ -21,7 +21,7 @@
   <div id="app-wrapper">
 
     <!-- SECTION HÉRO DE LA PAGE D'ACCUEIL
-         Structure :
+       Structure :
          1. .hero__slides   → les 3 images plein cadre (empilées, fondu enchaîné)
          2. .hero__overlay   → voile sombre pour la lisibilité du texte
          3. .hero__content   → titre + texte d'accroche + bouton "découvrir"
@@ -83,7 +83,7 @@
         </p>
 
         <!-- Bouton d'appel à l'action -->
-        <a href="../about.php" class="hero__cta">découvrir</a>
+        <a href="#decouvrir" class="hero__cta">découvrir</a>
 
       </div>
 
@@ -123,19 +123,12 @@
 
       </div>
 
-      <!-- 6. FLÈCHES < > (bas centre) -->
-      <!-- 2 boutons carrés pour passer à la slide précédente/suivante -->
-      <div class="hero__arrows">
-        <button type="button" class="hero__arrow hero__arrow--prev" aria-label="Slide précédente">&#8249;</button>
-        <button type="button" class="hero__arrow hero__arrow--next" aria-label="Slide suivante">&#8250;</button>
-      </div>
-
     </section>
 
   </div><!-- /#app-wrapper -->
 
   <!-- Script JS du carousel (slides, dots, vignettes, flèches synchronisés) -->
-  <script src="../../../public/js/scripts.js"></script>
+  <script src="/public/assets/js/script.js"></script>
 
 </body>
 

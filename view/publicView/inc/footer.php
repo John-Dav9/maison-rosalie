@@ -3,7 +3,6 @@
    <!---------footer pour le fond marron------->
    <footer class="bg-[#2F1B14] px-16 py-10">
     
-    
 
     <p class="text-[#C9A45C] text-3xl" style="font-family: 'Great Vibes', cursive;"> Maison Rosalie</p>
         <!------ligne de séparation----->
