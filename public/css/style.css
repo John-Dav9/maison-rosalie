@@ -293,11 +293,15 @@
     border-color: var(--hero-gold);
 }
 
-/* Image à l'intérieur des vignettes */
+/* Image à l'intérieur des vignettes.
+   La transition d'opacité crée un fondu quand l'image change :
+   le JS passe l'opacité à 0, change le src, puis repasse à 1. */
 #hero .hero__thumb img {
     display: block;
     object-fit: cover;
     /* recadrée sans déformation */
+    transition: opacity .3s ease;
+    /* fondu de 0.3 secondes */
 }
 
 /* Grande vignette (1re)
@@ -361,4 +365,476 @@
 /* Au survol : léger fond blanc */
 #hero .hero__arrow:hover {
     background: rgba(255, 255, 255, .1);
+}
+
+/* RESPONSIVE — MOBILE (moins de 768px)
+   Sur mobile :
+     - Le héro prend moins de hauteur (70vh au lieu de 100vh)
+     - Le bloc texte est centré horizontalement et positionné en bas
+     - Le voile sombre couvre tout uniformément (pas de dégradé)
+     - Les vignettes sont masquées
+     - Les dots passent en horizontal en bas à gauche
+     - Les flèches restent centrées en bas */
+@media (max-width: 767px) {
+
+    /* Conteneur principal */
+    #hero {
+        position: relative;
+        width: 100%;
+        height: 70vh;
+        min-height: 450px;
+        overflow: hidden;
+        background: #000;
+    }
+
+    /* Conteneur des slides */
+    #hero .hero__slides {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Chaque slide */
+    #hero .hero__slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity .8s ease;
+    }
+
+    #hero .hero__slide.is-active {
+        opacity: 1;
+        z-index: 1;
+    }
+
+    #hero .hero__slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Voile sombre : uniforme au lieu du dégradé gauche-droite,
+     car le texte est centré et pas collé à droite */
+    #hero .hero__overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: rgba(0, 0, 0, .50);
+    }
+
+    /* Bloc texte : centré horizontalement, positionné plus haut
+     pour laisser de la place aux vignettes en bas */
+    #hero .hero__content {
+        position: absolute;
+        top: 5%;
+        bottom: auto;
+        right: 1rem;
+        left: 1rem;
+        transform: none;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Titre : centré, retour à la ligne autorisé, taille réduite */
+    #hero .hero__title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 400;
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+        color: #fff;
+        line-height: 1.1;
+        white-space: normal;
+        text-align: center;
+    }
+
+    /* Trait doré : centré, plus court */
+    #hero .hero__divider {
+        display: block;
+        width: 4rem;
+        height: 2px;
+        margin-top: .75rem;
+        margin-left: auto;
+        margin-right: auto;
+        background: var(--hero-gold);
+    }
+
+    /* Texte d'accroche : centré, pleine largeur */
+    #hero .hero__text {
+        color: rgba(255, 255, 255, .85);
+        font-size: .85rem;
+        line-height: 1.6;
+        text-align: center;
+        max-width: 100%;
+    }
+
+    /* Bouton "découvrir" : plus petit */
+    #hero .hero__cta {
+        align-self: center;
+        display: inline-block;
+        border: 1px solid rgba(255, 255, 255, .6);
+        color: #fff;
+        text-decoration: none;
+        padding: .75rem 2.5rem;
+        border-radius: 999px;
+        font-size: .95rem;
+        letter-spacing: .04em;
+        transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+
+    #hero .hero__cta:hover {
+        background: var(--hero-gold);
+        border-color: var(--hero-gold);
+        color: #111;
+    }
+
+    /* Dots : ligne horizontale en bas à gauche */
+    #hero .hero__dots {
+        position: absolute;
+        top: auto;
+        bottom: 1.5rem;
+        left: 1.5rem;
+        transform: none;
+        z-index: 3;
+        display: flex;
+        flex-direction: row;
+        gap: .6rem;
+    }
+
+    #hero .hero__dot {
+        width: .6rem;
+        height: .6rem;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, .5);
+        padding: 0;
+        cursor: pointer;
+        background: transparent;
+        transition: background .2s ease, border-color .2s ease;
+    }
+
+    #hero .hero__dot.is-active {
+        background: var(--hero-gold);
+        border-color: var(--hero-gold);
+    }
+
+    /* Vignettes : affichées en bas à droite, plus petites qu'en desktop */
+    #hero .hero__thumbs {
+        position: absolute;
+        bottom: 3rem;
+        right: 1rem;
+        z-index: 3;
+        display: flex;
+        align-items: flex-end;
+        gap: .5rem;
+        max-width: 50%;
+    }
+
+    #hero .hero__thumb {
+        padding: 0;
+        border: 2px solid transparent;
+        border-radius: .25rem;
+        overflow: hidden;
+        cursor: pointer;
+        background: none;
+        transition: border-color .2s ease;
+    }
+
+    #hero .hero__thumb.is-active {
+        border-color: var(--hero-gold);
+    }
+
+    #hero .hero__thumb img {
+        display: block;
+        object-fit: cover;
+        transition: opacity .3s ease;
+    }
+
+    /* Grande vignette : taille mobile */
+    #hero .hero__thumb--lg {
+        width: 5.5rem;
+        height: 7rem;
+    }
+
+    #hero .hero__thumb--lg img {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Petite vignette : taille mobile */
+    #hero .hero__thumb--sm {
+        width: 4rem;
+        height: 5.5rem;
+    }
+
+    #hero .hero__thumb--sm img {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Flèches : centrées en bas, plus petites */
+    #hero .hero__arrows {
+        position: absolute;
+        bottom: 1.25rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        display: flex;
+        gap: .15rem;
+    }
+
+    #hero .hero__arrow {
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, .3);
+        border-radius: 0;
+        background: transparent;
+        color: rgba(255, 255, 255, .6);
+        font-size: .75rem;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .2s ease;
+    }
+
+    #hero .hero__arrow:hover {
+        background: rgba(255, 255, 255, .1);
+    }
+}
+
+/* RESPONSIVE — TABLETTE (768px à 1023px)
+   Sur tablette :
+     - Le héro prend 80vh
+     - Le bloc texte reste à droite mais avec moins de marges
+     - Les vignettes sont affichées mais un peu plus petites
+     - Les dots restent verticaux à gauche */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    /* Conteneur principal */
+    #hero {
+        position: relative;
+        width: 100%;
+        height: 80vh;
+        min-height: 500px;
+        overflow: hidden;
+        background: #000;
+    }
+
+    /* Conteneur des slides */
+    #hero .hero__slides {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Chaque slide */
+    #hero .hero__slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity .8s ease;
+    }
+
+    #hero .hero__slide.is-active {
+        opacity: 1;
+        z-index: 1;
+    }
+
+    #hero .hero__slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Voile sombre : même dégradé qu'en desktop */
+    #hero .hero__overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: linear-gradient(to right,
+                rgba(0, 0, 0, .65) 0%,
+                rgba(0, 0, 0, .45) 40%,
+                rgba(0, 0, 0, .25) 65%,
+                rgba(0, 0, 0, .15) 100%);
+    }
+
+    /* Bloc texte : à droite, remonté pour laisser de la place aux vignettes */
+    #hero .hero__content {
+        position: absolute;
+        top: 28%;
+        right: 2rem;
+        transform: translateY(-50%);
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.25rem;
+    }
+
+    /* Titre : taille intermédiaire */
+    #hero .hero__title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 400;
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        color: #fff;
+        line-height: 1.1;
+        white-space: nowrap;
+    }
+
+    /* Trait doré */
+    #hero .hero__divider {
+        display: block;
+        width: 5rem;
+        height: 2px;
+        margin-top: .85rem;
+        background: var(--hero-gold);
+    }
+
+    /* Texte d'accroche : un peu plus étroit et petit */
+    #hero .hero__text {
+        color: rgba(255, 255, 255, .85);
+        font-size: .9rem;
+        line-height: 1.7;
+        text-align: left;
+        max-width: 22rem;
+    }
+
+    /* Bouton "découvrir" : taille intermédiaire */
+    #hero .hero__cta {
+        align-self: center;
+        display: inline-block;
+        border: 1px solid rgba(255, 255, 255, .6);
+        color: #fff;
+        text-decoration: none;
+        padding: .85rem 2.8rem;
+        border-radius: 999px;
+        font-size: 1rem;
+        letter-spacing: .04em;
+        transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+
+    #hero .hero__cta:hover {
+        background: var(--hero-gold);
+        border-color: var(--hero-gold);
+        color: #111;
+    }
+
+    /* Dots : verticaux à gauche, un peu plus petits */
+    #hero .hero__dots {
+        position: absolute;
+        top: 50%;
+        left: 1.5rem;
+        transform: translateY(-50%);
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        gap: .7rem;
+    }
+
+    #hero .hero__dot {
+        width: .6rem;
+        height: .6rem;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, .5);
+        padding: 0;
+        cursor: pointer;
+        background: transparent;
+        transition: background .2s ease, border-color .2s ease;
+    }
+
+    #hero .hero__dot.is-active {
+        background: var(--hero-gold);
+        border-color: var(--hero-gold);
+    }
+
+    /* Vignettes : affichées, un peu plus petites et plus basses */
+    #hero .hero__thumbs {
+        position: absolute;
+        bottom: 2rem;
+        right: 1.5rem;
+        z-index: 3;
+        display: flex;
+        align-items: flex-end;
+        gap: .5rem;
+        max-width: 40%;
+    }
+
+    #hero .hero__thumb {
+        padding: 0;
+        border: 3px solid transparent;
+        border-radius: .35rem;
+        overflow: hidden;
+        cursor: pointer;
+        background: none;
+        transition: border-color .2s ease;
+    }
+
+    #hero .hero__thumb.is-active {
+        border-color: var(--hero-gold);
+    }
+
+    #hero .hero__thumb img {
+        display: block;
+        object-fit: cover;
+        transition: opacity .3s ease;
+    }
+
+    /* Grande vignette : taille tablette */
+    #hero .hero__thumb--lg {
+        width: clamp(7rem, 10vw, 10rem);
+        height: clamp(9rem, 13vw, 13rem);
+    }
+
+    #hero .hero__thumb--lg img {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Petite vignette : taille tablette */
+    #hero .hero__thumb--sm {
+        width: clamp(4.5rem, 7vw, 7rem);
+        height: clamp(6rem, 9vw, 10rem);
+    }
+
+    #hero .hero__thumb--sm img {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Flèches : centrées en bas */
+    #hero .hero__arrows {
+        position: absolute;
+        bottom: .75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        display: flex;
+        gap: .15rem;
+    }
+
+    #hero .hero__arrow {
+        width: 1.75rem;
+        height: 1.75rem;
+        border: 1px solid rgba(255, 255, 255, .3);
+        border-radius: 0;
+        background: transparent;
+        color: rgba(255, 255, 255, .6);
+        font-size: .85rem;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .2s ease;
+    }
+
+    #hero .hero__arrow:hover {
+        background: rgba(255, 255, 255, .1);
+    }
 }
