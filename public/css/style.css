@@ -214,7 +214,8 @@
 /* Au survol : fond doré, texte foncé */
 #hero .hero__cta:hover {
     background: var(--hero-gold);
-    border-color: var(--hero-gold);
+    outline: 3px solid var(--hero-gold);
+    outline-offset: -3px;
     color: #111;
 }
 
@@ -252,7 +253,8 @@
 /* Dot actif : rempli et bordé en doré */
 #hero .hero__dot.is-active {
     background: var(--hero-gold);
-    border-color: var(--hero-gold);
+    outline: 3px solid var(--hero-gold);
+    outline-offset: -3px;
 }
 
 /* VIGNETTES (en bas à droite)
@@ -287,20 +289,20 @@
 /* Style commun aux 2 vignettes */
 #hero .hero__thumb {
     padding: 0;
-    border: 3px solid transparent;
-    /* bordure invisible par défaut */
+    border: none;
     border-radius: .35rem;
     /* coins légèrement arrondis */
     overflow: hidden;
     /* l'image est recadrée dans le cadre */
     cursor: pointer;
     background: none;
-    transition: border-color .2s ease;
+    transition: outline-color .2s ease;
 }
 
 /* La vignette active a une bordure dorée */
 #hero .hero__thumb.is-active {
-    border-color: var(--hero-gold);
+    outline: 3px solid var(--hero-gold);
+    outline-offset: -3px;
 }
 
 /* Image à l'intérieur des vignettes.
@@ -466,7 +468,8 @@
 
     #hero .hero__cta:hover {
         background: var(--hero-gold);
-        border-color: var(--hero-gold);
+        outline: 3px solid var(--hero-gold);
+        outline-offset: -3px;
         color: #111;
     }
 
@@ -496,7 +499,8 @@
 
     #hero .hero__dot.is-active {
         background: var(--hero-gold);
-        border-color: var(--hero-gold);
+        outline: 3px solid var(--hero-gold);
+        outline-offset: -3px;
     }
 
     /* Vignettes : affichées en bas à droite, plus petites qu'en desktop */
@@ -518,11 +522,12 @@
         overflow: hidden;
         cursor: pointer;
         background: none;
-        transition: border-color .2s ease;
+        transition: outline-color .2s ease;
     }
 
     #hero .hero__thumb.is-active {
-        border-color: var(--hero-gold);
+        outline: 3px solid var(--hero-gold);
+        outline-offset: -3px;
     }
 
     #hero .hero__thumb img {
@@ -676,7 +681,8 @@
 
     #hero .hero__cta:hover {
         background: var(--hero-gold);
-        border-color: var(--hero-gold);
+        outline: 3px solid var(--hero-gold);
+        outline-offset: -3px;
         color: #111;
     }
 
@@ -705,7 +711,8 @@
 
     #hero .hero__dot.is-active {
         background: var(--hero-gold);
-        border-color: var(--hero-gold);
+        outline: 3px solid var(--hero-gold);
+        outline-offset: -3px;
     }
 
     /* Vignettes : affichées, un peu plus petites et plus basses */
@@ -722,16 +729,17 @@
 
     #hero .hero__thumb {
         padding: 0;
-        border: 3px solid transparent;
+        border: none;
         border-radius: .35rem;
         overflow: hidden;
         cursor: pointer;
         background: none;
-        transition: border-color .2s ease;
+        transition: outline-color .2s ease;
     }
 
     #hero .hero__thumb.is-active {
-        border-color: var(--hero-gold);
+        outline: 3px solid var(--hero-gold);
+        outline-offset: -3px;
     }
 
     #hero .hero__thumb img {
