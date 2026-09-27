@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- Styles du héro (carousel, texte, vignettes, dots, flèches) -->
-  <link rel="stylesheet" href="/public/assets/css/style.css">
+  <link rel="stylesheet" href="../../../public/css/style.css">
 </head>
 
 <body>
@@ -83,7 +83,7 @@
         </p>
 
         <!-- Bouton d'appel à l'action -->
-        <a href="../about.php" class="hero__cta">découvrir</a>
+        <a href="../about.php" class="hero__cta">Découvrir</a>
 
       </div>
 
@@ -128,7 +128,7 @@
   </div><!-- /#app-wrapper -->
 
   <!-- Script JS du carousel (slides, dots, vignettes, flèches synchronisés) -->
-  <script src="/public/assets/js/script.js"></script>
+  <script src="../../../public/js/scripts.js"></script>
 
 </body>
 

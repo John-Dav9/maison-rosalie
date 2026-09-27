@@ -289,31 +289,39 @@
 /* Style commun aux 2 vignettes */
 #hero .hero__thumb {
     padding: 0;
+    margin: 0;
     border: none;
     border-radius: .35rem;
-    /* coins légèrement arrondis */
     overflow: hidden;
-    /* l'image est recadrée dans le cadre */
     cursor: pointer;
-    background: none;
-    transition: outline-color .2s ease;
+    background: #000;
+    position: relative;
+    display: block;
+    transition: box-shadow .2s ease;
 }
 
 /* La vignette active a une bordure dorée */
-#hero .hero__thumb.is-active {
-    outline: 3px solid var(--hero-gold);
-    outline-offset: -3px;
+#hero .hero__thumb.is-active::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 3px solid var(--hero-gold);
+    border-radius: .35rem;
+    pointer-events: none;
+    z-index: 2;
 }
 
 /* Image à l'intérieur des vignettes.
    La transition d'opacité crée un fondu quand l'image change :
    le JS passe l'opacité à 0, change le src, puis repasse à 1. */
 #hero .hero__thumb img {
-    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    /* recadrée sans déformation */
+    display: block;
     transition: opacity .3s ease;
-    /* fondu de 0.3 secondes */
 }
 
 /* Grande vignette (1re)
@@ -323,22 +331,12 @@
     height: clamp(10rem, 16vw, 17rem);
 }
 
-#hero .hero__thumb--lg img {
-    width: 100%;
-    height: 100%;
-}
-
 /* Petite vignette (2e)
    Plus petite, partiellement coupée par le bord droit grâce au
    overflow: hidden du conteneur #hero */
 #hero .hero__thumb--sm {
     width: clamp(5rem, 8vw, 9rem);
     height: clamp(7rem, 11vw, 13rem);
-}
-
-#hero .hero__thumb--sm img {
-    width: 100%;
-    height: 100%;
 }
 
 /* RESPONSIVE — MOBILE (moins de 768px)
@@ -517,22 +515,34 @@
 
     #hero .hero__thumb {
         padding: 0;
-        border: 2px solid transparent;
-        border-radius: .25rem;
+        margin: 0;
+        border: none;
+        border-radius: .35rem;
         overflow: hidden;
         cursor: pointer;
-        background: none;
-        transition: outline-color .2s ease;
+        background: #000;
+        position: relative;
+        display: block;
+        transition: box-shadow .2s ease;
     }
 
-    #hero .hero__thumb.is-active {
-        outline: 3px solid var(--hero-gold);
-        outline-offset: -3px;
+    #hero .hero__thumb.is-active::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 3px solid var(--hero-gold);
+        border-radius: .25rem;
+        pointer-events: none;
+        z-index: 2;
     }
 
     #hero .hero__thumb img {
-        display: block;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
+        display: block;
         transition: opacity .3s ease;
     }
 
@@ -542,20 +552,10 @@
         height: 7rem;
     }
 
-    #hero .hero__thumb--lg img {
-        width: 100%;
-        height: 100%;
-    }
-
     /* Petite vignette : taille mobile */
     #hero .hero__thumb--sm {
         width: 4rem;
         height: 5.5rem;
-    }
-
-    #hero .hero__thumb--sm img {
-        width: 100%;
-        height: 100%;
     }
 }
 
@@ -729,22 +729,34 @@
 
     #hero .hero__thumb {
         padding: 0;
+        margin: 0;
         border: none;
         border-radius: .35rem;
         overflow: hidden;
         cursor: pointer;
-        background: none;
-        transition: outline-color .2s ease;
+        background: #000;
+        position: relative;
+        display: block;
+        transition: box-shadow .2s ease;
     }
 
-    #hero .hero__thumb.is-active {
-        outline: 3px solid var(--hero-gold);
-        outline-offset: -3px;
+    #hero .hero__thumb.is-active::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 3px solid var(--hero-gold);
+        border-radius: .35rem;
+        pointer-events: none;
+        z-index: 2;
     }
 
     #hero .hero__thumb img {
-        display: block;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
+        display: block;
         transition: opacity .3s ease;
     }
 
@@ -754,19 +766,9 @@
         height: clamp(9rem, 13vw, 13rem);
     }
 
-    #hero .hero__thumb--lg img {
-        width: 100%;
-        height: 100%;
-    }
-
     /* Petite vignette : taille tablette */
     #hero .hero__thumb--sm {
         width: clamp(4.5rem, 7vw, 7rem);
         height: clamp(6rem, 9vw, 10rem);
-    }
-
-    #hero .hero__thumb--sm img {
-        width: 100%;
-        height: 100%;
     }
 }
