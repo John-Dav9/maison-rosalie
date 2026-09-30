@@ -44,10 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // Les 2 vignettes en bas à droite (aperçu des slides suivantes)
   let thumbs = hero.querySelectorAll('.hero__thumb');
 
-  // Les flèches < et > en bas au centre
-  let prevBtn = hero.querySelector('.hero__arrow--prev');
-  let nextBtn = hero.querySelector('.hero__arrow--next');
-
   // Le bloc texte (titre + accroche + bouton) et le voile sombre :
   // ils ne s'affichent QUE sur la slide 0 (couple en terrasse).
   // Sur les autres slides, l'image occupe tout l'espace sans texte par-dessus.
@@ -157,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Lance le défilement automatique : change de slide toutes les 8 secondes
   function startAutoplay() {
     stopAutoplay();                  // on arrête l'ancien timer s'il existe
-    timer = setInterval(next, 7000); // toutes les 8000ms = 8 secondes
+    timer = setInterval(next, 8000); // toutes les 8000ms = 8 secondes
   }
 
   // Arrête le défilement automatique
@@ -190,22 +186,6 @@ document.addEventListener('DOMContentLoaded', function () {
       startAutoplay();
     });
   });
-
-  // Clic sur la flèche "précédent" → slide précédente + relancer l'autoplay
-  if (prevBtn) {
-    prevBtn.addEventListener('click', function () {
-      prev();
-      startAutoplay();
-    });
-  }
-
-  // Clic sur la flèche "suivant" → slide suivante + relancer l'autoplay
-  if (nextBtn) {
-    nextBtn.addEventListener('click', function () {
-      next();
-      startAutoplay();
-    });
-  }
 
   // 8. INITIALISATION
   // Au chargement de la page : on affiche la slide 0 et on démarre l'autoplay

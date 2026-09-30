@@ -21,7 +21,7 @@
   <div id="app-wrapper">
 
     <!-- SECTION HÉRO DE LA PAGE D'ACCUEIL
-         Structure :
+       Structure :
          1. .hero__slides   → les 3 images plein cadre (empilées, fondu enchaîné)
          2. .hero__overlay   → voile sombre pour la lisibilité du texte
          3. .hero__content   → titre + texte d'accroche + bouton "découvrir"
@@ -83,7 +83,7 @@
         </p>
 
         <!-- Bouton d'appel à l'action -->
-        <a href="../about.php" class="hero__cta">découvrir</a>
+        <a href="../about.php" class="hero__cta">Découvrir</a>
 
       </div>
 
@@ -121,13 +121,6 @@
             alt="Miniature chocolatier" />
         </button>
 
-      </div>
-
-      <!-- 6. FLÈCHES < > (bas centre) -->
-      <!-- 2 boutons carrés pour passer à la slide précédente/suivante -->
-      <div class="hero__arrows">
-        <button type="button" class="hero__arrow hero__arrow--prev" aria-label="Slide précédente">&#8249;</button>
-        <button type="button" class="hero__arrow hero__arrow--next" aria-label="Slide suivante">&#8250;</button>
       </div>
 
     </section>
