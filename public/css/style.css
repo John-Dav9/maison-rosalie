@@ -771,4 +771,299 @@
         width: clamp(4.5rem, 7vw, 7rem);
         height: clamp(6rem, 9vw, 10rem);
     }
+
+    #hero .hero__thumb--sm img {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Flèches : centrées en bas */
+    #hero .hero__arrows {
+        position: absolute;
+        bottom: .75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        display: flex;
+        gap: .15rem;
+    }
+
+    #hero .hero__arrow {
+        width: 1.75rem;
+        height: 1.75rem;
+        border: 1px solid rgba(255, 255, 255, .3);
+        border-radius: 0;
+        background: transparent;
+        color: rgba(255, 255, 255, .6);
+        font-size: .85rem;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .2s ease;
+    }
+
+    #hero .hero__arrow:hover {
+        background: rgba(255, 255, 255, .1);
+    }
+}
+
+/* STYLES DE LA PAGE À PROPOS — Maison Rosalie
+   Même principe que le héro : tous les sélecteurs sont préfixés par #about
+   pour ne pas entrer en conflit avec les autres pages.
+   Convention de nommage : BEM (.about__title, .about__title--small, ...) */
+:root {
+    --about-bg: #faf7f1;
+    /* crème très clair du fond */
+    --about-text: #2b1a14;
+    /* brun très foncé, bien lisible sur le crème (FE-01) */
+    --about-gold: #b8862b;
+    /* doré plus soutenu que --hero-gold : reste visible sur fond clair */
+}
+/* CONTENEUR DE LA PAGE
+   Fond crème avec un léger motif de petits points (dégradé radial répété). */
+#about {
+    background-color: var(--about-bg);
+    background-image: radial-gradient(rgba(43, 26, 20, .06) 1px, transparent 1px);
+    background-size: 18px 18px;
+    color: var(--about-text);
+    font-family: 'Playfair Display', Georgia, serif;
+    padding: 3rem 1rem 4rem;
+}
+/* TITRES ("À propos" et "Notre Histoire") */
+#about .about__title {
+    position: relative;
+    display: inline-block;
+    /* la largeur suit le texte : le losange se colle juste à côté */
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+}
+/* variante plus petite pour les sous-titres */
+#about .about__title--small {
+    font-size: clamp(1.4rem, 3vw, 1.6rem);
+}
+/* Petit losange doré à gauche ou à droite du titre :
+   un carré tourné de 45°, placé en dehors du texte */
+#about .about__title--diamond-left::before,
+#about .about__title--diamond-right::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: .4rem;
+    height: .4rem;
+    background: var(--about-gold);
+    transform: translateY(-50%) rotate(45deg);
+}
+#about .about__title--diamond-left::before {
+    left: -1rem;
+}
+#about .about__title--diamond-right::after {
+    right: -1rem;
+}
+/* Trait doré sous les titres */
+#about .about__divider {
+    display: block;
+    width: 2.25rem;
+    height: 2px;
+    margin: .5rem auto 1.25rem;
+    /* centré sous le titre */
+    background: var(--about-gold);
+}
+/* 1. INTRODUCTION : tout centré, paragraphe limité en largeur pour la lecture */
+#about .about__intro {
+    max-width: 40rem;
+    margin: 0 auto 3rem;
+    text-align: center;
+}
+#about .about__lead {
+    margin: 0;
+    line-height: 1.6;
+}
+/* 2. NOTRE HISTOIRE
+   Mobile : photo puis texte, l'un sous l'autre.
+   À partir de 768px : 2 colonnes, centrées verticalement l'une par rapport à l'autre. */
+#about .about__story {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    max-width: 60rem;
+    margin: 0 auto;
+}
+@media (min-width: 768px) {
+    #about .about__story {
+        flex-direction: row;
+        gap: 3.5rem;
+    }
+}
+/* Photo de la boutique : coins légèrement arrondis, fine ombre */
+#about .about__media {
+    flex: 1 1 50%;
+    width: 100%;
+    max-width: 28rem;
+    margin: 0;
+}
+#about .about__media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    /* cadre carré comme sur la maquette : la photo est recadrée sans être déformée */
+    object-fit: cover;
+    border-radius: .4rem;
+    box-shadow: 0 6px 18px rgba(43, 26, 20, .18);
+}
+/* Colonne texte : centrée comme sur la maquette */
+#about .about__text {
+    flex: 1 1 50%;
+    max-width: 26rem;
+    text-align: center;
+    line-height: 1.55;
+}
+#about .about__text p {
+    margin: 0 0 1.25rem;
+}
+#about .about__text p:last-child {
+    margin-bottom: 0;
+}
+
+/* SECTIONS SUIVANTES (valeurs, chiffres, frise)
+   Chaque section est séparée de la précédente par un grand espace. */
+#about .about__section {
+    max-width: 60rem;
+    margin: 5rem auto 0;
+}
+
+/* titre de section centré, avec son trait doré */
+#about .about__heading {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* 3. NOS VALEURS : grille de cartes */
+#about .about__values {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 576px) {
+    #about .about__values {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    #about .about__values {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* carte : fond blanc cassé, filet doré en haut */
+#about .about__value {
+    padding: 1.5rem 1.25rem;
+    border-top: 3px solid var(--about-gold);
+    border-radius: .4rem;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(43, 26, 20, .08);
+    text-align: center;
+}
+
+#about .about__value h3 {
+    margin: 0 0 .75rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+#about .about__value p {
+    margin: 0;
+    font-size: .95rem;
+    line-height: 1.55;
+}
+
+/* 4. CHIFFRES CLÉS : 2 colonnes sur mobile, 4 sur ordinateur */
+#about .about__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    #about .about__stats {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* grand chiffre doré au-dessus de son libellé */
+#about .about__stat-number {
+    display: block;
+    color: var(--about-gold);
+    font-size: clamp(2.25rem, 6vw, 3rem);
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    /* chiffres de même largeur : le nombre ne "tremble" pas pendant l'animation */
+}
+
+#about .about__stat-label {
+    display: block;
+    margin-top: .5rem;
+    font-size: .95rem;
+}
+
+/* 5. FRISE CHRONOLOGIQUE
+   Un trait vertical doré à gauche (bordure de la liste),
+   et un losange doré sur le trait pour chaque date. */
+#about .about__timeline {
+    position: relative;
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 0 0 0 2rem;
+    border-left: 2px solid var(--about-gold);
+    list-style: none;
+}
+
+#about .about__event {
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+#about .about__event:last-child {
+    padding-bottom: 0;
+}
+
+/* losange posé sur le trait, au niveau de l'année */
+#about .about__event::before {
+    content: "";
+    position: absolute;
+    top: .45rem;
+    left: calc(-2rem - 1px);
+    /* recule jusqu'au trait : padding de la liste + moitié de l'épaisseur du trait */
+    width: .7rem;
+    height: .7rem;
+    background: var(--about-gold);
+    transform: translateX(-50%) rotate(45deg);
+}
+
+#about .about__event-year {
+    display: block;
+    margin-bottom: .25rem;
+    color: var(--about-gold);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+#about .about__event p {
+    margin: 0;
+    line-height: 1.55;
 }
