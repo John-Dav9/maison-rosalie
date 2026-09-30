@@ -1,7 +1,6 @@
    <!---------footer pour le fond marron------->
    <footer class="bg-[#2F1B14] px-16 py-10">
     
-    
 
          <!-- Logo en image -->
         <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-32">
