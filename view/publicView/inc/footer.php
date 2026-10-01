@@ -34,7 +34,7 @@
       </div>
           <!--Colonne 2 : mentions légales-->
       <div class="space-y-6">
-         <h3 class="text-[#C9A45C] font-bold mb-6">Mention Legal</h3>
+         <h3 class="text-[#C9A45C] font-bold mb-6">Mentions Légales</h3>
          <ul class="space-y-4 text-white">
             <li><a href="#"
                   class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Politique de confidentialité</a></li>
