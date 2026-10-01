@@ -3,6 +3,8 @@
 
  include_once "../view/publicView/home.php";
 
-# 10 )
+ 
+ 
+ # 10 )
 $connectPDO = null;
 ?>

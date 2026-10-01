@@ -6,6 +6,16 @@
                          (empilées sur mobile)
     Les styles sont dans public/css/style.css, tous préfixés par #about.
 -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maison Rosalie</title>
+    <link rel="stylesheet" href="../../../public/css/style.css">
+</head>
+
 <main id="about">
 
     <!-- 1. INTRODUCTION -->
@@ -25,7 +35,7 @@
 
         <!-- photo de la boutique : chargée seulement quand elle arrive à l'écran (FE-66) -->
         <figure class="about__media">
-            <img src="./assets/images/about.jpg"
+            <img src="../../public/assets/images/about.jpg"
                  alt="Façade de la boutique Maison Rosalie avec sa terrasse et ses chaises en rotin"
                  width="600" height="620" loading="lazy">
         </figure>
