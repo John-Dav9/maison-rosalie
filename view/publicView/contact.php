@@ -41,7 +41,7 @@
       <!-- Formulaire de contact -->
       <!-- novalidate : on désactive la validation native du navigateur pour utiliser
            la nôtre (messages précis près des champs, comme demandé par FE-41). -->
-      <form class="contact__form" action="./?pg=contact" method="post" novalidate>
+      <form class="contact__form" action="./?pages=contact" method="post" novalidate>
 
         <!-- Nom -->
         <div class="contact__field">
