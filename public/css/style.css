@@ -821,6 +821,7 @@
     --about-gold: #b8862b;
     /* doré plus soutenu que --hero-gold : reste visible sur fond clair */
 }
+
 /* CONTENEUR DE LA PAGE
    Fond crème avec un léger motif de petits points (dégradé radial répété). */
 #about {
@@ -831,6 +832,7 @@
     font-family: 'Playfair Display', Georgia, serif;
     padding: 3rem 1rem 4rem;
 }
+
 /* TITRES ("À propos" et "Notre Histoire") */
 #about .about__title {
     position: relative;
@@ -841,10 +843,12 @@
     font-weight: 700;
     line-height: 1.2;
 }
+
 /* variante plus petite pour les sous-titres */
 #about .about__title--small {
     font-size: clamp(1.4rem, 3vw, 1.6rem);
 }
+
 /* Petit losange doré à gauche ou à droite du titre :
    un carré tourné de 45°, placé en dehors du texte */
 #about .about__title--diamond-left::before,
@@ -857,12 +861,15 @@
     background: var(--about-gold);
     transform: translateY(-50%) rotate(45deg);
 }
+
 #about .about__title--diamond-left::before {
     left: -1rem;
 }
+
 #about .about__title--diamond-right::after {
     right: -1rem;
 }
+
 /* Trait doré sous les titres */
 #about .about__divider {
     display: block;
@@ -872,16 +879,19 @@
     /* centré sous le titre */
     background: var(--about-gold);
 }
+
 /* 1. INTRODUCTION : tout centré, paragraphe limité en largeur pour la lecture */
 #about .about__intro {
     max-width: 40rem;
     margin: 0 auto 3rem;
     text-align: center;
 }
+
 #about .about__lead {
     margin: 0;
     line-height: 1.6;
 }
+
 /* 2. NOTRE HISTOIRE
    Mobile : photo puis texte, l'un sous l'autre.
    À partir de 768px : 2 colonnes, centrées verticalement l'une par rapport à l'autre. */
@@ -893,12 +903,14 @@
     max-width: 60rem;
     margin: 0 auto;
 }
+
 @media (min-width: 768px) {
     #about .about__story {
         flex-direction: row;
         gap: 3.5rem;
     }
 }
+
 /* Photo de la boutique : coins légèrement arrondis, fine ombre */
 #about .about__media {
     flex: 1 1 50%;
@@ -906,6 +918,7 @@
     max-width: 28rem;
     margin: 0;
 }
+
 #about .about__media img {
     display: block;
     width: 100%;
@@ -916,6 +929,7 @@
     border-radius: .4rem;
     box-shadow: 0 6px 18px rgba(43, 26, 20, .18);
 }
+
 /* Colonne texte : centrée comme sur la maquette */
 #about .about__text {
     flex: 1 1 50%;
@@ -923,9 +937,11 @@
     text-align: center;
     line-height: 1.55;
 }
+
 #about .about__text p {
     margin: 0 0 1.25rem;
 }
+
 #about .about__text p:last-child {
     margin-bottom: 0;
 }
@@ -1066,4 +1082,20 @@
 #about .about__event p {
     margin: 0;
     line-height: 1.55;
+}
+
+/* modification du style des liens de la nav bare */
+.menu {
+    color: #D4A373;
+    background-color: rgba(2500, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+#connexion{
+    background-color: #FAEDCD;
+    border-radius: 15px;
+    color: black;
+    cursor: pointer;
 }
