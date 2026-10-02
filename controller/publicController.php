@@ -1,5 +1,5 @@
 <?php
-# public/index.php 
+# public/index.php
 
 /****************************
  * Chargement des dépendances
@@ -17,12 +17,12 @@ if (!isset($_GET['pages'])) {
     include BASE_URL . "/view/publicView/home.php";
 
     // sinon si la variable get 'pages' est dans le
-    // tableau VALID_PAGES    
+    // tableau VALID_PAGES
 } elseif (in_array($_GET['pages'], VALID_PAGES)) {
     // inclusion de la vue autorisée
     include BASE_URL . "/view/publicView/" . $_GET['pages'] . ".php";
 
-    // sinon (pages non valide)    
+    // sinon (pages non valide)
 } else {
     include BASE_URL . "/view/publicView/404view.php";
 }

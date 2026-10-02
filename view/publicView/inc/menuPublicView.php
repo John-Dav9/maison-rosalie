@@ -28,7 +28,14 @@
             <ul class="flex flex-col gap-4 text-lg md:ml-10 md:flex-row md:gap-8">
                 <li><a href="./?pages=home" class="hover:text-gold">Accueil</a></li>
                 <li><a href="./?pages=about" class="hover:text-gold">À propos</a></li>
-                <li><a href="./?pages=recipe" class="hover:text-gold">Recettes</a></li>
+                <li class="relative">
+                    <details>
+                        <summary class="cursor-pointer hover:text-gold">Recettes</summary>
+                        <ul class="mt-2 flex min-w-56 flex-col gap-2 rounded-md bg-espresso p-4 md:absolute md:left-0 md:shadow-lg">
+                            <li><a href="./?pages=recipe" class="hover:text-gold">Toutes les recettes</a></li>
+                        </ul>
+                    </details>
+                </li>
                 <li><a href="./?pages=contact" class="hover:text-gold">Contact</a></li>
             </ul>
 
