@@ -1108,8 +1108,8 @@
      --contact-text  = brun foncé du texte
      --contact-field = fond gris clair des champs du formulaire
      --contact-muted = gris des valeurs secondaires */
-.body-contact {
-    background-color: #E9D8A6;
+.div-contact {
+    background-color: #FBF5E6;
 }
 
 #contact {
