@@ -17,7 +17,7 @@ include "./../view/publicView/inc/menuPublicView.php";
     <div class="contact__header">
       <h1 class="contact__title">Contactez-nous</h1>
       <!-- logo en haut à droite -->
-      <img src="../../public/assets/logo/maison-rosalie-logo-double.svg" alt="Maison Rosalie" class="contact__logo">
+      <img src="./assets/logo.svg" alt="Maison Rosalie" class="contact__logo">
     </div>
 
     <!-- 2. CARTE + FORMULAIRE -->
