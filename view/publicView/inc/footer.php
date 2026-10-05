@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maison Rosalie</title>
-  <link rel="stylesheet" href="../../../public/css/style.css">
-   <script src="https://cdn.tailwindcss.com"></script>
-</head>
-   
    <!---------footer pour le fond marron------->
    <footer class="bg-[#2F1B14] px-16 py-10">
     
 
          <!-- Logo en image -->
-        <img src="../../../public/assets/logo.svg" alt="Maison Rosalie" class="h-32">
+        <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-32">
         <!------ligne de séparation----->
    <hr class="my-10 border-white"/> 
 
@@ -65,11 +54,11 @@
          <p class="text-white mb-4"> Suivez nous </p>
               <!--Icônes dorées -->
          <ul class="flex gap-4 text-[#C9A45C] text-xl">
-               <li><a href="#"><img class="images" src="../../../public/assets/icons/youtube.svg" alt=""></a></li>
-               <li><a href="#"><img class="images" src="../../../public/assets/icons/facebook.svg" alt=""></a></li>
-               <li><a href="#"><img class="images" src="../../../public/assets/icons/twitter.svg" alt=""></a></li>
-               <li><a href="#"><img class="images" src="../../../public/assets/icons/instagram.svg" alt=""></a></li>
-               <li><a href="#"><img class="images" src="../../../public/assets/icons/linkedin.svg" alt=""></i></a></li>
+               <li><a href="#"><i class="fa-brands fa-youtube"></i></a></li>
+               <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
+               <li><a href="#"><i class="fa-brands fa-twitter"></i></a></li>
+               <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
+               <li><a href="#"><i class="fa-brands fa-linkedin-in"></i></a></li>
          </ul>
 
          
@@ -81,7 +70,7 @@
 
           <!-----Copyright, centré ---->
       <p class="text-center text-[#BFA58A]">
-        © 2026 Maison Rosalie - Tous droits réservés.
+        &lt&lt © 2026 Maison Rosalie - Tous droits réservés. &gt&gt
       </p>
    
 </footer>
