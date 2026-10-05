@@ -192,3 +192,160 @@ document.addEventListener('DOMContentLoaded', function () {
   goTo(0);
   startAutoplay();
 });
+
+/* ==========================================================================
+   VALIDATION DU FORMULAIRE DE CONTACT (côté client — FE-41, FE-61)
+   ==========================================================================
+   Vérifie champs requis, formats (regex) et longueurs AVANT l'envoi,
+   et affiche un message précis près de chaque champ concerné.
+   Ne s'exécute que sur la page contact (sinon le formulaire n'existe pas).
+   Rappel CDC : cette validation améliore l'expérience mais ne remplace
+   jamais celle du serveur (sécurité PHP faite séparément). */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const form = document.querySelector('.contact__form');
+  if (!form) return;
+
+  // RÈGLES DE VALIDATION
+  // Les formats ne sont pas imposés par le cahier des charges : ce sont des
+  // choix raisonnables. Les longueurs (message 3–500, sujet ≤120) viennent
+  // du CDC (section 6.1).
+  const rules = {
+    // Nom : lettres (avec accents), espaces, tirets et apostrophes, 2 à 100 caractères.
+    name: {
+      regex: /^[A-Za-zÀ-ÖØ-öø-ÿ'’\- ]{2,100}$/,
+      required: true,
+      messages: {
+        empty: 'Le nom est obligatoire.',
+        invalid: 'Le nom doit contenir 2 à 100 lettres (espaces, tirets et apostrophes autorisés).'
+      }
+    },
+    // Email : format standard adresse@domaine.ext
+    email: {
+      regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      required: true,
+      messages: {
+        empty: "L'adresse email est obligatoire.",
+        invalid: "L'adresse email n'est pas valide."
+      }
+    },
+    // Sujet : facultatif, maximum 120 caractères (CDC section 6.1)
+    subject: {
+      regex: /^.{0,120}$/,
+      required: false,
+      messages: {
+        invalid: 'Le sujet ne doit pas dépasser 120 caractères.'
+      }
+    },
+    // Message : 3 à 500 caractères une fois les espaces superflus retirés (CDC section 6.1)
+    message: {
+      regex: /^[\s\S]{3,500}$/,
+      required: true,
+      messages: {
+        empty: 'Le message est obligatoire.',
+        invalid: 'Le message doit contenir entre 3 et 500 caractères.'
+      }
+    }
+  };
+
+  // Récupère le champ et sa zone d'erreur à partir du nom
+  function getField(name) {
+    return {
+      input: form.querySelector('[name="' + name + '"]'),
+      error: form.querySelector('[data-error-for="' + name + '"]')
+    };
+  }
+
+  // Affiche un message d'erreur sous un champ et le passe en rouge (--error)
+  function showError(name, message) {
+    const { input, error } = getField(name);
+    if (error) error.textContent = message;
+    if (input) {
+      input.classList.add('contact__input--error');
+      input.classList.remove('contact__input--valid');
+    }
+  }
+
+  // Marque un champ comme valide : passe en vert (--valid), efface l'erreur
+  function showValid(name) {
+    const { input, error } = getField(name);
+    if (error) error.textContent = '';
+    if (input) {
+      input.classList.add('contact__input--valid');
+      input.classList.remove('contact__input--error');
+    }
+  }
+
+  // Remet un champ à l'état neutre (ni rouge ni vert) : champ vide facultatif
+  function clearState(name) {
+    const { input, error } = getField(name);
+    if (error) error.textContent = '';
+    if (input) {
+      input.classList.remove('contact__input--error', 'contact__input--valid');
+    }
+  }
+
+  // Valide un champ selon ses règles ; renvoie true si valide
+  function validateField(name) {
+    const rule = rules[name];
+    const { input } = getField(name);
+    if (!rule || !input) return true;
+
+    // on enlève les espaces superflus avant/après (comme le fera le serveur)
+    const value = input.value.trim();
+
+    // champ requis mais vide
+    if (rule.required && value === '') {
+      showError(name, rule.messages.empty);
+      return false;
+    }
+
+    // champ facultatif et vide : état neutre, pas de vert ni de rouge
+    if (!rule.required && value === '') {
+      clearState(name);
+      return true;
+    }
+
+    // test du format via la regex
+    if (!rule.regex.test(value)) {
+      showError(name, rule.messages.invalid);
+      return false;
+    }
+
+    // tout est bon : on passe le champ en vert
+    showValid(name);
+    return true;
+  }
+
+  // Validation en temps réel : pendant la frappe (input) ET quand on quitte le champ (blur)
+  Object.keys(rules).forEach(function (name) {
+    const { input } = getField(name);
+    if (input) {
+      input.addEventListener('input', function () {
+        validateField(name);
+      });
+      input.addEventListener('blur', function () {
+        validateField(name);
+      });
+    }
+  });
+
+  // À l'envoi : on valide tous les champs, on bloque si au moins un est invalide
+  form.addEventListener('submit', function (event) {
+    let allValid = true;
+
+    Object.keys(rules).forEach(function (name) {
+      if (!validateField(name)) {
+        allValid = false;
+      }
+    });
+
+    // si un champ est invalide, on empêche l'envoi et on place le focus sur le 1er champ en erreur
+    if (!allValid) {
+      event.preventDefault();
+      const firstError = form.querySelector('.contact__input--error');
+      if (firstError) firstError.focus();
+    }
+  });
+});
