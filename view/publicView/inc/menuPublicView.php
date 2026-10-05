@@ -28,7 +28,7 @@
             <ul class="flex flex-col gap-4 text-lg md:ml-10 md:flex-row md:gap-8">
                 <li><a href="./?pages=home" class="hover:text-gold">Accueil</a></li>
                 <li><a href="./?pages=about" class="hover:text-gold">À propos</a></li>
-                <li><a href="./?pages=recipe" class="hover:text-gold">Recettes</a></li>
+                <li><a href="./?pages=recettes" class="hover:text-gold">Recettes</a></li>
                 <li><a href="./?pages=contact" class="hover:text-gold">Contact</a></li>
             </ul>
 
