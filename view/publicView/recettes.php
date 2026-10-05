@@ -1,169 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr" style="">
 
-<head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="web_standard" name="shell-type">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "outline": "#807572",
-                        "on-primary-fixed-variant": "#4e4542",
-                        "background": "#fcf9f4",
-                        "tertiary-container": "#271900",
-                        "outline-variant": "#d1c4c0",
-                        "on-tertiary-container": "#a17e41",
-                        "primary-container": "#211a18",
-                        "error": "#ba1a1a",
-                        "on-primary": "#ffffff",
-                        "on-background": "#1c1c19",
-                        "surface-variant": "#e5e2dd",
-                        "surface-container-low": "#f6f3ee",
-                        "primary": "#000000",
-                        "secondary-fixed": "#ffdea5",
-                        "surface-bright": "#fcf9f4",
-                        "surface-container-lowest": "#ffffff",
-                        "on-secondary-container": "#785a1a",
-                        "on-secondary-fixed": "#261900",
-                        "inverse-surface": "#31302d",
-                        "on-surface-variant": "#4e4542",
-                        "secondary-fixed-dim": "#e9c176",
-                        "inverse-primary": "#d1c4c0",
-                        "surface-tint": "#665c59",
-                        "on-secondary": "#ffffff",
-                        "surface-container-highest": "#e5e2dd",
-                        "secondary": "#775a19",
-                        "surface-container": "#f0ede9",
-                        "surface": "#fcf9f4",
-                        "on-secondary-fixed-variant": "#5d4201",
-                        "tertiary-fixed-dim": "#e9c07d",
-                        "secondary-container": "#fed488",
-                        "tertiary": "#000000",
-                        "surface-dim": "#dcdad5",
-                        "primary-fixed": "eedfdc",
-                        "on-tertiary-fixed": "#271900",
-                        "surface-container-high": "#ebe8e3",
-                        "tertiary-fixed": "#ffdeab",
-                        "on-tertiary": "#ffffff",
-                        "on-surface": "#1c1c19",
-                        "inverse-on-surface": "#f3f0eb",
-                        "error-container": "#ffdad6",
-                        "on-primary-container": "#8d817e",
-                        "primary-fixed-dim": "#d1c4c0",
-                        "on-error": "#ffffff",
-                        "on-primary-fixed": "#211a18",
-                        "on-tertiary-fixed-variant": "#5d4209",
-                        "on-error-container": "#93000a"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "spacing": {
-                        "space-sm": "0.5rem",
-                        "space-xs": "0.25rem",
-                        "space-xl": "2.5rem",
-                        "margin": "3rem",
-                        "margin-mobile": "1.25rem",
-                        "gutter-mobile": "1rem",
-                        "space-md": "1rem",
-                        "space-xxl": "4rem",
-                        "gutter": "1.5rem",
-                        "space-lg": "1.75rem"
-                    },
-                    "fontFamily": {
-                        "label-lg": ["EB Garamond"],
-                        "headline-lg": ["Playfair Display"],
-                        "headline-lg-mobile": ["Playfair Display"],
-                        "display-lg-mobile": ["Playfair Display"],
-                        "body-md": ["EB Garamond"],
-                        "label-md": ["EB Garamond"],
-                        "body-lg": ["EB Garamond"],
-                        "label-sm": ["EB Garamond"],
-                        "headline-md": ["Playfair Display"],
-                        "headline-sm": ["Playfair Display"],
-                        "display-lg": ["Playfair Display"],
-                        "body-sm": ["EB Garamond"]
-                    },
-                    "fontSize": {
-                        "label-lg": ["15px", {
-                            "lineHeight": "20px",
-                            "letterSpacing": "0.08em",
-                            "fontWeight": "600"
-                        }],
-                        "headline-lg": ["36px", {
-                            "lineHeight": "44px",
-                            "letterSpacing": "-0.01em",
-                            "fontWeight": "500"
-                        }],
-                        "headline-lg-mobile": ["28px", {
-                            "lineHeight": "36px",
-                            "letterSpacing": "0em",
-                            "fontWeight": "500"
-                        }],
-                        "display-lg-mobile": ["38px", {
-                            "lineHeight": "46px",
-                            "letterSpacing": "-0.01em",
-                            "fontWeight": "400"
-                        }],
-                        "body-md": ["17px", {
-                            "lineHeight": "26px",
-                            "fontWeight": "400"
-                        }],
-                        "label-md": ["13px", {
-                            "lineHeight": "18px",
-                            "letterSpacing": "0.1em",
-                            "fontWeight": "600"
-                        }],
-                        "body-lg": ["20px", {
-                            "lineHeight": "32px",
-                            "fontWeight": "400"
-                        }],
-                        "label-sm": ["11px", {
-                            "lineHeight": "16px",
-                            "letterSpacing": "0.12em",
-                            "fontWeight": "600"
-                        }],
-                        "headline-md": ["26px", {
-                            "lineHeight": "34px",
-                            "fontWeight": "500"
-                        }],
-                        "headline-sm": ["20px", {
-                            "lineHeight": "28px",
-                            "fontWeight": "600"
-                        }],
-                        "display-lg": ["56px", {
-                            "lineHeight": "64px",
-                            "letterSpacing": "-0.02em",
-                            "fontWeight": "400"
-                        }],
-                        "body-sm": ["15px", {
-                            "lineHeight": "22px",
-                            "fontWeight": "400"
-                        }]
-                    }
-                }
-            }
-        };
-    </script>
-</head>
 <?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
 <section class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
     <main class="w-full pt-20 bg-surface min-h-[calc(100vh-20rem)]">
         <div class="flex flex-col w-full">
-            <section class="w-full bg-[#211a18] text-surface pt-space-xl pb-space-xl shadow-sm">
+            <section class="w-full bg-[#2F1B14] text-surface pt-space-xl pb-space-xl shadow-sm">
                 <div class="max-w-[1280px] mx-auto px-margin">
                     <div class="flex flex-col items-center text-center max-w-2xl mx-auto space-y-space-xs">
                         <div class="flex items-center gap-space-xs text-[#fed488] mb-1"><span class="material-symbols-outlined text-[14px]">diamond</span><span class="font-label-sm text-label-sm uppercase tracking-[0.2em] font-semibold text-[#fed488]">Le Carnet Culinaire</span><span class="material-symbols-outlined text-[14px]">diamond</span></div>
@@ -247,7 +87,7 @@
                         <!-- Footer Card -->
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°01</span>
-                            <a class="px-3 py-1.5 bg-primary text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-smore-ganache" href="#">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-smore-ganache" href="#">
                                 Voir la recette
                             </a>
                         </div>
@@ -295,7 +135,7 @@
                         </div>
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°02</span>
-                            <a class="px-3 py-1.5 bg-primary text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-tablettes-praline" href="#">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-tablettes-praline" href="#">
                                 Voir la recette
                             </a>
                         </div>
@@ -343,7 +183,7 @@
                         </div>
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°03</span>
-                            <a class="px-3 py-1.5 bg-primary text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-truffes-cacao" href="#">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-truffes-cacao" href="#">
                                 Voir la recette
                             </a>
                         </div>
@@ -391,7 +231,7 @@
                         </div>
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°04</span>
-                            <a class="px-3 py-1.5 bg-primary text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-sable-noisette" href="#">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-sable-noisette" href="#">
                                 Voir la recette
                             </a>
                         </div>
