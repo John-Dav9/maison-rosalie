@@ -830,7 +830,7 @@
     background-size: 18px 18px;
     color: var(--about-text);
     font-family: 'Playfair Display', Georgia, serif;
-    padding: 3rem 1rem 4rem;
+    padding: 5rem 1rem 4rem;
 }
 
 /* TITRES ("À propos" et "Notre Histoire") */
@@ -1108,8 +1108,8 @@
      --contact-text  = brun foncé du texte
      --contact-field = fond gris clair des champs du formulaire
      --contact-muted = gris des valeurs secondaires */
-.body-contact{
-    background-color: #FBF7ED;
+.body-contact {
+    background-color: #E9D8A6;
 }
 
 #contact {
@@ -1163,13 +1163,20 @@
 }
 
 /* Carte : hauteur fixe (requise par Leaflet pour bien positionner les tuiles),
-   coins arrondis, bordure de la couleur de la marque, légère ombre */
+   coins arrondis, bordure de la couleur de la marque, légère ombre.
+   position + isolation + z-index : créent un "contexte d'empilement" isolé
+   qui enferme les z-index internes élevés de Leaflet (tuiles, contrôles,
+   popups montent jusqu'à 1000). Sans ça, ils passent par-dessus la navbar
+   qui n'a pas de z-index. Ici tout Leaflet reste confiné dans la carte. */
 #contact .contact__map {
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
     border-radius: .75rem;
     overflow: hidden;
     height: 100%;
     min-height: 28rem;
-    border: 3px solid #70493A;
+    border: 2px solid #70493A;
     box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
 }
 
@@ -1178,6 +1185,14 @@
     height: 100%;
     width: 100%;
     border-radius: .5rem;
+}
+
+/* Sécurité supplémentaire : on borne les z-index des panneaux et contrôles
+   Leaflet pour qu'ils restent bas, à l'intérieur du cadre de la carte. */
+#contact .contact__map .leaflet-pane,
+#contact .contact__map .leaflet-top,
+#contact .contact__map .leaflet-bottom {
+    z-index: 1;
 }
 
 #contact .contact__map img {
@@ -1206,6 +1221,7 @@
     color: var(--contact-text);
     font-family: inherit;
     transition: border-color .2s ease, background .2s ease;
+    border: 2px solid #70493A;
 }
 
 #contact .contact__input::placeholder {
