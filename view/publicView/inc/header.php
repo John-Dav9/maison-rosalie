@@ -68,7 +68,7 @@
           </p>
 
           <!-- Bouton d'appel à l'action -->
-          <a href="../about.php" class="hero__cta">Découvrir</a>
+          <a href="./?pages=about" class="hero__cta">Découvrir</a>
 
         </div>
 
