@@ -9,7 +9,7 @@ include "./../view/publicView/inc/menuPublicView.php";
          3. .contact__infos    → appel / email / localisation (bas)
   -->
 
-  <body class="body-contact">
+  <div class="div-contact">
 
   <section id="contact" class="contact">
 
@@ -166,6 +166,8 @@ include "./../view/publicView/inc/menuPublicView.php";
       map.invalidateSize();
     });
   </script>
+
+  </div><!-- /.div-contact : on ferme AVANT le footer pour qu'il ne soit pas dans le conteneur contact -->
 
 <?php
 include "./../view/publicView/inc/footer.php";
