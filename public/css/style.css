@@ -1386,3 +1386,119 @@
     border-color: #2e7d32;
     background: #f4faf4;
 }
+
+/* PAGE 404 — Maison Rosalie
+   Page "introuvable", dans l'identité de la marque (crème, doré, brun).
+   Scopée sous #error404 pour ne pas toucher aux autres pages. */
+
+/* Fond crème pleine largeur, comme la page contact */
+.div-error {
+    background-color: #FBF5E6;
+}
+
+/* Conteneur centré, verticalement et horizontalement */
+#error404 {
+    --err-gold: #b8862b;
+    --err-text: #2b1a14;
+    --err-title: #70493A;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 6rem;
+    text-align: center;
+    color: var(--err-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+/* Grand "404" en doré, police serif de la marque */
+#error404 .error404__code {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(5rem, 18vw, 10rem);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--err-gold);
+    margin: 0;
+}
+
+/* Logo sous le code */
+#error404 .error404__logo {
+    height: 4.5rem;
+    width: auto;
+}
+
+/* Titre brun */
+#error404 .error404__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    color: var(--err-title);
+    margin: 0;
+}
+
+/* Texte d'explication */
+#error404 .error404__text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--err-text);
+    max-width: 32rem;
+    margin: 0;
+}
+
+/* Zone des boutons */
+#error404 .error404__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Style commun des boutons : forme pilule, padding généreux */
+#error404 .error404__btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: .85rem 2rem;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+
+/* Bouton principal : fond doré, texte crème */
+#error404 .error404__btn--primary {
+    background: var(--err-gold);
+    color: #fff;
+    border: 2px solid var(--err-gold);
+}
+
+#error404 .error404__btn--primary:hover {
+    background: #a0751f;
+    border-color: #a0751f;
+}
+
+/* Bouton secondaire : contour doré, fond transparent */
+#error404 .error404__btn--ghost {
+    background: transparent;
+    color: var(--err-gold);
+    border: 2px solid var(--err-gold);
+}
+
+#error404 .error404__btn--ghost:hover {
+    background: var(--err-gold);
+    color: #fff;
+}
+
+/* Responsive : boutons empilés sur petit écran */
+@media (max-width: 480px) {
+    #error404 .error404__actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #error404 .error404__btn {
+        width: 100%;
+    }
+}
