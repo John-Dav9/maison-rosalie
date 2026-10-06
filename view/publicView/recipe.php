@@ -96,15 +96,19 @@
                       <i class="fa-solid fa-basket-shopping text-[#C9A45C]>text-xl"></i>Les ingrédients </h3>
                     <p class="text-sm">ajusté pour <b><span id="portions-texte">4</span>personnes</b></p>
                 </div>
-            <!------ ======Carrousel : les cartes defilent de gauche à droit =========----->
-             <div class="min-w-36 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/chocolat.jpg" alt="Chocolat noir" class="h-16 w-full object-cover rounded">
+      
+         <!-- Carrousel : les cartes défilent de gauche à droite -->
+         <div id="carrousel" class="flex gap-4 overflow-x-auto scroll-smooth">
+
+            <!-- Une carte = un ingrédient. data-quantite = quantité pour 4 personnes -->
+            <div class="min-w-36 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
+               <img src="./assets/ganache1.webp" alt="Chocolat noir" class="h-16 w-full object-cover rounded">
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="200">200</span>g</p>
             </div>
 
             <div class="min-w-36 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/beurre.jpg" alt="Beurre" class="h-16 w-full object-cover rounded">
+               <img src="./assets/beurre.webp" alt="Beurre" class="h-16 w-full object-cover rounded">
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Beurre</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
             </div>
@@ -122,17 +126,75 @@
             </div>
 
             <div class="min-w-36 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/cacao.jpg" alt="Cacao en poudre" class="h-16 w-full object-cover rounded">
+               <img src="./assets/cacoa.jpg" alt="Cacao en poudre" class="h-16 w-full object-cover rounded">
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Cacao en poudre</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="30">30</span>g</p>
             </div>
 
-
-
-            
-
+         </div>
+         <!---=======Fleches du carrousel ===== ----->
+         <div class="flex justify-between mt-3">
+            <button id="gauche" class="bg-[#2F1B14] text-[#C9A45C] w-7 h-7 rounded-full">
+                <i class="fa-solid fa-chevron-left text-xs" ></i>
+            </button >
+            <button id="droite" class="bg-[#2F1B14] text-[#C9A45C] w-7 h-7 rounded-full">
+               <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button >
+         </div>
           </section>
 
+          <!---=========Les étapes de la recette ==========-->
+          <section class="border-t border-[#C9A45C] p-6">
+            <h3 class="text-3xl font-bold font-['Playfair_Display'] mb-6">
+                 <i class="fa-solid fa-list-ol text-[#C9A45C] text"></i> Les étapes
+            </h3>
+         <!---===== Une étape = une case à cocher + un titre + un text ======----->
+         <div class="space-y-4">
+            <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+               <input type="checkbox" class="mt-1">
+               <div>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
+                     a corrupti rerum possimus repellendus quidem voluptate.</p>
+               </div>
+            </label>
+             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+               <input type="checkbox" class="mt-1">
+               <div>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
+                     a corrupti rerum possimus repellendus quidem voluptate.</p>
+               </div>
+            </label>
+             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+               <input type="checkbox" class="mt-1">
+               <div>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
+                     a corrupti rerum possimus repellendus quidem voluptate.</p>
+               </div>
+            </label>
+              <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+               <input type="checkbox" class="mt-1">
+               <div>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
+                     a corrupti rerum possimus repellendus quidem voluptate.</p>
+               </div>
+            </label>
+             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+               <input type="checkbox" class="mt-1">
+               <div>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
+                     a corrupti rerum possimus repellendus quidem voluptate.</p>
+               </div>
+            </label>
 
 
 
