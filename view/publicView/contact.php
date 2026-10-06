@@ -9,7 +9,7 @@ include "./../view/publicView/inc/menuPublicView.php";
          3. .contact__infos    → appel / email / localisation (bas)
   -->
 
-  <body class="body-contact">
+  <div class="body-contact bg-[#FBF5E6]">
 
   <section id="contact" class="contact">
 
@@ -174,6 +174,7 @@ include "./../view/publicView/inc/footer.php";
   <!-- Script commun (carousel + validation du formulaire de contact) -->
   <script src="../../public/js/scripts.js"></script>
 
+</div>
 </body>
 
 </html>

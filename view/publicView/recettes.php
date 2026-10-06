@@ -87,7 +87,7 @@
                         <!-- Footer Card -->
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°01</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-smore-ganache" href="#">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-smore-ganache" href="./?pages=recipe">
                                 Voir la recette
                             </a>
                         </div>
