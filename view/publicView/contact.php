@@ -176,6 +176,7 @@ include "./../view/publicView/inc/footer.php";
   <!-- Script commun (carousel + validation du formulaire de contact) -->
   <script src="../../public/js/scripts.js"></script>
 
+</div>
 </body>
 
 </html>
