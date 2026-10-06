@@ -9,11 +9,7 @@ include "./../view/publicView/inc/menuPublicView.php";
          3. .contact__infos    → appel / email / localisation (bas)
   -->
 
-<<<<<<< HEAD
-  <div class="body-contact bg-[#FBF5E6]">
-=======
   <div class="div-contact">
->>>>>>> 94bd88e2c3db8ffc6c7d09d90df956de8c693a99
 
   <section id="contact" class="contact">
 
