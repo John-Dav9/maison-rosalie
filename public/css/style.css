@@ -1086,10 +1086,37 @@
 /* modification du style des liens de la nav bare */
 .menu {
     color: #D4A373;
-    background-color: rgba(2500, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
+    /* transparente en haut de page */
+    background-color: transparent;
     font-weight: bold;
+    /* transition douce quand le fond apparaît/disparaît au scroll */
+    transition: background-color .3s ease, box-shadow .3s ease, backdrop-filter .3s ease;
+}
+
+/* Au scroll (classe ajoutée par scripts.js) : la navbar prend la couleur de la page.
+   La couleur est une variable (--nav-scrolled-bg) que chaque page peut redéfinir
+   pour coller à son propre fond. Valeur par défaut : crème du site. */
+:root {
+    --nav-scrolled-bg: #FBF5E6;
+}
+
+.menu--scrolled {
+    background-color: var(--nav-scrolled-bg);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .08);
+}
+
+/* Accueil : le contenu sous le hero (top 3) a un fond chocolat foncé,
+   donc la navbar colorée doit être foncée elle aussi, pas crème. */
+body:has(#top-recipes) {
+    --nav-scrolled-bg: #180E09;
+}
+
+/* Page recettes : on ne peut pas modifier son fichier, donc on la reconnaît
+   par sa structure — une <section class="bg-surface"> placée juste après la
+   navbar. Son fond est "surface" (#fcf9f4) → la navbar prend cette teinte au scroll. */
+body:has(> .menu + section.bg-surface) {
+    --nav-scrolled-bg: #fcf9f4;
 }
 
 #connexion {
