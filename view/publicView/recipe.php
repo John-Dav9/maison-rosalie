@@ -102,31 +102,41 @@
 
             <!-- Une carte = un ingrédient. data-quantite = quantité pour 4 personnes -->
             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/ganache1.webp" alt="Chocolat noir" class="h-20 w-full object-cover rounded">
-               <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
+              <div class="overflow-hidden rounded">
+                <img src="./assets/ganache1.webp" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
+                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="200">200</span>g</p>
             </div>
 
             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/beurre.webp" alt="Beurre" class="h-20 w-full object-cover rounded">
+               <div class="overflow-hidden rounded">
+                  <img src="./assets/beurre.webp" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Beurre</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
             </div>
 
             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/sucre.jpg" alt="Sucre" class="h-20 w-full object-cover rounded">
-               <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Sucre</p>
+               <div class="overflow-hidden rounded">
+                  <img src="./assets/sucre.jpg" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
+                  <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Sucre</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
             </div>
 
             <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/oeufs.jpg" alt="Œufs" class="h-20 w-full object-cover rounded">
+               <div class="overflow-hidden rounded">
+                  <img src="./assets/oeufs.jpg" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Œufs</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="4">4</span></p>
             </div>
 
             <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/cacoa.jpg" alt="Cacao en poudre" class="h-20 w-full object-cover rounded">
+               <div class="overflow-hidden rounded">
+                  <img src="./assets/cacoa.jpg" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Cacao en poudre</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="30">30</span>g</p>
             </div>
