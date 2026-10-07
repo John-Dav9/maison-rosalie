@@ -7,7 +7,7 @@
         <!------ligne de séparation----->
    <hr class="my-10 border-white"/> 
 
-   <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-y-12 gap-x-6 sm:gap-x-8"> 
+   <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-y-12 gap-x-6 sm:gap-x-8 text-center"> 
   
          <!--les colonnes -->
         
@@ -53,7 +53,7 @@
          <h3 class="text-[#C9A45C] font-bold mb-6"> Réseaux sociaux</h3>
          <p class="text-white mb-4"> Suivez nous </p>
               <!--Icônes dorées -->
-         <ul class="flex gap-4 text-[#C9A45C] text-xl">
+         <ul class="flex justify-center gap-4 text-[#C9A45C] text-xl">
                <li><a href="#"><i class="fa-brands fa-youtube"></i></a></li>
                <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
                <li><a href="#"><i class="fa-brands fa-twitter"></i></a></li>
@@ -64,7 +64,7 @@
          
          </div>
       </div>
-   </div>
+   
           <!------ligne de séparation----->
         <hr class="my-10 border-white"/>
 
