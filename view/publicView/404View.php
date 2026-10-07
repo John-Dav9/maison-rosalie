@@ -33,7 +33,7 @@ include "./../view/publicView/inc/menuPublicView.php";
       <!-- Actions : retour accueil + voir les recettes -->
       <div class="error404__actions">
         <a href="./?pages=home" class="error404__btn error404__btn--primary">Retour à l'accueil</a>
-        <a href="./?pages=recipe" class="error404__btn error404__btn--ghost">Voir les recettes</a>
+        <a href="./?pages=recettes" class="error404__btn error404__btn--ghost">Voir les recettes</a>
       </div>
 
     </section>
