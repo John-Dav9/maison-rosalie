@@ -150,7 +150,7 @@
             </h3>
          <!---===== Une étape = une case à cocher + un titre + un text ======----->
          <div class="space-y-4">
-            <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+            <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
                   <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
@@ -159,37 +159,37 @@
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
                </div>
             </label>
-             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
-                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 2</p>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
                </div>
             </label>
-             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
-                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 3</p>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
                </div>
             </label>
-              <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+              <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
-                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 4</p>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
                </div>
             </label>
-             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
-                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 5</p>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
@@ -281,9 +281,6 @@
       <div class="bg-[#FBF5E6] border border-[#E5C98A] px-8 py-6 mt-6">
          <div class="grid grid-cols-2 gap-x-16">
 
-            <!-- Note : 5 étoiles + texte + flèche (colonne de droite) -->
-            <div class="col-start-2">
-               <p class="text-sm font-bold mb-1">Note</p>
                
             <!-- Note : 5 étoiles + texte + flèche (colonne de droite) -->
             <div class="col-start-2">
@@ -295,10 +292,7 @@
                   <option>★★☆☆☆ (2/5) moyen</option>
                   <option>★☆☆☆☆ (1/5) mauvais</option>
                </select>
-
-            </div>
-            </div>
-
+             </div>
          </div>
 
          <!-- Commentaire : grande case pour écrire -->
@@ -316,6 +310,71 @@
    </article>
 </section>
 
+
+<!-- ================= JAVASCRIPT DE LA PAGE RECETTE ================= -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+   {
+      // 1) Boutons des catégories : le bouton cliqué devient foncé
+      const categories = document.querySelectorAll('.categorie');
+      categories.forEach(function (bouton) {
+         bouton.addEventListener('click', function () {
+            categories.forEach(function (b) {
+               b.classList.remove('bg-[#2F1B14]', 'text-white');
+               b.classList.add('bg-[#F8EDD3]');
+            });
+            bouton.classList.remove('bg-[#F8EDD3]');
+            bouton.classList.add('bg-[#2F1B14]', 'text-white');
+         });
+      });
+
+      // 2) Portions : + et - changent le nombre de personnes et les quantités
+      let portions = 4;
+      function mettreAJour() {
+         document.getElementById('portions').textContent = portions;
+         document.getElementById('portions-texte').textContent = portions;
+         document.querySelectorAll('.quantite').forEach(function (q) {
+            q.textContent = Math.round(q.dataset.quantite / 4 * portions);
+         });
+      }
+      document.getElementById('plus').addEventListener('click', function () {
+         portions = portions + 1;
+         mettreAJour();
+      });
+      document.getElementById('moins').addEventListener('click', function () {
+         if (portions > 1) {
+            portions = portions - 1;
+            mettreAJour();
+         }
+      });
+
+      // 3) Carrousel : les flèches font défiler les ingrédients
+      const carrousel = document.getElementById('carrousel');
+      document.getElementById('gauche').addEventListener('click', function () {
+         carrousel.scrollBy({ left: -160 });
+      });
+      document.getElementById('droite').addEventListener('click', function () {
+         carrousel.scrollBy({ left: 160 });
+      });
+
+      // 4) Étapes : quand on coche une étape, elle devient pâle
+      document.querySelectorAll('.etape input').forEach(function (caseACocher) {
+         caseACocher.addEventListener('change', function () {
+            caseACocher.parentElement.classList.toggle('opacity-50');
+         });
+      });
+
+      // 5) Étapes : au survol, la case monte un peu ; quand la souris part, elle redescend
+      $('.etape').hover(
+         function () {
+            $(this).stop(true).animate({ top: '-6px' }, 200);
+         },
+         function () {
+            $(this).stop(true).animate({ top: '0px' }, 200);
+         }
+      );
+   }
+</script>
 
 
     <script src="./js/scripts.js"></script>
