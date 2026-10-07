@@ -1794,3 +1794,245 @@ body:has(> .menu + section.bg-surface) {
         transition: none;
     }
 }
+
+/* ==================================================================
+   MODAL CONNEXION / INSCRIPTION (FE-50)
+   ==================================================================
+   Thème clair de la marque : crème, doré, brun chocolat.
+   Scopé sous #authModal. Ouverture/fermeture et onglets gérés
+   dans scripts.js (classes .is-open et .is-active).
+   ================================================================== */
+#authModal {
+    --auth-gold: #C9A45C;
+    --auth-gold-dark: #B8860B;
+    --auth-cream: #FBF5E6;
+    --auth-brown: #2F1B14;
+    --auth-field: #f3f1ee;
+
+    /* masqué par défaut */
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Modal ouvert (classe ajoutée par le JS) */
+#authModal.is-open {
+    display: flex;
+}
+
+/* Fond sombre derrière la fenêtre */
+#authModal .auth-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 14, 8, .65);
+    backdrop-filter: blur(3px);
+}
+
+/* Fenêtre */
+#authModal .auth-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 26rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--auth-cream);
+    color: var(--auth-brown);
+    border-radius: 1rem;
+    border: 1px solid var(--auth-gold);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+    padding: 2rem;
+    animation: authModalIn .25s ease;
+}
+
+@keyframes authModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Bouton de fermeture */
+#authModal .auth-modal__close {
+    position: absolute;
+    top: .75rem;
+    right: 1rem;
+    border: none;
+    background: none;
+    color: var(--auth-brown);
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color .2s ease;
+}
+
+#authModal .auth-modal__close:hover {
+    color: var(--auth-gold-dark);
+}
+
+/* En-tête */
+#authModal .auth-modal__header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+#authModal .auth-modal__logo {
+    height: 2.5rem;
+    width: auto;
+    display: inline-block;
+}
+
+#authModal .auth-modal__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: var(--auth-brown);
+    margin: .25rem 0 0;
+}
+
+/* Onglets */
+#authModal .auth-modal__tabs {
+    display: flex;
+    gap: .5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(201, 164, 92, .4);
+}
+
+#authModal .auth-modal__tab {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: .75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #998f82;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .2s ease, border-color .2s ease;
+}
+
+#authModal .auth-modal__tab:hover {
+    color: var(--auth-brown);
+}
+
+/* Onglet actif : doré, souligné */
+#authModal .auth-modal__tab.is-active {
+    color: var(--auth-gold-dark);
+    border-bottom-color: var(--auth-gold-dark);
+}
+
+/* Panneaux : masqués sauf l'actif */
+#authModal .auth-modal__panel {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#authModal .auth-modal__panel.is-active {
+    display: flex;
+}
+
+/* Champs */
+#authModal .auth-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+}
+
+#authModal .auth-modal__field label {
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--auth-brown);
+}
+
+#authModal .auth-modal__field input {
+    border: 1px solid transparent;
+    border-radius: .5rem;
+    background: var(--auth-field);
+    padding: .75rem 1rem;
+    font-size: 1rem;
+    color: var(--auth-brown);
+    font-family: inherit;
+    transition: border-color .2s ease, background .2s ease;
+}
+
+#authModal .auth-modal__field input::placeholder {
+    color: #9a948c;
+}
+
+#authModal .auth-modal__field input:focus {
+    outline: none;
+    border-color: var(--auth-gold-dark);
+    background: #fff;
+}
+
+/* Champ en erreur (rouge) / valide (vert) — ajoutés par la validation JS */
+#authModal .auth-modal__field input.auth-modal__input--error {
+    border-color: #9b2c2c;
+    background: #fdf5f5;
+}
+
+#authModal .auth-modal__field input.auth-modal__input--valid {
+    border-color: #2e7d32;
+    background: #f4faf4;
+}
+
+/* Message d'erreur sous un champ (rempli par le JS) */
+#authModal .auth-modal__error {
+    color: #9b2c2c;
+    font-size: .8rem;
+    min-height: .9rem;
+}
+
+/* Bouton principal (Se connecter / Créer mon compte) */
+#authModal .auth-modal__submit {
+    margin-top: .5rem;
+    border: none;
+    border-radius: .5rem;
+    background: var(--auth-gold-dark);
+    color: #fff;
+    padding: .85rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+#authModal .auth-modal__submit:hover {
+    background: #9a7209;
+}
+
+/* Lien de bascule sous le formulaire */
+#authModal .auth-modal__switch {
+    text-align: center;
+    font-size: .9rem;
+    color: #6b645c;
+    margin: .25rem 0 0;
+}
+
+#authModal .auth-modal__link {
+    border: none;
+    background: none;
+    color: var(--auth-gold-dark);
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+}
+
+/* Quand le modal est ouvert, on empêche le défilement de la page derrière */
+body.auth-modal-open {
+    overflow: hidden;
+}

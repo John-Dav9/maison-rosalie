@@ -419,3 +419,274 @@ document.addEventListener('DOMContentLoaded', function () {
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 });
+/* MODAL CONNEXION / INSCRIPTION (FE-50)
+   Ouvre le modal au clic sur le bouton "Connexion" (data-auth-open),
+   le ferme au clic sur la croix, sur le fond, ou avec la touche Échap.
+   Gère aussi la bascule entre les onglets Connexion / Inscription.
+
+   PERSISTANCE : l'état (ouvert/fermé + onglet actif) est mémorisé dans
+   sessionStorage, pour que le modal reste ouvert après un refresh de la
+   page (ou après une soumission de formulaire qui recharge la page).
+   sessionStorage se vide à la fermeture de l'onglet du navigateur.
+
+   Ne fait rien si le modal n'est pas présent sur la page. */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+
+  const openBtns  = document.querySelectorAll('[data-auth-open]');
+  const closeEls  = modal.querySelectorAll('[data-auth-close]');
+  const tabs      = modal.querySelectorAll('.auth-modal__tab');
+  const panels    = modal.querySelectorAll('.auth-modal__panel');
+  // les liens "Créer un compte" / "Se connecter" sous les formulaires
+  const switchLinks = modal.querySelectorAll('.auth-modal__link');
+
+  // clés utilisées dans sessionStorage
+  const STORE_OPEN = 'authModalOpen';  // 'true' si le modal doit rester ouvert
+  const STORE_TAB  = 'authModalTab';   // 'login' ou 'register'
+
+  // petit utilitaire : sessionStorage peut être indisponible (navigation privée
+  // sur certains navigateurs), donc on protège les accès par try/catch.
+  function store(key, value) {
+    try { sessionStorage.setItem(key, value); } catch (e) {}
+  }
+  function read(key) {
+    try { return sessionStorage.getItem(key); } catch (e) { return null; }
+  }
+  function remove(key) {
+    try { sessionStorage.removeItem(key); } catch (e) {}
+  }
+
+  // Ouvre le modal (et mémorise l'état)
+  function openModal() {
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('auth-modal-open');
+    store(STORE_OPEN, 'true');
+  }
+
+  // Ferme le modal (et oublie l'état mémorisé)
+  function closeModal() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('auth-modal-open');
+    remove(STORE_OPEN);
+  }
+
+  // Affiche l'onglet demandé ('login' ou 'register') et le mémorise
+  function showTab(name) {
+    tabs.forEach(function (tab) {
+      tab.classList.toggle('is-active', tab.getAttribute('data-tab') === name);
+    });
+    panels.forEach(function (panel) {
+      panel.classList.toggle('is-active', panel.getAttribute('data-panel') === name);
+    });
+    store(STORE_TAB, name);
+  }
+
+  // Clic sur le bouton "Connexion" de la navbar → ouverture
+  openBtns.forEach(function (btn) {
+    btn.addEventListener('click', openModal);
+  });
+
+  // Clic sur la croix ou le fond → fermeture
+  closeEls.forEach(function (el) {
+    el.addEventListener('click', closeModal);
+  });
+
+  // Touche Échap → fermeture
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+
+  // Clic sur un onglet → bascule
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      showTab(tab.getAttribute('data-tab'));
+    });
+  });
+
+  // Clic sur un lien de bascule ("Créer un compte" / "Se connecter")
+  switchLinks.forEach(function (link) {
+    link.addEventListener('click', function () {
+      showTab(link.getAttribute('data-tab'));
+    });
+  });
+
+  // ---- RESTAURATION AU CHARGEMENT DE LA PAGE ----
+  // On rétablit d'abord l'onglet mémorisé (login par défaut),
+  // puis on rouvre le modal s'il était ouvert avant le refresh.
+  const savedTab = read(STORE_TAB);
+  if (savedTab === 'register') {
+    showTab('register');
+  }
+  if (read(STORE_OPEN) === 'true') {
+    openModal();
+  }
+});
+
+/* VALIDATION DES FORMULAIRES CONNEXION / INSCRIPTION (côté client — FE-61)
+   Même principe que la validation du contact : regex, messages précis près
+   des champs, blocage de l'envoi si invalide. Deux formulaires gérés via
+   data-auth-form ("login" / "register"). Ne s'exécute que si présents.
+   Rappel CDC : ne remplace jamais la validation serveur (SEC-07). */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const authForms = document.querySelectorAll('[data-auth-form]');
+  if (authForms.length === 0) return;
+
+  // RÈGLES par type de formulaire.
+  // Formats non imposés par le CDC : choix raisonnables, à ajuster par l'équipe.
+  const rulesByForm = {
+    login: {
+      email: {
+        regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        messages: {
+          empty: "L'adresse email est obligatoire.",
+          invalid: "L'adresse email n'est pas valide."
+        }
+      },
+      password: {
+        // au moins 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial
+        regex: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
+        messages: {
+          empty: 'Le mot de passe est obligatoire.',
+          invalid: 'Au moins 8 caractères, avec une majuscule, un chiffre et un caractère spécial.'
+        }
+      }
+    },
+    register: {
+      username: {
+        // 3 à 20 caractères : lettres, chiffres, tiret et underscore
+        regex: /^[A-Za-z0-9_-]{3,20}$/,
+        messages: {
+          empty: "Le nom d'utilisateur est obligatoire.",
+          invalid: "3 à 20 caractères : lettres, chiffres, - et _ uniquement."
+        }
+      },
+      email: {
+        regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        messages: {
+          empty: "L'adresse email est obligatoire.",
+          invalid: "L'adresse email n'est pas valide."
+        }
+      },
+      password: {
+        // au moins 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial
+        regex: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
+        messages: {
+          empty: 'Le mot de passe est obligatoire.',
+          invalid: 'Au moins 8 caractères, avec une majuscule, un chiffre et un caractère spécial.'
+        }
+      }
+      // password_confirm est vérifié à part (doit être identique au mot de passe)
+    }
+  };
+
+  // Récupère un champ et sa zone d'erreur dans un formulaire donné
+  function getField(form, name) {
+    return {
+      input: form.querySelector('[name="' + name + '"]'),
+      error: form.querySelector('[data-error-for="' + name + '"]')
+    };
+  }
+
+  function showError(form, name, message) {
+    const { input, error } = getField(form, name);
+    if (error) error.textContent = message;
+    if (input) {
+      input.classList.add('auth-modal__input--error');
+      input.classList.remove('auth-modal__input--valid');
+    }
+  }
+
+  function showValid(form, name) {
+    const { input, error } = getField(form, name);
+    if (error) error.textContent = '';
+    if (input) {
+      input.classList.add('auth-modal__input--valid');
+      input.classList.remove('auth-modal__input--error');
+    }
+  }
+
+  // Valide un champ selon sa règle ; renvoie true si valide
+  function validateField(form, name, rule) {
+    const { input } = getField(form, name);
+    if (!rule || !input) return true;
+
+    const value = input.value.trim();
+
+    if (value === '') {
+      showError(form, name, rule.messages.empty);
+      return false;
+    }
+    if (!rule.regex.test(value)) {
+      showError(form, name, rule.messages.invalid);
+      return false;
+    }
+    showValid(form, name);
+    return true;
+  }
+
+  // Vérifie que la confirmation correspond au mot de passe (inscription)
+  function validatePasswordConfirm(form) {
+    const pass    = form.querySelector('[name="password"]');
+    const confirm = form.querySelector('[name="password_confirm"]');
+    if (!confirm) return true;
+
+    const value = confirm.value.trim();
+    if (value === '') {
+      showError(form, 'password_confirm', 'Merci de confirmer le mot de passe.');
+      return false;
+    }
+    if (pass && value !== pass.value.trim()) {
+      showError(form, 'password_confirm', 'Les mots de passe ne correspondent pas.');
+      return false;
+    }
+    showValid(form, 'password_confirm');
+    return true;
+  }
+
+  // Branche la validation sur chaque formulaire
+  authForms.forEach(function (form) {
+    const type  = form.getAttribute('data-auth-form');
+    const rules = rulesByForm[type];
+    if (!rules) return;
+
+    // validation en direct (frappe + sortie de champ)
+    Object.keys(rules).forEach(function (name) {
+      const { input } = getField(form, name);
+      if (!input) return;
+      input.addEventListener('input', function () { validateField(form, name, rules[name]); });
+      input.addEventListener('blur',  function () { validateField(form, name, rules[name]); });
+    });
+
+    // confirmation de mot de passe (inscription uniquement)
+    const confirm = form.querySelector('[name="password_confirm"]');
+    if (confirm) {
+      confirm.addEventListener('input', function () { validatePasswordConfirm(form); });
+      confirm.addEventListener('blur',  function () { validatePasswordConfirm(form); });
+    }
+
+    // à l'envoi : on valide tout, on bloque si invalide
+    form.addEventListener('submit', function (event) {
+      let allValid = true;
+
+      Object.keys(rules).forEach(function (name) {
+        if (!validateField(form, name, rules[name])) allValid = false;
+      });
+      if (confirm && !validatePasswordConfirm(form)) allValid = false;
+
+      if (!allValid) {
+        event.preventDefault();
+        const firstError = form.querySelector('.auth-modal__input--error');
+        if (firstError) firstError.focus();
+      }
+    });
+  });
+});
