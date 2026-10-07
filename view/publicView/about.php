@@ -1,4 +1,4 @@
-    <?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
+<?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
     <!--
     PAGE À PROPOS (FE-40)
     Structure (maquette du designer) :
@@ -58,95 +58,6 @@
                 <p>Bonne dégustation.</p>
             </div>
 
-        </section>
-
-        <!-- 3. NOS VALEURS : 4 cartes (1 colonne sur mobile, 2 sur tablette, 4 sur ordinateur) -->
-        <section class="about__section" aria-labelledby="values-title">
-            <div class="about__heading">
-                <h2 id="values-title" class="about__title about__title--small">Nos valeurs</h2>
-                <span class="about__divider"></span>
-            </div>
-
-            <ul class="about__values">
-                <li class="about__value">
-                    <h3>L'artisanat</h3>
-                    <p>Chaque chocolat est tempéré, moulé et décoré à la main dans notre atelier liégeois.</p>
-                </li>
-                <li class="about__value">
-                    <h3>La transmission</h3>
-                    <p>Nos recettes passent de génération en génération, sur les cahiers écrits à la plume de Rosalie.</p>
-                </li>
-                <li class="about__value">
-                    <h3>Des fèves choisies</h3>
-                    <p>Nous sélectionnons nos fèves de cacao auprès de petites coopératives, pour leur goût et leur origine.</p>
-                </li>
-                <li class="about__value">
-                    <h3>Le partage</h3>
-                    <p>Un bon chocolat se déguste à plusieurs : c'est pour cela que nous ouvrons aujourd'hui notre livre de recettes.</p>
-                </li>
-            </ul>
-        </section>
-
-        <!-- 4. CHIFFRES CLÉS
-         Les vraies valeurs sont écrites dans le HTML : la page reste juste sans JavaScript.
-         public/js/about.js les fait simplement défiler de 0 jusqu'à data-count quand elles arrivent à l'écran. -->
-        <section class="about__section" aria-labelledby="stats-title">
-            <div class="about__heading">
-                <h2 id="stats-title" class="about__title about__title--small">La maison en chiffres</h2>
-                <span class="about__divider"></span>
-            </div>
-
-            <ul class="about__stats">
-                <li class="about__stat">
-                    <!-- calculé à partir de l'année de création : ne vieillit pas -->
-                    <?php $yearsOfCraft = (int) date('Y') - 1987; ?>
-                    <span class="about__stat-number" data-count="<?= $yearsOfCraft ?>"><?= $yearsOfCraft ?></span>
-                    <span class="about__stat-label">ans de savoir-faire</span>
-                </li>
-                <li class="about__stat">
-                    <span class="about__stat-number" data-count="3">3</span>
-                    <span class="about__stat-label">générations de chocolatiers</span>
-                </li>
-                <li class="about__stat">
-                    <span class="about__stat-number" data-count="120">120</span>
-                    <span class="about__stat-label">créations au catalogue</span>
-                </li>
-                <li class="about__stat">
-                    <span class="about__stat-number" data-count="100" data-suffix=" %">100 %</span>
-                    <span class="about__stat-label">fait main à Liège</span>
-                </li>
-            </ul>
-        </section>
-
-        <!-- 5. FRISE CHRONOLOGIQUE : liste ordonnée, un trait doré relie les dates -->
-        <section class="about__section" aria-labelledby="timeline-title">
-            <div class="about__heading">
-                <h2 id="timeline-title" class="about__title about__title--small">Notre parcours</h2>
-                <span class="about__divider"></span>
-            </div>
-
-            <ol class="about__timeline">
-                <li class="about__event">
-                    <span class="about__event-year">1987</span>
-                    <p>Rosalie Moreau ouvre sa première boutique dans le centre de Liège.</p>
-                </li>
-                <li class="about__event">
-                    <span class="about__event-year">1995</span>
-                    <p>Naissance de la praline « Rosalie », au praliné noisette et chocolat noir, devenue notre signature.</p>
-                </li>
-                <li class="about__event">
-                    <span class="about__event-year">2008</span>
-                    <p>Sa fille Claire reprend l'atelier et agrandit la boutique : la deuxième génération est aux fourneaux.</p>
-                </li>
-                <li class="about__event">
-                    <span class="about__event-year">2019</span>
-                    <p>Arrivée de la troisième génération et premiers achats de fèves en direct auprès des coopératives.</p>
-                </li>
-                <li class="about__event">
-                    <span class="about__event-year">2026</span>
-                    <p>Le livre de recettes de la famille s'ouvre à tous, en ligne.</p>
-                </li>
-            </ol>
         </section>
 
     </main>
