@@ -193,9 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
   startAutoplay();
 });
 
-/* ==========================================================================
-   VALIDATION DU FORMULAIRE DE CONTACT (côté client — FE-41, FE-61)
-   ==========================================================================
+/* VALIDATION DU FORMULAIRE DE CONTACT (côté client — FE-41, FE-61)
    Vérifie champs requis, formats (regex) et longueurs AVANT l'envoi,
    et affiche un message précis près de chaque champ concerné.
    Ne s'exécute que sur la page contact (sinon le formulaire n'existe pas).
@@ -347,5 +345,42 @@ document.addEventListener('DOMContentLoaded', function () {
       const firstError = form.querySelector('.contact__input--error');
       if (firstError) firstError.focus();
     }
+  });
+});
+/* ANIMATION D'APPARITION AU SCROLL — section Top 3 (page d'accueil)
+   Révèle les cartes (fondu + glissement vers le haut) quand elles entrent
+   dans l'écran, via IntersectionObserver. Ne s'exécute que s'il y a des
+   éléments [data-reveal] sur la page (sinon ne fait rien).
+   Le style de départ/arrivée est dans style.css (.is-visible). */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const revealItems = document.querySelectorAll('[data-reveal]');
+  if (revealItems.length === 0) return;
+
+  // Si le navigateur ne supporte pas IntersectionObserver : on affiche tout
+  // directement (pas d'animation, mais le contenu reste visible).
+  if (!('IntersectionObserver' in window)) {
+    revealItems.forEach(function (item) {
+      item.classList.add('is-visible');
+    });
+    return;
+  }
+
+  // L'observateur ajoute .is-visible quand l'élément est visible à ~15%,
+  // puis arrête de l'observer (l'animation ne se joue qu'une fois).
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15
+  });
+
+  revealItems.forEach(function (item) {
+    observer.observe(item);
   });
 });
