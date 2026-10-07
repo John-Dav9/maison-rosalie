@@ -17,9 +17,9 @@
         <!--  === ==========Boutons des catégories ========= -->
         <!--============= Le bouton foncé = la catégorie choisie ============-->
          <div class="flex justify-center gap-5 mb-10">
-             <button class="categorie bg-[#2F1B14] text-white px-8 py-1 font-['Playfair_Display']"> Ganache</button>
-             <button class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Praline</button>
-             <button class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Truffe</button>
+             <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']"> Ganache</span>
+             <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Praline</span>
+             <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Truffe</span>
         </div>
 
        <!-- ================= CARTE DE LA RECETTE ================= -->

@@ -390,20 +390,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
    {
-      // 1) Boutons des catégories : le bouton cliqué devient foncé
-      const categories = document.querySelectorAll('.categorie');
-      categories.forEach(function (bouton) {
-         bouton.addEventListener('click', function () {
-            categories.forEach(function (b) {
-               b.classList.remove('bg-[#2F1B14]', 'text-white');
-               b.classList.add('bg-[#F8EDD3]');
-            });
-            bouton.classList.remove('bg-[#F8EDD3]');
-            bouton.classList.add('bg-[#2F1B14]', 'text-white');
-         });
-      });
+      
 
-      // 2) Portions : + et - changent le nombre de personnes et les quantités
+      // 1) Portions : + et - changent le nombre de personnes et les quantités
       let portions = 4;
       function mettreAJour() {
          document.getElementById('portions').textContent = portions;
@@ -423,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function () {
          }
       });
 
-      // 3) Carrousel : les flèches font défiler les ingrédients
+      // 2) Carrousel : les flèches font défiler les ingrédients
       const carrousel = document.getElementById('carrousel');
       document.getElementById('gauche').addEventListener('click', function () {
          carrousel.scrollBy({ left: -160 });
@@ -432,14 +421,14 @@ document.addEventListener('DOMContentLoaded', function () {
          carrousel.scrollBy({ left: 160 });
       });
 
-      // 4) Étapes : quand on coche une étape, elle devient pâle
+      // 3) Étapes : quand on coche une étape, elle devient pâle
       document.querySelectorAll('.etape input').forEach(function (caseACocher) {
          caseACocher.addEventListener('change', function () {
             caseACocher.parentElement.classList.toggle('opacity-50');
          });
       });
 
-      // 5) Étapes : au survol, la case monte un peu ; quand la souris part, elle redescend
+      // 4) Étapes : au survol, la case monte un peu ; quand la souris part, elle redescend
       $('.etape').hover(
          function () {
             $(this).stop(true).animate({ top: '-6px' }, 200);
