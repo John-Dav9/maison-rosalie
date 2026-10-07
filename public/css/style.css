@@ -828,7 +828,7 @@
     background-color: #FBF5E6;
     color: var(--about-text);
     font-family: 'Playfair Display', Georgia, serif;
-    padding: 5rem 1rem 4rem;
+    padding: 8rem 1rem 7rem;
 }
 
 /* TITRES ("À propos" et "Notre Histoire") */
@@ -837,14 +837,14 @@
     display: inline-block;
     /* la largeur suit le texte : le losange se colle juste à côté */
     margin: 0;
-    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 700;
     line-height: 1.2;
 }
 
 /* variante plus petite pour les sous-titres */
 #about .about__title--small {
-    font-size: clamp(1.4rem, 3vw, 1.6rem);
+    font-size: clamp(2rem, 3vw, 1.6rem);
 }
 
 /* Petit losange doré à gauche ou à droite du titre :
