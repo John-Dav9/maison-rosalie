@@ -438,3 +438,38 @@ document.addEventListener('DOMContentLoaded', function () {
          }
       );
    }
+/* NAVBAR TRANSPARENTE QUI SE COLORE AU SCROLL
+   En haut de page, la navbar (.menu) est transparente.
+   Dès qu'on scrolle (plus de 50px), on lui ajoute la classe .menu--scrolled
+   qui lui donne un fond (couleur de la page) via le CSS.
+   Retrait de la classe quand on revient tout en haut. */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const navbar = document.querySelector('.menu');
+  if (!navbar) return;
+
+  // seuil de déclenchement en pixels de défilement vertical
+  const scrollThreshold = 50;
+
+  function onScroll() {
+    // on lit le défilement de plusieurs sources pour couvrir tous les cas
+    // (certaines pages défilent via window, d'autres via l'élément racine)
+    const scrolled = window.scrollY
+      || window.pageYOffset
+      || document.documentElement.scrollTop
+      || document.body.scrollTop
+      || 0;
+
+    if (scrolled > scrollThreshold) {
+      navbar.classList.add('menu--scrolled');
+    } else {
+      navbar.classList.remove('menu--scrolled');
+    }
+  }
+
+  // on vérifie l'état au chargement (si la page est déjà défilée) puis à chaque scroll.
+  // { passive: true } : meilleure performance au défilement.
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+});
