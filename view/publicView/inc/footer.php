@@ -15,16 +15,16 @@
                      <!--Colonne 1 : navigation-->
                      <h3 class="text-[#C9A45C] font-bold mb-6">Navigation</h3>
                      <ul class="space-y-4 text-white">
-                           <li><a href="#"
+                           <li><a href="./?pages=home"
                                        class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
                                        Accueil</a></li>
-                           <li><a href="#"
+                           <li><a href="./?pages=about"
+                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
+                                       À propos</a></li>
+                           <li><a href="./?pages=recettes"
                                        class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
                                        Recettes</a></li>
-                           <li><a href="#"
-                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
-                                       A propos</a></li>
-                           <li><a href="#"
+                           <li><a href="./?pages=contact"
                                        class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
                                        Contact</a></li>
 
