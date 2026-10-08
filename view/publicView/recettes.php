@@ -258,6 +258,7 @@
         </div>
     </main>
     <?php require_once "./../view/publicView/inc/footer.php" ?>
+    <script src="./js/scripts.js"></script>
 </section>
 </body>
 
