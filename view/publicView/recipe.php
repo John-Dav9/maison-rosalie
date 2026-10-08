@@ -321,8 +321,9 @@
     </article>
  </section>
  <?php require_once "./../view/publicView/inc/footer.php" ?>
- <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
  <script src="./js/scripts.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 
  </body>
 
