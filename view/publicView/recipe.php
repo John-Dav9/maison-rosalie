@@ -17,9 +17,9 @@
         <!--  === ==========Boutons des catégories ========= -->
         <!--============= Le bouton foncé = la catégorie choisie ============-->
          <div class="flex justify-center gap-5 mb-10">
-             <button class="categorie bg-[#2F1B14] text-white px-8 py-1 font-['Playfair_Display']"> Ganache</button>
-             <button class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Praline</button>
-             <button class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Truffe</button>
+             <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']"> Ganache</span>
+             <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Praline</span>
+             <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Truffe</span>
         </div>
 
        <!-- ================= CARTE DE LA RECETTE ================= -->
@@ -102,31 +102,41 @@
 
             <!-- Une carte = un ingrédient. data-quantite = quantité pour 4 personnes -->
             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/ganache1.webp" alt="Chocolat noir" class="h-20 w-full object-cover rounded">
-               <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
+              <div class="overflow-hidden rounded">
+                <img src="./assets/ganache1.webp" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
+                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="200">200</span>g</p>
             </div>
 
             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/beurre.webp" alt="Beurre" class="h-20 w-full object-cover rounded">
+               <div class="overflow-hidden rounded">
+                  <img src="./assets/beurre.webp" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Beurre</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
             </div>
 
             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/sucre.jpg" alt="Sucre" class="h-20 w-full object-cover rounded">
-               <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Sucre</p>
+               <div class="overflow-hidden rounded">
+                  <img src="./assets/sucre.jpg" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
+                  <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Sucre</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
             </div>
 
             <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/oeufs.jpg" alt="Œufs" class="h-20 w-full object-cover rounded">
+               <div class="overflow-hidden rounded">
+                  <img src="./assets/oeufs.jpg" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Œufs</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="4">4</span></p>
             </div>
 
             <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-               <img src="./assets/cacoa.jpg" alt="Cacao en poudre" class="h-20 w-full object-cover rounded">
+               <div class="overflow-hidden rounded">
+                  <img src="./assets/cacoa.jpg" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+               </div>
                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Cacao en poudre</p>
                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="30">30</span>g</p>
             </div>
@@ -150,7 +160,7 @@
             </h3>
          <!---===== Une étape = une case à cocher + un titre + un text ======----->
          <div class="space-y-4">
-            <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+            <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
                   <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
@@ -159,37 +169,37 @@
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
                </div>
             </label>
-             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
-                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 2</p>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
                </div>
             </label>
-             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
-                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 3</p>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
                </div>
             </label>
-              <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+              <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
-                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 4</p>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
                </div>
             </label>
-             <label class="etape flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
                <input type="checkbox" class="mt-1">
                <div>
-                  <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
+                  <p class="text-sm text-[#B8860B]">ÉTAPE 5</p>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem 
                      a corrupti rerum possimus repellendus quidem voluptate.</p>
@@ -281,9 +291,6 @@
       <div class="bg-[#FBF5E6] border border-[#E5C98A] px-8 py-6 mt-6">
          <div class="grid grid-cols-2 gap-x-16">
 
-            <!-- Note : 5 étoiles + texte + flèche (colonne de droite) -->
-            <div class="col-start-2">
-               <p class="text-sm font-bold mb-1">Note</p>
                
             <!-- Note : 5 étoiles + texte + flèche (colonne de droite) -->
             <div class="col-start-2">
@@ -295,10 +302,7 @@
                   <option>★★☆☆☆ (2/5) moyen</option>
                   <option>★☆☆☆☆ (1/5) mauvais</option>
                </select>
-
-            </div>
-            </div>
-
+             </div>
          </div>
 
          <!-- Commentaire : grande case pour écrire -->
@@ -315,10 +319,9 @@
 
    </article>
 </section>
+<?php require_once "./../view/publicView/inc/footer.php" ?>
 
-
-
-    <script src="./js/scripts.js"></script>
+ <script src="./js/scripts.js"></script>
 
 </body>
 

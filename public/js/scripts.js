@@ -193,9 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
   startAutoplay();
 });
 
-/* ==========================================================================
-   VALIDATION DU FORMULAIRE DE CONTACT (côté client — FE-41, FE-61)
-   ==========================================================================
+/* VALIDATION DU FORMULAIRE DE CONTACT (côté client — FE-41, FE-61)
    Vérifie champs requis, formats (regex) et longueurs AVANT l'envoi,
    et affiche un message précis près de chaque champ concerné.
    Ne s'exécute que sur la page contact (sinon le formulaire n'existe pas).
@@ -348,4 +346,130 @@ document.addEventListener('DOMContentLoaded', function () {
       if (firstError) firstError.focus();
     }
   });
+});
+/* ANIMATION D'APPARITION AU SCROLL — section Top 3 (page d'accueil)
+   Révèle les cartes (fondu + glissement vers le haut) quand elles entrent
+   dans l'écran, via IntersectionObserver. Ne s'exécute que s'il y a des
+   éléments [data-reveal] sur la page (sinon ne fait rien).
+   Le style de départ/arrivée est dans style.css (.is-visible). */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const revealItems = document.querySelectorAll('[data-reveal]');
+  if (revealItems.length === 0) return;
+
+  // Si le navigateur ne supporte pas IntersectionObserver : on affiche tout
+  // directement (pas d'animation, mais le contenu reste visible).
+  if (!('IntersectionObserver' in window)) {
+    revealItems.forEach(function (item) {
+      item.classList.add('is-visible');
+    });
+    return;
+  }
+
+  // L'observateur ajoute .is-visible quand l'élément est visible à ~15%,
+  // puis arrête de l'observer (l'animation ne se joue qu'une fois).
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15
+  });
+
+  revealItems.forEach(function (item) {
+    observer.observe(item);
+  });
+});
+
+
+// <!-- ================= JAVASCRIPT DE LA PAGE RECETTE ================= -->
+
+
+   {
+      
+
+      // 1) Portions : + et - changent le nombre de personnes et les quantités
+      let portions = 4;
+      function mettreAJour() {
+         document.getElementById('portions').textContent = portions;
+         document.getElementById('portions-texte').textContent = portions;
+         document.querySelectorAll('.quantite').forEach(function (q) {
+            q.textContent = Math.round(q.dataset.quantite / 4 * portions);
+         });
+      }
+      document.getElementById('plus').addEventListener('click', function () {
+         portions = portions + 1;
+         mettreAJour();
+      });
+      document.getElementById('moins').addEventListener('click', function () {
+         if (portions > 1) {
+            portions = portions - 1;
+            mettreAJour();
+         }
+      });
+
+      // 2) Carrousel : les flèches font défiler les ingrédients
+      const carrousel = document.getElementById('carrousel');
+      document.getElementById('gauche').addEventListener('click', function () {
+         carrousel.scrollBy({ left: -160 });
+      });
+      document.getElementById('droite').addEventListener('click', function () {
+         carrousel.scrollBy({ left: 160 });
+      });
+
+      // 3) Étapes : quand on coche une étape, elle devient pâle
+      document.querySelectorAll('.etape input').forEach(function (caseACocher) {
+         caseACocher.addEventListener('change', function () {
+            caseACocher.parentElement.classList.toggle('opacity-50');
+         });
+      });
+
+      // 4) Étapes : au survol, la case monte un peu ; quand la souris part, elle redescend
+      $('.etape').hover(
+         function () {
+            $(this).stop(true).animate({ top: '-6px' }, 200);
+         },
+         function () {
+            $(this).stop(true).animate({ top: '0px' }, 200);
+         }
+      );
+   }
+/* NAVBAR TRANSPARENTE QUI SE COLORE AU SCROLL
+   En haut de page, la navbar (.menu) est transparente.
+   Dès qu'on scrolle (plus de 50px), on lui ajoute la classe .menu--scrolled
+   qui lui donne un fond (couleur de la page) via le CSS.
+   Retrait de la classe quand on revient tout en haut. */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const navbar = document.querySelector('.menu');
+  if (!navbar) return;
+
+  // seuil de déclenchement en pixels de défilement vertical
+  const scrollThreshold = 50;
+
+  function onScroll() {
+    // on lit le défilement de plusieurs sources pour couvrir tous les cas
+    // (certaines pages défilent via window, d'autres via l'élément racine)
+    const scrolled = window.scrollY
+      || window.pageYOffset
+      || document.documentElement.scrollTop
+      || document.body.scrollTop
+      || 0;
+
+    if (scrolled > scrollThreshold) {
+      navbar.classList.add('menu--scrolled');
+    } else {
+      navbar.classList.remove('menu--scrolled');
+    }
+  }
+
+  // on vérifie l'état au chargement (si la page est déjà défilée) puis à chaque scroll.
+  // { passive: true } : meilleure performance au défilement.
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 });

@@ -3,7 +3,7 @@
 <section class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
     <main class="w-full bg-surface min-h-[calc(100vh-20rem)]">
         <div class="flex flex-col w-full">
-            <section class="w-full bg-[#2F1B14] text-surface pt-25 pb-space-xl shadow-sm ">
+            <section class="w-full bg-[#2F1B14] text-surface pt-25 pb-space-xl shadow-sm">
                 <div class="max-w-[1280px] mx-auto px-margin">
                     <div class="flex flex-col items-center text-center max-w-2xl mx-auto space-y-space-xs">
                         <div class="flex items-center gap-space-xs text-[#fed488] mb-1"><span class="material-symbols-outlined text-[14px]">diamond</span><span class="font-label-sm text-label-sm uppercase tracking-[0.2em] font-semibold text-[#fed488]">Le Carnet Culinaire</span><span class="material-symbols-outlined text-[14px]">diamond</span></div>

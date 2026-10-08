@@ -825,12 +825,10 @@
 /* CONTENEUR DE LA PAGE
    Fond crème avec un léger motif de petits points (dégradé radial répété). */
 #about {
-    background-color: var(--about-bg);
-    background-image: radial-gradient(rgba(43, 26, 20, .06) 1px, transparent 1px);
-    background-size: 18px 18px;
+    background-color: #FBF5E6;
     color: var(--about-text);
     font-family: 'Playfair Display', Georgia, serif;
-    padding: 5rem 1rem 4rem;
+    padding: 8rem 1rem 7rem;
 }
 
 /* TITRES ("À propos" et "Notre Histoire") */
@@ -839,14 +837,14 @@
     display: inline-block;
     /* la largeur suit le texte : le losange se colle juste à côté */
     margin: 0;
-    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 700;
     line-height: 1.2;
 }
 
 /* variante plus petite pour les sous-titres */
 #about .about__title--small {
-    font-size: clamp(1.4rem, 3vw, 1.6rem);
+    font-size: clamp(2rem, 3vw, 1.6rem);
 }
 
 /* Petit losange doré à gauche ou à droite du titre :
@@ -882,7 +880,7 @@
 
 /* 1. INTRODUCTION : tout centré, paragraphe limité en largeur pour la lecture */
 #about .about__intro {
-    max-width: 40rem;
+    max-width: 60rem;
     margin: 0 auto 3rem;
     text-align: center;
 }
@@ -900,8 +898,9 @@
     flex-direction: column;
     align-items: center;
     gap: 2.5rem;
-    max-width: 60rem;
+    max-width: 84rem;
     margin: 0 auto;
+    justify-content: center;
 }
 
 @media (min-width: 768px) {
@@ -1087,10 +1086,37 @@
 /* modification du style des liens de la nav bare */
 .menu {
     color: #D4A373;
-    background-color: rgba(2500, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
+    /* transparente en haut de page */
+    background-color: transparent;
     font-weight: bold;
+    /* transition douce quand le fond apparaît/disparaît au scroll */
+    transition: background-color .3s ease, box-shadow .3s ease, backdrop-filter .3s ease;
+}
+
+/* Au scroll (classe ajoutée par scripts.js) : la navbar prend la couleur de la page.
+   La couleur est une variable (--nav-scrolled-bg) que chaque page peut redéfinir
+   pour coller à son propre fond. Valeur par défaut : crème du site. */
+:root {
+    --nav-scrolled-bg: #FBF5E6;
+}
+
+.menu--scrolled {
+    background-color: var(--nav-scrolled-bg);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .08);
+}
+
+/* Accueil : le contenu sous le hero (top 3) a un fond chocolat foncé,
+   donc la navbar colorée doit être foncée elle aussi, pas crème. */
+body:has(#top-recipes) {
+    --nav-scrolled-bg: #180E09;
+}
+
+/* Page recettes : on ne peut pas modifier son fichier, donc on la reconnaît
+   par sa structure — une <section class="bg-surface"> placée juste après la
+   navbar. Son fond est "surface" (#fcf9f4) → la navbar prend cette teinte au scroll. */
+body:has(> .menu + section.bg-surface) {
+    --nav-scrolled-bg: #fcf9f4;
 }
 
 #connexion {
@@ -1500,5 +1526,271 @@
 
     #error404 .error404__btn {
         width: 100%;
+    }
+}
+
+/* TOP 3 DES RECETTES — page d'accueil (FE-11)
+   Bloc "luxe chocolatier" : fond sombre, doré, cartes cacao.
+   Scopé sous #top-recipes (PAS #recettes, déjà utilisé par recipe.php).
+   L'animation d'apparition au scroll est gérée dans scripts.js
+   (classe .is-visible ajoutée aux éléments [data-reveal]). */
+#top-recipes {
+    --tr-gold: #D4AF37;
+    --tr-gold-light: #E2C992;
+    --tr-cream: #FBF5EC;
+    --tr-text: #E7DEC8;
+    --tr-card: #27170F;
+    --tr-card-border: rgba(82, 51, 33, .6);
+    background: linear-gradient(to bottom, #180E09, #21130D 55%, #1E120C);
+    color: var(--tr-text);
+    padding: 6rem 1.5rem;
+    font-family: 'Montserrat', 'Segoe UI', Tahoma, sans-serif;
+}
+
+#top-recipes .top-recipes__inner {
+    max-width: 72rem;
+    margin: 0 auto;
+}
+
+/* En-tête de section */
+#top-recipes .top-recipes__heading {
+    text-align: center;
+    max-width: 42rem;
+    margin: 0 auto 4rem;
+}
+
+#top-recipes .top-recipes__eyebrow {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: .25em;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--tr-gold);
+    margin-bottom: .75rem;
+}
+
+#top-recipes .top-recipes__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--tr-cream);
+    letter-spacing: .02em;
+    margin: 0 0 1rem;
+}
+
+/* Ornement : deux traits dorés + une icône */
+#top-recipes .top-recipes__ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+
+#top-recipes .top-recipes__ornament-line {
+    width: 3rem;
+    height: 1px;
+    background: rgba(212, 175, 55, .5);
+}
+
+#top-recipes .top-recipes__ornament i {
+    color: var(--tr-gold);
+    font-size: .75rem;
+}
+
+#top-recipes .top-recipes__subtitle {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(231, 222, 200, .8);
+    margin: 0;
+}
+
+/* État "aucune recette" (FE-12) */
+#top-recipes .top-recipes__empty {
+    text-align: center;
+    color: rgba(231, 222, 200, .7);
+    max-width: 32rem;
+    margin: 0 auto;
+}
+
+/* Grille : 3 colonnes ordinateur, 1 colonne mobile (FE-11) */
+#top-recipes .top-recipes__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+    #top-recipes .top-recipes__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    #top-recipes .top-recipes__grid {
+        grid-template-columns: 1fr;
+        max-width: 26rem;
+        margin: 0 auto;
+    }
+}
+
+/* Carte de recette */
+#top-recipes .recipe-card {
+    background: var(--tr-card);
+    border: 1px solid var(--tr-card-border);
+    border-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, .35);
+    transition: transform .3s ease, border-color .3s ease;
+}
+
+#top-recipes .recipe-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(212, 175, 55, .7);
+}
+
+/* Visuel */
+#top-recipes .recipe-card__media {
+    position: relative;
+    height: 16rem;
+    overflow: hidden;
+    background: #1E120C;
+}
+
+#top-recipes .recipe-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .5s ease;
+}
+
+#top-recipes .recipe-card:hover .recipe-card__image {
+    transform: scale(1.05);
+}
+
+/* Voile dégradé en bas de l'image */
+#top-recipes .recipe-card__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--tr-card), transparent 55%);
+    opacity: .8;
+    pointer-events: none;
+}
+
+/* Badge de rang (haut gauche) */
+#top-recipes .recipe-card__badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1;
+    background: rgba(22, 13, 8, .85);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(212, 175, 55, .5);
+    color: var(--tr-gold-light);
+    font-size: .75rem;
+    font-weight: 500;
+    letter-spacing: .03em;
+    padding: .3rem .85rem;
+    border-radius: 999px;
+}
+
+/* Corps de la carte */
+#top-recipes .recipe-card__body {
+    padding: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex: 1;
+}
+
+/* Temps + difficulté (doré, majuscules) */
+#top-recipes .recipe-card__meta {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-size: .72rem;
+    font-weight: 500;
+    color: var(--tr-gold);
+    margin: 0 0 .75rem;
+}
+
+#top-recipes .recipe-card__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+    color: var(--tr-cream);
+    margin: 0 0 .75rem;
+    transition: color .3s ease;
+}
+
+#top-recipes .recipe-card:hover .recipe-card__title {
+    color: var(--tr-gold-light);
+}
+
+#top-recipes .recipe-card__desc {
+    font-size: .9rem;
+    font-weight: 300;
+    line-height: 1.65;
+    color: rgba(231, 222, 200, .75);
+    margin: 0;
+}
+
+/* Bouton "Voir la recette" : pilule contour doré, se remplit au survol */
+#top-recipes .recipe-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: .7rem 1.25rem;
+    border: 1px solid rgba(212, 175, 55, .6);
+    border-radius: 999px;
+    color: var(--tr-cream);
+    text-decoration: none;
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    transition: background .3s ease, color .3s ease;
+}
+
+#top-recipes .recipe-card__btn:hover {
+    background: var(--tr-gold);
+    color: #180E09;
+}
+
+/* Animation d'apparition au scroll (pilotée par scripts.js) */
+#top-recipes [data-reveal] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .6s ease, transform .6s ease;
+}
+
+#top-recipes [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Léger décalage entre les cartes pour un effet en cascade */
+#top-recipes [data-reveal]:nth-child(2) {
+    transition-delay: .12s;
+}
+
+#top-recipes [data-reveal]:nth-child(3) {
+    transition-delay: .24s;
+}
+
+/* Accessibilité : pas d'animation si l'utilisateur la refuse */
+@media (prefers-reduced-motion: reduce) {
+    #top-recipes [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
     }
 }
