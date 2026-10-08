@@ -384,6 +384,60 @@ document.addEventListener('DOMContentLoaded', function () {
     observer.observe(item);
   });
 });
+
+
+// <!-- ================= JAVASCRIPT DE LA PAGE RECETTE ================= -->
+
+
+   {
+      
+
+      // 1) Portions : + et - changent le nombre de personnes et les quantités
+      let portions = 4;
+      function mettreAJour() {
+         document.getElementById('portions').textContent = portions;
+         document.getElementById('portions-texte').textContent = portions;
+         document.querySelectorAll('.quantite').forEach(function (q) {
+            q.textContent = Math.round(q.dataset.quantite / 4 * portions);
+         });
+      }
+      document.getElementById('plus').addEventListener('click', function () {
+         portions = portions + 1;
+         mettreAJour();
+      });
+      document.getElementById('moins').addEventListener('click', function () {
+         if (portions > 1) {
+            portions = portions - 1;
+            mettreAJour();
+         }
+      });
+
+      // 2) Carrousel : les flèches font défiler les ingrédients
+      const carrousel = document.getElementById('carrousel');
+      document.getElementById('gauche').addEventListener('click', function () {
+         carrousel.scrollBy({ left: -160 });
+      });
+      document.getElementById('droite').addEventListener('click', function () {
+         carrousel.scrollBy({ left: 160 });
+      });
+
+      // 3) Étapes : quand on coche une étape, elle devient pâle
+      document.querySelectorAll('.etape input').forEach(function (caseACocher) {
+         caseACocher.addEventListener('change', function () {
+            caseACocher.parentElement.classList.toggle('opacity-50');
+         });
+      });
+
+      // 4) Étapes : au survol, la case monte un peu ; quand la souris part, elle redescend
+      $('.etape').hover(
+         function () {
+            $(this).stop(true).animate({ top: '-6px' }, 200);
+         },
+         function () {
+            $(this).stop(true).animate({ top: '0px' }, 200);
+         }
+      );
+   }
 /* NAVBAR TRANSPARENTE QUI SE COLORE AU SCROLL
    En haut de page, la navbar (.menu) est transparente.
    Dès qu'on scrolle (plus de 50px), on lui ajoute la classe .menu--scrolled
