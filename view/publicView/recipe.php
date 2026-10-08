@@ -314,7 +314,10 @@
 
           <!-- Bouton Envoyer, à droite -->
           <div class="text-right mt-2">
-             <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display']">Envoyer</button>
+             <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer 
+              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out 
+              hover:opacity-90 focus:opacity-90 focus:outline-none active:shadow-none active:translate-y-[6px]">Envoyer
+             </button>
           </div>
        </div>
 
@@ -322,7 +325,7 @@
  </section>
  <?php require_once "./../view/publicView/inc/footer.php" ?>
  <script src="./js/scripts.js"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+ <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 
  </body>
