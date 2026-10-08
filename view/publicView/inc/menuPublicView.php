@@ -184,10 +184,13 @@
                 <li><a href="./?pages=contact" class="hover:text-gold">Contact</a></li>
             </ul>
 
-            <button id="connexion" type="button" command="show-modal" commandfor="loginModal"
+            <button id="connexion" type="button" data-auth-open
                 class="text-white box-border border border-transparent focus:ring-4 focus:ring-warning-medium shadow-xs font-medium leading-5 text-sm px-4 py-2.5 focus:outline-none">
                 Connexion
             </button>
         </div>
 
     </nav>
+
+    <!-- Modal connexion / inscription, ouvert par le bouton ci-dessus (FE-50) -->
+    <?php require_once __DIR__ . "/authModal.php" ?>

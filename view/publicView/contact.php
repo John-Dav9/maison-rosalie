@@ -137,11 +137,10 @@ include "./../view/publicView/inc/menuPublicView.php";
     /* INITIALISATION (normalement rien à modifier en dessous) */
 
     // Création de la carte centrée selon la config
-    const map = L.map('contactMap').setView(config.center, config.zoom);
+    const map = L.map('contactMap', { attributionControl: false }).setView(config.center, config.zoom);
 
     // Fond de carte OpenStreetMap (gratuit, pas de clé API)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       maxZoom: 19
     }).addTo(map);
 
