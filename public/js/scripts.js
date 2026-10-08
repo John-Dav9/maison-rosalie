@@ -386,9 +386,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 /* NAVBAR TRANSPARENTE QUI SE COLORE AU SCROLL
    En haut de page, la navbar (.menu) est transparente.
-   Dès qu'on scrolle (plus de 50px), on lui ajoute la classe .menu--scrolled
-   qui lui donne un fond (couleur de la page) via le CSS.
-   Retrait de la classe quand on revient tout en haut. */
+   Dès qu'on scrolle (plus de 50px), elle prend la couleur de fond de la page.
+
+   VERSION RENFORCÉE : en plus d'ajouter la classe .menu--scrolled, on applique
+   aussi le fond directement en inline (style.backgroundColor). Comme ça, même
+   s'il y avait un conflit de priorité CSS (Tailwind, ordre des règles...),
+   la navbar se colore quand même. La couleur vient de la variable CSS
+   --nav-scrolled-bg (définie par page dans style.css), avec un crème en secours. */
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -397,6 +401,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // seuil de déclenchement en pixels de défilement vertical
   const scrollThreshold = 50;
+
+  // Lit la couleur de fond voulue pour cette page (variable CSS héritée),
+  // avec un crème #FBF5E6 en secours si la variable n'est pas définie.
+  function getScrolledColor() {
+    const value = getComputedStyle(navbar).getPropertyValue('--nav-scrolled-bg').trim();
+    return value || '#FBF5E6';
+  }
 
   function onScroll() {
     // on lit le défilement de plusieurs sources pour couvrir tous les cas
@@ -408,9 +419,14 @@ document.addEventListener('DOMContentLoaded', function () {
       || 0;
 
     if (scrolled > scrollThreshold) {
+      // 1) la classe CSS (gère la transition, le flou, l'ombre)
       navbar.classList.add('menu--scrolled');
+      // 2) le fond en inline, en secours, pour qu'il s'affiche à coup sûr
+      navbar.style.backgroundColor = getScrolledColor();
     } else {
+      // tout en haut : on remet la navbar transparente
       navbar.classList.remove('menu--scrolled');
+      navbar.style.backgroundColor = '';
     }
   }
 
