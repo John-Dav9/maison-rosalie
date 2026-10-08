@@ -9,7 +9,13 @@
       - Inscription (.auth-modal__panel[data-panel="register"])
     La bascule entre les deux est gérée en JS (classe .is-active).
 
-    Pas de validation pour l'instant (à ajouter plus tard, comme le contact).
+    ŒIL "AFFICHER / MASQUER LE MOT DE PASSE" :
+      Chaque champ mot de passe est entouré d'un <div class="auth-modal__password">
+      qui contient l'input + un bouton œil (.auth-modal__eye).
+      Par défaut l'œil est BARRÉ (fa-eye-slash) et le mot de passe est masqué.
+      Au clic, le JS bascule l'input en type="text" et montre l'œil ouvert
+      (fa-eye). Voir scripts.js, bloc "ŒIL AFFICHER / MASQUER LE MOT DE PASSE".
+      (Les icônes viennent de Font Awesome, déjà chargé dans menuPublicView.php.)
 -->
 <div id="authModal" class="auth-modal" aria-hidden="true">
 
@@ -45,9 +51,32 @@
             </div>
             <div class="auth-modal__field">
                 <label for="loginPassword">Mot de passe</label>
-                <input type="password" id="loginPassword" name="password" placeholder="••••••••" autocomplete="current-password">
+                <!-- Enveloppe input + œil : positionne le bouton œil par-dessus la droite du champ.
+                     L'input reste le 1er enfant (le JS lira .querySelector('input')). -->
+                <div class="auth-modal__password">
+                    <input type="password" id="loginPassword" name="password" placeholder="••••••••" autocomplete="current-password">
+                    <!-- Bouton œil : barré par défaut (mot de passe masqué). data-auth-eye = cible pour le JS -->
+                    <button type="button" class="auth-modal__eye" data-auth-eye aria-label="Afficher le mot de passe" aria-pressed="false">
+                        <i class="fa-regular fa-eye-slash" aria-hidden="true"></i>
+                    </button>
+                </div>
                 <span class="auth-modal__error" data-error-for="password"></span>
             </div>
+
+            <!-- "SE SOUVENIR DE MOI"
+                 La case envoie remember=1 au serveur quand elle est cochée.
+                 /!\ IMPORTANT (back-end) : garder l'utilisateur connecté après
+                 fermeture du navigateur se fait CÔTÉ PHP. Si $_POST['remember']
+                 est présent, il faut prolonger la durée de vie du cookie de
+                 session (ou poser un cookie "remember token" stocké en BDD) ;
+                 sinon la session expire normalement. Le front ne peut pas le
+                 garantir seul. Ici, le JS mémorise juste l'email pour le
+                 pré-remplir au retour (jamais le mot de passe). -->
+            <label class="auth-modal__remember">
+                <input type="checkbox" name="remember" value="1" data-auth-remember>
+                <span>Se souvenir de moi</span>
+            </label>
+
             <button type="submit" class="auth-modal__submit">Se connecter</button>
             <p class="auth-modal__switch">
                 Pas encore de compte ?
@@ -70,12 +99,24 @@
             </div>
             <div class="auth-modal__field">
                 <label for="registerPassword">Mot de passe</label>
-                <input type="password" id="registerPassword" name="password" placeholder="••••••••" autocomplete="new-password">
+                <!-- Enveloppe input + œil -->
+                <div class="auth-modal__password">
+                    <input type="password" id="registerPassword" name="password" placeholder="••••••••" autocomplete="new-password">
+                    <button type="button" class="auth-modal__eye" data-auth-eye aria-label="Afficher le mot de passe" aria-pressed="false">
+                        <i class="fa-regular fa-eye-slash" aria-hidden="true"></i>
+                    </button>
+                </div>
                 <span class="auth-modal__error" data-error-for="password"></span>
             </div>
             <div class="auth-modal__field">
                 <label for="registerPasswordConfirm">Confirmer le mot de passe</label>
-                <input type="password" id="registerPasswordConfirm" name="password_confirm" placeholder="••••••••" autocomplete="new-password">
+                <!-- Enveloppe input + œil -->
+                <div class="auth-modal__password">
+                    <input type="password" id="registerPasswordConfirm" name="password_confirm" placeholder="••••••••" autocomplete="new-password">
+                    <button type="button" class="auth-modal__eye" data-auth-eye aria-label="Afficher le mot de passe" aria-pressed="false">
+                        <i class="fa-regular fa-eye-slash" aria-hidden="true"></i>
+                    </button>
+                </div>
                 <span class="auth-modal__error" data-error-for="password_confirm"></span>
             </div>
             <button type="submit" class="auth-modal__submit">Créer mon compte</button>

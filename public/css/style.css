@@ -1977,6 +1977,54 @@ body:has(> .menu + section.bg-surface) {
     background: #fff;
 }
 
+/* CHAMP MOT DE PASSE AVEC ŒIL (afficher/masquer)
+   .auth-modal__password enveloppe l'input + le bouton œil.
+   position: relative → sert de repère pour positionner l'œil en absolute.
+   L'input prend toute la largeur de l'enveloppe et reçoit un padding-right
+   pour que le texte saisi ne passe pas sous l'icône. */
+#authModal .auth-modal__password {
+    position: relative;
+    display: block;
+}
+
+#authModal .auth-modal__password input {
+    width: 100%;
+    /* place à droite pour l'œil, sinon le texte passerait dessous */
+    padding-right: 2.75rem;
+}
+
+/* Bouton œil : collé à droite du champ, centré verticalement.
+   Sans fond ni bordure, il n'affiche que l'icône (couleur brun → doré au survol). */
+#authModal .auth-modal__eye {
+    position: absolute;
+    top: 50%;
+    right: .25rem;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #9a948c;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: .35rem;
+    transition: color .2s ease;
+}
+
+#authModal .auth-modal__eye:hover {
+    color: var(--auth-gold-dark);
+}
+
+/* Accessibilité : contour doré visible quand on navigue au clavier */
+#authModal .auth-modal__eye:focus-visible {
+    outline: 2px solid var(--auth-gold-dark);
+    outline-offset: 2px;
+}
+
 /* Champ en erreur (rouge) / valide (vert) — ajoutés par la validation JS */
 #authModal .auth-modal__field input.auth-modal__input--error {
     border-color: #9b2c2c;
@@ -1993,6 +2041,25 @@ body:has(> .menu + section.bg-surface) {
     color: #9b2c2c;
     font-size: .8rem;
     min-height: .9rem;
+}
+
+/* "SE SOUVENIR DE MOI" : case + libellé alignés sur une ligne */
+#authModal .auth-modal__remember {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .9rem;
+    color: var(--auth-brown);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Case à cocher aux couleurs de la marque (doré quand cochée) */
+#authModal .auth-modal__remember input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--auth-gold-dark);
+    cursor: pointer;
 }
 
 /* Bouton principal (Se connecter / Créer mon compte) */
