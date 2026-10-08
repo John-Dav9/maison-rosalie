@@ -385,59 +385,77 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+/* JAVASCRIPT DE LA PAGE RECETTE
+   IMPORTANT : ce bloc est protégé. Il ne s'exécute QUE si les éléments de la
+   page recette existent (portions, +, -, etc.). Sinon il s'arrête tout de suite.
+   Sans cette protection, document.getElementById('plus') valait null sur les
+   autres pages → .addEventListener plantait → et comme ce bloc est AVANT le
+   code de la navbar et du modal, tout ce qui suit ne s'exécutait jamais. */
 
-// <!-- ================= JAVASCRIPT DE LA PAGE RECETTE ================= -->
+document.addEventListener('DOMContentLoaded', function () {
 
+  // Éléments de base de la page recette (portions + boutons +/-)
+  const portionsEl = document.getElementById('portions');
+  const portionsTexteEl = document.getElementById('portions-texte');
+  const plusBtn = document.getElementById('plus');
+  const moinsBtn = document.getElementById('moins');
 
-   {
-      
+  // Si on n'est pas sur la page recette, on arrête ici (pas d'erreur ailleurs)
+  if (!portionsEl || !plusBtn || !moinsBtn) return;
 
-      // 1) Portions : + et - changent le nombre de personnes et les quantités
-      let portions = 4;
-      function mettreAJour() {
-         document.getElementById('portions').textContent = portions;
-         document.getElementById('portions-texte').textContent = portions;
-         document.querySelectorAll('.quantite').forEach(function (q) {
-            q.textContent = Math.round(q.dataset.quantite / 4 * portions);
-         });
+  // 1) Portions : + et - changent le nombre de personnes et les quantités
+  let portions = 4;
+  function mettreAJour() {
+    portionsEl.textContent = portions;
+    if (portionsTexteEl) portionsTexteEl.textContent = portions;
+    document.querySelectorAll('.quantite').forEach(function (q) {
+      q.textContent = Math.round(q.dataset.quantite / 4 * portions);
+    });
+  }
+  plusBtn.addEventListener('click', function () {
+    portions = portions + 1;
+    mettreAJour();
+  });
+  moinsBtn.addEventListener('click', function () {
+    if (portions > 1) {
+      portions = portions - 1;
+      mettreAJour();
+    }
+  });
+
+  // 2) Carrousel : les flèches font défiler les ingrédients (seulement s'il existe)
+  const carrousel = document.getElementById('carrousel');
+  const gaucheBtn = document.getElementById('gauche');
+  const droiteBtn = document.getElementById('droite');
+  if (carrousel && gaucheBtn && droiteBtn) {
+    gaucheBtn.addEventListener('click', function () {
+      carrousel.scrollBy({ left: -160 });
+    });
+    droiteBtn.addEventListener('click', function () {
+      carrousel.scrollBy({ left: 160 });
+    });
+  }
+
+  // 3) Étapes : quand on coche une étape, elle devient pâle
+  document.querySelectorAll('.etape input').forEach(function (caseACocher) {
+    caseACocher.addEventListener('change', function () {
+      caseACocher.parentElement.classList.toggle('opacity-50');
+    });
+  });
+
+  // 4) Étapes : au survol, la case monte un peu ; quand la souris part, elle redescend
+  //    (utilise jQuery : on ne l'exécute que si jQuery est bien chargé)
+  if (window.jQuery) {
+    jQuery('.etape').hover(
+      function () {
+        jQuery(this).stop(true).animate({ top: '-6px' }, 200);
+      },
+      function () {
+        jQuery(this).stop(true).animate({ top: '0px' }, 200);
       }
-      document.getElementById('plus').addEventListener('click', function () {
-         portions = portions + 1;
-         mettreAJour();
-      });
-      document.getElementById('moins').addEventListener('click', function () {
-         if (portions > 1) {
-            portions = portions - 1;
-            mettreAJour();
-         }
-      });
-
-      // 2) Carrousel : les flèches font défiler les ingrédients
-      const carrousel = document.getElementById('carrousel');
-      document.getElementById('gauche').addEventListener('click', function () {
-         carrousel.scrollBy({ left: -160 });
-      });
-      document.getElementById('droite').addEventListener('click', function () {
-         carrousel.scrollBy({ left: 160 });
-      });
-
-      // 3) Étapes : quand on coche une étape, elle devient pâle
-      document.querySelectorAll('.etape input').forEach(function (caseACocher) {
-         caseACocher.addEventListener('change', function () {
-            caseACocher.parentElement.classList.toggle('opacity-50');
-         });
-      });
-
-      // 4) Étapes : au survol, la case monte un peu ; quand la souris part, elle redescend
-      $('.etape').hover(
-         function () {
-            $(this).stop(true).animate({ top: '-6px' }, 200);
-         },
-         function () {
-            $(this).stop(true).animate({ top: '0px' }, 200);
-         }
-      );
-   }
+    );
+  }
+});
 /* NAVBAR TRANSPARENTE QUI SE COLORE AU SCROLL
    En haut de page, la navbar (.menu) est transparente.
    Dès qu'on scrolle (plus de 50px), on lui ajoute la classe .menu--scrolled
