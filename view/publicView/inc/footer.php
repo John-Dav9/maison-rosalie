@@ -1,7 +1,5 @@
    <!---------footer pour le fond marron------->
    <footer class="bg-[#2F1B14] px-16 py-10">
-
-
          <!-- Logo en image -->
          <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-32">
          <!------ligne de séparation----->
@@ -15,19 +13,18 @@
                      <!--Colonne 1 : navigation-->
                      <h3 class="text-[#C9A45C] font-bold mb-6">Navigation</h3>
                      <ul class="space-y-4 text-white">
-                           <li><a href="#"
+                           <li><a href="./?pages=home"
                                        class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
                                        Accueil</a></li>
-                           <li><a href="#"
+                           <li><a href="./?pages=about"
+                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
+                                       À propos</a></li>
+                           <li><a href="./?pages=recettes"
                                        class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
                                        Recettes</a></li>
-                           <li><a href="#"
-                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
-                                       A propos</a></li>
-                           <li><a href="#"
+                           <li><a href="./?pages=contact"
                                        class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">
                                        Contact</a></li>
-
                      </ul>
                </div>
                <!--Colonne 2 : mentions légales-->
@@ -46,8 +43,6 @@
                                        class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Conditions d'utilisation</a></li>
                      </ul>
                </div>
-
-
                <!--Colonne 3 :  réseaux sociaux-->
                <div class="space-y-6">
                      <h3 class="text-[#C9A45C] font-bold mb-6"> Réseaux sociaux</h3>
@@ -60,17 +55,13 @@
                            <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
                            <li><a href="#"><i class="fa-brands fa-linkedin-in"></i></a></li>
                      </ul>
-
-
                </div>
          </div>
          </div>
          <!------ligne de séparation----->
          <hr class="my-10 border-white" />
-
          <!-----Copyright, centré ---->
          <p class="text-center text-[#BFA58A]">
                &lt&lt © 2026 Maison Rosalie - Tous droits réservés. &gt&gt
          </p>
-
    </footer>
