@@ -79,7 +79,6 @@
                                 </p>
                                 <div class="bg-surface-container-low px-2.5 py-1.5 rounded-DEFAULT text-on-surface-variant font-body-sm text-xs flex items-center justify-between">
                                     <span class="">⏱ 25 min</span>
-                                    <span class="">👥 4 pers.</span>
                                     <span class="font-medium text-secondary">Facile</span>
                                 </div>
                             </div>
@@ -238,28 +237,7 @@
                     </article>
                 </div>
             </section>
-            <!-- Pagination Component -->
-            <nav aria-label="Pagination des recettes" class="w-full max-w-[1280px] mx-auto px-margin pt-space-xl pb-space-lg flex items-center justify-center">
-                <div class="flex items-center gap-space-xs bg-surface-container-low p-1.5 rounded-full shadow-sm">
-                    <button aria-label="Page précédente" class="w-9 h-9 rounded-full flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface transition-colors" type="button">
-                        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
-                    </button>
-                    <div class="flex items-center gap-1 px-1">
-                        <button aria-current="page" class="w-9 h-9 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center shadow-sm" type="button">
-                            1
-                        </button>
-                        <button class="w-9 h-9 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface font-body-md text-body-md flex items-center justify-center transition-colors" type="button">
-                            2
-                        </button>
-                        <button class="w-9 h-9 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface font-body-md text-body-md flex items-center justify-center transition-colors" type="button">
-                            3
-                        </button>
-                    </div>
-                    <button aria-label="Page suivante" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface hover:bg-surface transition-colors" type="button">
-                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
-                    </button>
-                </div>
-            </nav>
+            
             <!-- Newsletter & Culinary Note Callout (Editorial Section) -->
             <section class="w-full max-w-[1280px] mx-auto px-margin py-space-xl">
                 <div class="relative bg-surface-container rounded-DEFAULT p-space-xl overflow-hidden shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-lg">
@@ -280,6 +258,7 @@
         </div>
     </main>
     <?php require_once "./../view/publicView/inc/footer.php" ?>
+    <script src="./js/scripts.js"></script>
 </section>
 </body>
 

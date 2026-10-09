@@ -1,4 +1,4 @@
-<?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
+ <?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
  <!--=========Fond créme pour toute la section ================-->
  <section id="recettes" class="bg-[#FBF5E6] text-[#2F1B14] pb-16">
 
@@ -104,7 +104,11 @@
              <!-- Une carte = un ingrédient. data-quantite = quantité pour 4 personnes -->
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
+<<<<<<< HEAD
                    <img src="./assets/ganache1.webp" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+=======
+                   <img src="./assets/Capture d'écran 2026-10-08 130423.png" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+>>>>>>> 47a27769f7398fefcfc7effb2c9722c2c63509d7
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="200">200</span>g</p>
@@ -112,7 +116,11 @@
 
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
+<<<<<<< HEAD
                    <img src="./assets/beurre.webp" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+=======
+                   <img src="./assets/Capture d'écran 2026-10-08 130400.png" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+>>>>>>> 47a27769f7398fefcfc7effb2c9722c2c63509d7
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Beurre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
@@ -120,7 +128,11 @@
 
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
+<<<<<<< HEAD
                    <img src="./assets/sucre.webp" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+=======
+                   <img src="./assets/istockphoto-516358950-612x612-1.jpg" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+>>>>>>> 47a27769f7398fefcfc7effb2c9722c2c63509d7
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Sucre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
@@ -128,7 +140,11 @@
 
              <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
+<<<<<<< HEAD
                    <img src="./assets/oeufs.webp" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+=======
+                   <img src="./assets/conteaaant_lg.jpg" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+>>>>>>> 47a27769f7398fefcfc7effb2c9722c2c63509d7
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Œufs</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="4">4</span></p>
@@ -136,7 +152,11 @@
 
              <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
+<<<<<<< HEAD
                    <img src="./assets/cacoa.webp" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+=======
+                   <img src="./assets/is-cocoa-processed-with-alkali-vegan.jpg" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+>>>>>>> 47a27769f7398fefcfc7effb2c9722c2c63509d7
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Cacao en poudre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="30">30</span>g</p>
