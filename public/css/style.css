@@ -1120,7 +1120,7 @@ body:has(> .menu + section.bg-surface) {
 }
 
 #connexion, #deconnexion {
-    background-color: #FAEDCD;
+    background-color: #D4A373;
     border-radius: 15px;
     color: black;
     cursor: pointer;
@@ -1795,13 +1795,10 @@ body:has(> .menu + section.bg-surface) {
     }
 }
 
-/* ==================================================================
-   MODAL CONNEXION / INSCRIPTION (FE-50)
-   ==================================================================
+/* MODAL CONNEXION / INSCRIPTION (FE-50)
    Thème clair de la marque : crème, doré, brun chocolat.
    Scopé sous #authModal. Ouverture/fermeture et onglets gérés
-   dans scripts.js (classes .is-open et .is-active).
-   ================================================================== */
+   dans scripts.js (classes .is-open et .is-active). */
 #authModal {
     --auth-gold: #C9A45C;
     --auth-gold-dark: #B8860B;
