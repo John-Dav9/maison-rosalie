@@ -271,11 +271,11 @@
                 quod temporibus perspiciatis nam odit vitae quia eaque harum!
                 lorem ipsum dolor sit amet consectetur adipisicing elit. Vero dolore autem similique minima eveniet, fugit sapiente necessitatibus cum consectetur laborum, deserunt
                 quod temporibus perspiciatis nam odit vitae quia eaque harum!
-             </p>
-          </div>
-       </div>
-       <!-- ================= FORMULAIRE : Note + Commentaire + Envoyer ================= -->
-       <div class="bg-[#FBF5E6] border border-[#E5C98A] px-8 py-6 mt-6">
+               </p>
+            </div>
+         </div>
+         <!-- ================= FORMULAIRE : Note + Commentaire + Envoyer ================= -->
+         <div class="bg-[#FBF5E6] border border-[#E5C98A] px-8 py-6 mt-6">
 
 
           <!-- Commentaire : grande case pour écrire -->
