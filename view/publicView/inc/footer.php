@@ -1,14 +1,13 @@
    <!---------footer pour le fond marron------->
    <footer class="bg-[#2F1B14] px-16 py-10">
-         <!-- Logo en image -->
-         <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-32">
+        
          <!------ligne de séparation----->
          <hr class="my-10 border-white" />
 
-         <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-y-12 gap-x-6 sm:gap-x-8 text-center">
-
+         <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-y-12 gap-x-6 sm:gap-x-8 text-center">
                <!--les colonnes -->
-
+                <!-- Logo en image -->
+         <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-32">
                <div class="space-y-6">
                      <!--Colonne 1 : navigation-->
                      <h3 class="text-[#C9A45C] font-bold mb-6">Navigation</h3>
