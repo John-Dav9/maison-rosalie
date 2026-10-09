@@ -1,4 +1,4 @@
-   <!---------footer pour le fond marron------->
+<!---------footer pour le fond marron------->
    <footer class="bg-[#2F1B14] px-16 py-10">
         
          <!------ligne de séparation----->
@@ -29,17 +29,20 @@
                <!--Colonne 2 : mentions légales-->
                <div class="space-y-6">
                      <h3 class="text-[#C9A45C] font-bold mb-6">Mention Legal</h3>
+                     <!-- Les liens ouvrent le modal des mentions légales (voir legalModal.php).
+                          data-legal-open = clé du document à afficher. type="button" car ce
+                          sont des boutons d'action (pas de vraie navigation). -->
                      <ul class="space-y-4 text-white">
-                           <li><a href="#"
-                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Politique de confidentialité</a></li>
-                           <li><a href="#"
-                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Politique des cookies </a></li>
-                           <li><a href="#"
-                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Droits GDPR</a></li>
-                           <li><a href="#"
-                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Traitement des données</a></li>
-                           <li><a href="#"
-                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Conditions d'utilisation</a></li>
+                           <li><button type="button" data-legal-open="privacy"
+                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Politique de confidentialité</button></li>
+                           <li><button type="button" data-legal-open="cookies"
+                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Politique des cookies</button></li>
+                           <li><button type="button" data-legal-open="gdpr"
+                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Droits GDPR</button></li>
+                           <li><button type="button" data-legal-open="data"
+                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Traitement des données</button></li>
+                           <li><button type="button" data-legal-open="terms"
+                                       class="hover:text-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-all">Conditions d'utilisation</button></li>
                      </ul>
                </div>
                <!--Colonne 3 :  réseaux sociaux-->
@@ -63,4 +66,8 @@
          <p class="text-center text-[#BFA58A]">
                &lt&lt © 2026 Maison Rosalie - Tous droits réservés. &gt&gt
          </p>
+
    </footer>
+
+   <!-- Modal des mentions légales, ouvert par les liens de la colonne "Mention Legal" ci-dessus -->
+   <?php require_once __DIR__ . "/legalModal.php" ?>

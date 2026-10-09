@@ -880,3 +880,69 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+/* MODAL MENTIONS LÉGALES (liens du footer)
+   Ouvre #legalModal au clic sur un lien de la colonne "Mention Legal"
+   ([data-legal-open="<clé>"]), affiche le bon panneau et met à jour le titre.
+   Ferme au clic sur la croix, sur le fond, ou avec la touche Échap.
+   Un seul modal réutilisé pour les 5 documents (privacy, cookies, gdpr, data, terms).
+   Ne fait rien si le modal n'est pas présent sur la page. */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const modal = document.getElementById('legalModal');
+  if (!modal) return;
+
+  const openBtns = document.querySelectorAll('[data-legal-open]');
+  const closeEls = modal.querySelectorAll('[data-legal-close]');
+  const panels   = modal.querySelectorAll('.legal-modal__panel');
+  const titleEl  = modal.querySelector('.legal-modal__title');
+
+  // Affiche le panneau correspondant à la clé et met à jour le titre
+  function showPanel(key) {
+    panels.forEach(function (panel) {
+      const isTarget = panel.getAttribute('data-legal-panel') === key;
+      panel.classList.toggle('is-active', isTarget);
+      // le titre du modal reprend le libellé stocké sur le panneau actif
+      if (isTarget && titleEl) {
+        titleEl.textContent = panel.getAttribute('data-legal-title') || 'Mentions légales';
+      }
+    });
+  }
+
+  // Ouvre le modal sur le document demandé
+  function openModal(key) {
+    showPanel(key);
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('legal-modal-open');
+    // on remet le contenu tout en haut à chaque ouverture
+    const dialog = modal.querySelector('.legal-modal__dialog');
+    if (dialog) dialog.scrollTop = 0;
+  }
+
+  // Ferme le modal
+  function closeModal() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('legal-modal-open');
+  }
+
+  // Clic sur un lien du footer → ouverture sur le bon document
+  openBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      openModal(btn.getAttribute('data-legal-open'));
+    });
+  });
+
+  // Clic sur la croix ou le fond → fermeture
+  closeEls.forEach(function (el) {
+    el.addEventListener('click', closeModal);
+  });
+
+  // Touche Échap → fermeture
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+});
