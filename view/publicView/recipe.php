@@ -104,7 +104,7 @@
              <!-- Une carte = un ingrédient. data-quantite = quantité pour 4 personnes -->
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/Capture d'écran 2026-10-08 130423.png" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/Capture d'écran 2026-10-08 130423.webp" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="200">200</span>g</p>
@@ -112,7 +112,7 @@
 
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/Capture d'écran 2026-10-08 130400.png" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/Capture d'écran 2026-10-08 130400.webp" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Beurre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
@@ -120,7 +120,7 @@
 
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/istockphoto-516358950-612x612-1.jpg" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/istockphoto-516358950-612x612-1.webp" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Sucre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
@@ -128,7 +128,7 @@
 
              <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/conteaaant_lg.jpg" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/conteaaant_lg.webp" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Œufs</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="4">4</span></p>
@@ -136,7 +136,7 @@
 
              <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/is-cocoa-processed-with-alkali-vegan.jpg" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/is-cocoa-processed-with-alkali-vegan.webp" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Cacao en poudre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="30">30</span>g</p>
@@ -239,11 +239,7 @@
                    <p class="font-bold font-['Playfair_Display'] text-sm">Darrell Steward</p>
                    <p class="text-sm mt-1">Darrell.Steward@cf2000.com</p>
                 </div>
-                <!-- 3 étoiles rouges, 2 grises -->
-                <p class="text-red-600 text-lg">
-                   <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                   <i class="fa-solid fa-star text-gray-300"></i><i class="fa-solid fa-star text-gray-300"></i>
-                </p>
+
              </div>
              <p class="text-xs mt-3">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -267,11 +263,7 @@
                    <p class="font-bold font-['Playfair_Display'] text-sm">Annette Black</p>
                    <p class="text-sm mt-1">Annette.Black@cf2000.com</p>
                 </div>
-                <!-- 2 étoiles rouges, 3 grises -->
-                <p class="text-red-600 text-lg">
-                   <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                   <i class="fa-solid fa-star text-gray-300"></i><i class="fa-solid fa-star text-gray-300"></i><i class="fa-solid fa-star text-gray-300"></i>
-                </p>
+
              </div>
              <p class="text-xs mt-3">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -282,29 +274,9 @@
              </p>
           </div>
        </div>
-
-
-
-
-
-
        <!-- ================= FORMULAIRE : Note + Commentaire + Envoyer ================= -->
        <div class="bg-[#FBF5E6] border border-[#E5C98A] px-8 py-6 mt-6">
-          <div class="grid grid-cols-2 gap-x-16">
 
-
-             <!-- Note : 5 étoiles + texte + flèche (colonne de droite) -->
-             <div class="col-start-2">
-                <p class="text-sm font-bold mb-1">Note</p>
-                <select class="w-full bg-white border border-[#E5C98A] px-3 py-2 text-sm">
-                   <option>★★★★★ (5/5) excellent</option>
-                   <option>★★★★☆ (4/5) très bon</option>
-                   <option>★★★☆☆ (3/5) bon</option>
-                   <option>★★☆☆☆ (2/5) moyen</option>
-                   <option>★☆☆☆☆ (1/5) mauvais</option>
-                </select>
-             </div>
-          </div>
 
           <!-- Commentaire : grande case pour écrire -->
           <div class="mt-4">
@@ -312,12 +284,37 @@
              <textarea class="w-full h-20 resize-none bg-white border border-[#E5C98A] p-2"></textarea>
           </div>
 
+
           <!-- Bouton Envoyer, à droite -->
           <div class="text-right mt-2">
              <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer 
               shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out 
               hover:opacity-90 focus:opacity-90 focus:outline-none active:shadow-none active:translate-y-[6px]">Envoyer
              </button>
+          </div>
+       </div>
+       <div class="grid grid-cols-2 gap-x-16">
+
+
+          <!-- Note : 5 étoiles + texte + flèche (colonne de droite) -->
+          <div class=" bg-[#FBF5E6] border border-[#E5C98A] p-4 min-h-40 mt-6">
+
+             <div class="flex-1 text-center">
+                <p class="text-sm font-bold mb-2">Note</p>
+                <select class="w-1/2 -translate-x-6 bg-white border border-[#E5C98A] px-3 py-2 text-sm">
+                   <option>★★★★★ (5/5) excellent</option>
+                   <option>★★★★☆ (4/5) très bon</option>
+                   <option>★★★☆☆ (3/5) bon</option>
+                   <option>★★☆☆☆ (2/5) moyen</option>
+                   <option>★☆☆☆☆ (1/5) mauvais</option>
+                </select>
+             </div>
+             <div class="text-right mt-6">
+                <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer 
+              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out 
+              hover:opacity-90 focus:opacity-90 focus:outline-none active:shadow-none active:translate-y-[6px]">Envoyer
+                </button>
+             </div>
           </div>
        </div>
 
