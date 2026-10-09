@@ -172,9 +172,66 @@ if (($_GET['pages'] ?? '') === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST')
     exit;
 }
 
+// Enregistre un message de contact et envoie sa notification en texte brut.
+if (($_GET['pages'] ?? '') === 'contact' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+    require_once BASE_URL . '/model/ManagerInterface.php';
+    require_once BASE_URL . '/model/AbstractMapping.php';
+    require_once BASE_URL . '/model/mapping/contactMapping.php';
+    require_once BASE_URL . '/model/ContactText.php';
+    require_once BASE_URL . '/model/manager/ContactManager.php';
+    require_once BASE_URL . '/model/manager/ContactMailer.php';
+
+    $contactError = null;
+    $postedToken = $_POST['csrf_token'] ?? null;
+    $sessionToken = $_SESSION['contact_csrf_token'] ?? '';
+    if (!is_string($postedToken) || !is_string($sessionToken) || $sessionToken === '' || !hash_equals($sessionToken, $postedToken)) {
+        $contactError = 'La session du formulaire a expiré. Rechargez la page puis réessayez.';
+    } elseif (!is_string($_POST['website'] ?? '') || trim((string) ($_POST['website'] ?? '')) !== '') {
+        $contactError = 'Le formulaire n’a pas pu être validé.';
+    } elseif (isset($_SESSION['contact_last_submitted_at'])
+        && is_int($_SESSION['contact_last_submitted_at'])
+        && time() - $_SESSION['contact_last_submitted_at'] < 30) {
+        $contactError = 'Veuillez attendre quelques secondes avant d’envoyer un autre message.';
+    } else {
+        $contactManager = new \model\manager\ContactManager($connectPDO);
+        $savedContact = $contactManager->addContact($_POST);
+        if ($savedContact === false) {
+            $contactError = 'Vérifiez les champs du formulaire et réessayez.';
+        } else {
+            $_SESSION['contact_last_submitted_at'] = time();
+            $recipient = defined('CONTACT_RECIPIENT_EMAIL')
+                ? CONTACT_RECIPIENT_EMAIL
+                : 'maison.rosalie.chocolat@gmail.com';
+            $mailer = new \model\manager\ContactMailer();
+            $mailSent = $mailer->send([
+                'name' => $savedContact->getName(),
+                'email' => $savedContact->getEmail(),
+                'subject' => $savedContact->getSubject() ?? '',
+                'message' => $savedContact->getMessage(),
+            ], $recipient);
+            $contactError = $mailSent
+                ? null
+                : 'Votre message est enregistré, mais la notification par courriel n’a pas pu être envoyée.';
+        }
+    }
+
+    $_SESSION['contact_feedback'] = [
+        'type' => $contactError === null ? 'success' : 'error',
+        'message' => $contactError ?? 'Votre message a été enregistré et envoyé.',
+    ];
+    header('Location: ./?pages=contact');
+    exit;
+}
+
 // Récupère le message temporaire après la redirection, puis le retire de la session.
 $authFeedback = $_SESSION['auth_feedback'] ?? null;
 unset($_SESSION['auth_feedback']);
+$contactFeedback = $_SESSION['contact_feedback'] ?? null;
+unset($_SESSION['contact_feedback']);
+if (!isset($_SESSION['contact_csrf_token']) || !is_string($_SESSION['contact_csrf_token'])) {
+    $_SESSION['contact_csrf_token'] = bin2hex(random_bytes(32));
+}
+$contactCsrfToken = $_SESSION['contact_csrf_token'];
 
 // si non existence de la variable
 // $_GET nommée 'p'
