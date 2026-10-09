@@ -2103,3 +2103,170 @@ body:has(> .menu + section.bg-surface) {
 body.auth-modal-open {
     overflow: hidden;
 }
+
+/* ==================================================================
+   MODAL DES MENTIONS LÉGALES (liens du footer)
+   ==================================================================
+   Même thème que le modal connexion (crème, doré, brun chocolat).
+   Un seul modal (#legalModal) réutilisé pour les 5 documents : le JS
+   affiche le bon panneau (.legal-modal__panel.is-active) et met à jour
+   le titre. Ouverture/fermeture : scripts.js, bloc "MODAL MENTIONS LÉGALES".
+   ================================================================== */
+
+/* Les liens de la colonne "Mention Legal" sont des <button> : on les
+   remet à l'allure d'un simple lien texte (pas de fond ni bordure de bouton). */
+.footer-legal-reset,
+[data-legal-open] {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+#legalModal {
+    --legal-gold: #C9A45C;
+    --legal-gold-dark: #B8860B;
+    --legal-cream: #FBF5E6;
+    --legal-brown: #2F1B14;
+
+    /* masqué par défaut */
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Modal ouvert (classe ajoutée par le JS) */
+#legalModal.is-open {
+    display: flex;
+}
+
+/* Fond sombre derrière la fenêtre */
+#legalModal .legal-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 14, 8, .65);
+    backdrop-filter: blur(3px);
+}
+
+/* Fenêtre : un peu plus large que le modal connexion car les textes sont longs */
+#legalModal .legal-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 40rem;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: var(--legal-cream);
+    color: var(--legal-brown);
+    border-radius: 1rem;
+    border: 1px solid var(--legal-gold);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+    padding: 2.5rem 2rem 2rem;
+    animation: legalModalIn .25s ease;
+}
+
+@keyframes legalModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Bouton de fermeture */
+#legalModal .legal-modal__close {
+    position: absolute;
+    top: .75rem;
+    right: 1rem;
+    border: none;
+    background: none;
+    color: var(--legal-brown);
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color .2s ease;
+}
+
+#legalModal .legal-modal__close:hover {
+    color: var(--legal-gold-dark);
+}
+
+/* Titre du document (mis à jour par le JS) */
+#legalModal .legal-modal__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.6rem;
+    color: var(--legal-brown);
+    margin: 0;
+    text-align: center;
+}
+
+/* Petit trait doré sous le titre */
+#legalModal .legal-modal__divider {
+    display: block;
+    width: 3rem;
+    height: 2px;
+    margin: .75rem auto 1.5rem;
+    background: var(--legal-gold-dark);
+}
+
+/* Zone de contenu */
+#legalModal .legal-modal__body {
+    font-size: .95rem;
+    line-height: 1.6;
+    color: #4a3a30;
+}
+
+/* Panneaux : masqués sauf l'actif (classe ajoutée par le JS) */
+#legalModal .legal-modal__panel {
+    display: none;
+}
+
+#legalModal .legal-modal__panel.is-active {
+    display: block;
+}
+
+/* Sous-titres dorés à l'intérieur d'un document */
+#legalModal .legal-modal__body h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--legal-gold-dark);
+    margin: 1.25rem 0 .4rem;
+}
+
+#legalModal .legal-modal__body p {
+    margin: 0 0 .75rem;
+}
+
+#legalModal .legal-modal__body ul {
+    margin: 0 0 .75rem;
+    padding-left: 1.25rem;
+    list-style: disc;
+}
+
+#legalModal .legal-modal__body li {
+    margin-bottom: .4rem;
+}
+
+#legalModal .legal-modal__body a {
+    color: var(--legal-gold-dark);
+    text-decoration: underline;
+}
+
+/* Quand un modal (connexion OU légal) est ouvert, on bloque le scroll du fond */
+body.legal-modal-open {
+    overflow: hidden;
+}
