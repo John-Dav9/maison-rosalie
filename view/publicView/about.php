@@ -26,7 +26,7 @@
 
             <!-- photo de la boutique : chargée seulement quand elle arrive à l'écran (FE-66) -->
             <figure class="about__media">
-                <img src="./assets/images/Untitleaaad.jpg"
+                <img src="./assets/images/facade-chocolaterie-maison-rosalie.webp"
                     alt="Façade de la boutique Maison Rosalie avec sa terrasse et ses chaises en rotin"
                     width="600" height="620" loading="lazy">
             </figure>
