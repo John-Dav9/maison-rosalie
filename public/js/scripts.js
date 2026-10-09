@@ -640,21 +640,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       },
       password: {
-        // au moins 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial
-        regex: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
+        // À la connexion, le serveur vérifie le mot de passe existant; la règle de complexité concerne l'inscription.
+        regex: /^[\s\S]+$/,
         messages: {
           empty: 'Le mot de passe est obligatoire.',
-          invalid: 'Au moins 8 caractères, avec une majuscule, un chiffre et un caractère spécial.'
+          invalid: 'Le mot de passe est invalide.'
         }
       }
     },
     register: {
       username: {
-        // 3 à 20 caractères : lettres, chiffres, tiret et underscore
-        regex: /^[A-Za-z0-9_-]{3,20}$/,
+        // Le nom affiché accepte les espaces et caractères accentués, dans la limite du serveur (100 caractères).
+        regex: /^[\s\S]{1,100}$/,
         messages: {
-          empty: "Le nom d'utilisateur est obligatoire.",
-          invalid: "3 à 20 caractères : lettres, chiffres, - et _ uniquement."
+          empty: "Le nom est obligatoire.",
+          invalid: 'Le nom ne doit pas dépasser 100 caractères.'
         }
       },
       email: {
@@ -707,7 +707,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const { input } = getField(form, name);
     if (!rule || !input) return true;
 
-    const value = input.value.trim();
+    // Le mot de passe est conservé tel quel; seul l'email est nettoyé avant validation.
+    const value = name === 'password' ? input.value : input.value.trim();
 
     if (value === '') {
       showError(form, name, rule.messages.empty);
@@ -727,12 +728,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirm = form.querySelector('[name="password_confirm"]');
     if (!confirm) return true;
 
-    const value = confirm.value.trim();
+    // La confirmation doit correspondre exactement : les espaces font partie du mot de passe.
+    const value = confirm.value;
     if (value === '') {
       showError(form, 'password_confirm', 'Merci de confirmer le mot de passe.');
       return false;
     }
-    if (pass && value !== pass.value.trim()) {
+    if (pass && value !== pass.value) {
       showError(form, 'password_confirm', 'Les mots de passe ne correspondent pas.');
       return false;
     }

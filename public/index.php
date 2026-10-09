@@ -45,11 +45,18 @@ try {
 }
 
 
-// ici sont redirigés les administrateurs connectés.
-if(isset($_SESSION['myID'])&&$_SESSION['myID']==session_id()){
+// La sortie de session passe par le contrôleur public, même pour un administrateur.
+$isLogoutPost = (($_GET['pages'] ?? '') === 'logout'
+    && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST');
+$isAdminPage = (($_GET['pages'] ?? '') === 'admin');
+$isAdmin = isset($_SESSION['user_role_id']) && (int) $_SESSION['user_role_id'] === 1;
+
+if ($isLogoutPost) {
+    require_once "../controller/publicController.php";
+} elseif ($isAdminPage && $isAdmin) {
+    // Seul un compte de rôle 1 peut atteindre le contrôleur privé.
     require_once "../controller/privateController.php";
-  
-// zone publique, pour les visiteurs
-}else{
+} else {
+    // Les pages publiques restent accessibles aux visiteurs, utilisateurs et administrateurs.
     require_once "../controller/publicController.php";
 }

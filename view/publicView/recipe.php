@@ -104,7 +104,7 @@
              <!-- Une carte = un ingrédient. data-quantite = quantité pour 4 personnes -->
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/ganache1.webp" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/Capture d'écran 2026-10-08 130423.png" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="200">200</span>g</p>
@@ -112,7 +112,7 @@
 
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/beurre.webp" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/Capture d'écran 2026-10-08 130400.png" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Beurre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
@@ -120,7 +120,7 @@
 
              <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/sucre.jpg" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/istockphoto-516358950-612x612-1.jpg" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Sucre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
@@ -128,7 +128,7 @@
 
              <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/oeufs.jpg" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/conteaaant_lg.jpg" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Œufs</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="4">4</span></p>
@@ -136,7 +136,7 @@
 
              <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
                 <div class="overflow-hidden rounded">
-                   <img src="./assets/cacoa.jpg" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   <img src="./assets/is-cocoa-processed-with-alkali-vegan.jpg" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
                 </div>
                 <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Cacao en poudre</p>
                 <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="30">30</span>g</p>
@@ -314,7 +314,10 @@
 
           <!-- Bouton Envoyer, à droite -->
           <div class="text-right mt-2">
-             <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display']">Envoyer</button>
+             <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer 
+              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out 
+              hover:opacity-90 focus:opacity-90 focus:outline-none active:shadow-none active:translate-y-[6px]">Envoyer
+             </button>
           </div>
        </div>
 
@@ -322,7 +325,7 @@
  </section>
  <?php require_once "./../view/publicView/inc/footer.php" ?>
  <script src="./js/scripts.js"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+ <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 
  </body>
