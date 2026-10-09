@@ -1119,7 +1119,7 @@ body:has(> .menu + section.bg-surface) {
     --nav-scrolled-bg: #fcf9f4;
 }
 
-#connexion {
+#connexion, #deconnexion {
     background-color: #FAEDCD;
     border-radius: 15px;
     color: black;

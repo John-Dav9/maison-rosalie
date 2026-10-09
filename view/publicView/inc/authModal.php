@@ -34,16 +34,28 @@
             <h2 id="authModalTitle" class="auth-modal__title">Bienvenue</h2>
         </div>
 
+        <?php $authActiveTab = ($authFeedback['form'] ?? '') === 'register' ? 'register' : 'login'; ?>
+        <?php if (is_array($authFeedback ?? null) && isset($authFeedback['message']) && is_string($authFeedback['message'])): ?>
+            <?php $feedbackIsSuccess = ($authFeedback['type'] ?? '') === 'success'; ?>
+            <!-- Le contrôleur indique le résultat de la connexion ou de la création du compte. -->
+            <p class="mb-4 rounded border p-3 text-sm <?= $feedbackIsSuccess ? 'border-green-700 bg-green-50 text-green-900' : 'border-red-700 bg-red-50 text-red-900' ?>"
+               role="<?= $feedbackIsSuccess ? 'status' : 'alert' ?>">
+                <?= htmlspecialchars($authFeedback['message'], ENT_QUOTES, 'UTF-8') ?>
+            </p>
+        <?php endif; ?>
+
         <!-- Onglets -->
         <div class="auth-modal__tabs" role="tablist">
-            <button type="button" class="auth-modal__tab is-active" data-tab="login" role="tab">Connexion</button>
-            <button type="button" class="auth-modal__tab" data-tab="register" role="tab">Inscription</button>
+            <button type="button" class="auth-modal__tab <?= $authActiveTab === 'login' ? 'is-active' : '' ?>" data-tab="login" role="tab">Connexion</button>
+            <button type="button" class="auth-modal__tab <?= $authActiveTab === 'register' ? 'is-active' : '' ?>" data-tab="register" role="tab">Inscription</button>
         </div>
 
         <!-- Panneau CONNEXION -->
         <!-- data-auth-form : identifie le formulaire pour la validation JS (scripts.js) -->
-        <form class="auth-modal__panel is-active" data-panel="login" data-auth-form="login"
+        <form class="auth-modal__panel <?= $authActiveTab === 'login' ? 'is-active' : '' ?>" data-panel="login" data-auth-form="login"
               action="./?pages=login" method="post" novalidate>
+            <!-- Permet au contrôleur de revenir à la page qui affichait le modal. -->
+            <input type="hidden" name="return_to" value="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/?pages=home', ENT_QUOTES, 'UTF-8') ?>">
             <div class="auth-modal__field">
                 <label for="loginEmail">Adresse email</label>
                 <input type="email" id="loginEmail" name="email" placeholder="vous@exemple.be" autocomplete="email">
@@ -85,8 +97,10 @@
         </form>
 
         <!-- Panneau INSCRIPTION -->
-        <form class="auth-modal__panel" data-panel="register" data-auth-form="register"
+        <form class="auth-modal__panel <?= $authActiveTab === 'register' ? 'is-active' : '' ?>" data-panel="register" data-auth-form="register"
               action="./?pages=register" method="post" novalidate>
+            <!-- La destination est réutilisée après le traitement POST d'inscription. -->
+            <input type="hidden" name="return_to" value="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/?pages=home', ENT_QUOTES, 'UTF-8') ?>">
             <div class="auth-modal__field">
                 <label for="registerUsername">Nom d'utilisateur</label>
                 <input type="text" id="registerUsername" name="username" placeholder="Votre pseudo" autocomplete="username">

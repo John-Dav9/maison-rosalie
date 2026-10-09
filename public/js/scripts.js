@@ -458,9 +458,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 /* NAVBAR TRANSPARENTE QUI SE COLORE AU SCROLL
    En haut de page, la navbar (.menu) est transparente.
-   Dès qu'on scrolle (plus de 50px), on lui ajoute la classe .menu--scrolled
-   qui lui donne un fond (couleur de la page) via le CSS.
-   Retrait de la classe quand on revient tout en haut. */
+   Dès qu'on scrolle (plus de 50px), elle prend la couleur de fond de la page.
+
+   VERSION RENFORCÉE : en plus d'ajouter la classe .menu--scrolled, on applique
+   aussi le fond directement en inline (style.backgroundColor). Comme ça, même
+   s'il y avait un conflit de priorité CSS (Tailwind, ordre des règles...),
+   la navbar se colore quand même. La couleur vient de la variable CSS
+   --nav-scrolled-bg (définie par page dans style.css), avec un crème en secours. */
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -469,6 +473,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // seuil de déclenchement en pixels de défilement vertical
   const scrollThreshold = 50;
+
+  // Lit la couleur de fond voulue pour cette page (variable CSS héritée),
+  // avec un crème #FBF5E6 en secours si la variable n'est pas définie.
+  function getScrolledColor() {
+    const value = getComputedStyle(navbar).getPropertyValue('--nav-scrolled-bg').trim();
+    return value || '#FBF5E6';
+  }
 
   function onScroll() {
     // on lit le défilement de plusieurs sources pour couvrir tous les cas
@@ -480,9 +491,14 @@ document.addEventListener('DOMContentLoaded', function () {
       || 0;
 
     if (scrolled > scrollThreshold) {
+      // 1) la classe CSS (gère la transition, le flou, l'ombre)
       navbar.classList.add('menu--scrolled');
+      // 2) le fond en inline, en secours, pour qu'il s'affiche à coup sûr
+      navbar.style.backgroundColor = getScrolledColor();
     } else {
+      // tout en haut : on remet la navbar transparente
       navbar.classList.remove('menu--scrolled');
+      navbar.style.backgroundColor = '';
     }
   }
 
@@ -624,21 +640,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       },
       password: {
-        // au moins 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial
-        regex: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
+        // À la connexion, le serveur vérifie le mot de passe existant; la règle de complexité concerne l'inscription.
+        regex: /^[\s\S]+$/,
         messages: {
           empty: 'Le mot de passe est obligatoire.',
-          invalid: 'Au moins 8 caractères, avec une majuscule, un chiffre et un caractère spécial.'
+          invalid: 'Le mot de passe est invalide.'
         }
       }
     },
     register: {
       username: {
-        // 3 à 20 caractères : lettres, chiffres, tiret et underscore
-        regex: /^[A-Za-z0-9_-]{3,20}$/,
+        // Le nom affiché accepte les espaces et caractères accentués, dans la limite du serveur (100 caractères).
+        regex: /^[\s\S]{1,100}$/,
         messages: {
-          empty: "Le nom d'utilisateur est obligatoire.",
-          invalid: "3 à 20 caractères : lettres, chiffres, - et _ uniquement."
+          empty: "Le nom est obligatoire.",
+          invalid: 'Le nom ne doit pas dépasser 100 caractères.'
         }
       },
       email: {
@@ -691,7 +707,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const { input } = getField(form, name);
     if (!rule || !input) return true;
 
-    const value = input.value.trim();
+    // Le mot de passe est conservé tel quel; seul l'email est nettoyé avant validation.
+    const value = name === 'password' ? input.value : input.value.trim();
 
     if (value === '') {
       showError(form, name, rule.messages.empty);
@@ -711,12 +728,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirm = form.querySelector('[name="password_confirm"]');
     if (!confirm) return true;
 
-    const value = confirm.value.trim();
+    // La confirmation doit correspondre exactement : les espaces font partie du mot de passe.
+    const value = confirm.value;
     if (value === '') {
       showError(form, 'password_confirm', 'Merci de confirmer le mot de passe.');
       return false;
     }
-    if (pass && value !== pass.value.trim()) {
+    if (pass && value !== pass.value) {
       showError(form, 'password_confirm', 'Les mots de passe ne correspondent pas.');
       return false;
     }
