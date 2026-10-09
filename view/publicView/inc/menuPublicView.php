@@ -1,3 +1,12 @@
+<?php
+// Un administrateur conserve le menu public et lui ajoute l'entrée privée.
+$isPrivateMenu = $isPrivateMenu ?? false;
+if (!$isPrivateMenu && isset($_SESSION['user_role_id']) && (int) $_SESSION['user_role_id'] === 1) {
+    $isPrivateMenu = true;
+    require __DIR__ . "/../../privateView/inc/menuPrivateView.php";
+    return;
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -182,12 +191,26 @@
                 <li><a href="./?pages=about" class="hover:text-gold">À propos</a></li>
                 <li><a href="./?pages=recettes" class="hover:text-gold">Recettes</a></li>
                 <li><a href="./?pages=contact" class="hover:text-gold">Contact</a></li>
+                <?php if ($isPrivateMenu): ?>
+                    <li><a href="./?pages=admin" class="hover:text-gold">Administration</a></li>
+                <?php endif; ?>
             </ul>
 
-            <button id="connexion" type="button" data-auth-open
-                class="text-white box-border border border-transparent focus:ring-4 focus:ring-warning-medium shadow-xs font-medium leading-5 text-sm px-4 py-2.5 focus:outline-none">
-                Connexion
-            </button>
+            <?php if (isset($_SESSION['user_id']) && (int) $_SESSION['user_id'] > 0): ?>
+                <form action="./?pages=logout" method="post">
+                    <!-- Garde l'utilisateur sur la page courante après la déconnexion. -->
+                    <input type="hidden" name="return_to" value="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/?pages=home', ENT_QUOTES, 'UTF-8') ?>">
+                    <button id="deconnexion" type="submit"
+                        class="text-white box-border border border-transparent focus:ring-4 focus:ring-warning-medium shadow-xs font-medium leading-5 text-sm px-4 py-2.5 focus:outline-none">
+                        Déconnexion
+                    </button>
+                </form>
+            <?php else: ?>
+                <button id="connexion" type="button" data-auth-open
+                    class="text-white box-border border border-transparent focus:ring-4 focus:ring-warning-medium shadow-xs font-medium leading-5 text-sm px-4 py-2.5 focus:outline-none">
+                    Connexion
+                </button>
+            <?php endif; ?>
         </div>
 
     </nav>

@@ -1119,8 +1119,8 @@ body:has(> .menu + section.bg-surface) {
     --nav-scrolled-bg: #fcf9f4;
 }
 
-#connexion {
-    background-color: #FAEDCD;
+#connexion, #deconnexion {
+    background-color: #D4A373;
     border-radius: 15px;
     color: black;
     cursor: pointer;
@@ -1795,13 +1795,10 @@ body:has(> .menu + section.bg-surface) {
     }
 }
 
-/* ==================================================================
-   MODAL CONNEXION / INSCRIPTION (FE-50)
-   ==================================================================
+/* MODAL CONNEXION / INSCRIPTION (FE-50)
    Thème clair de la marque : crème, doré, brun chocolat.
    Scopé sous #authModal. Ouverture/fermeture et onglets gérés
-   dans scripts.js (classes .is-open et .is-active).
-   ================================================================== */
+   dans scripts.js (classes .is-open et .is-active). */
 #authModal {
     --auth-gold: #C9A45C;
     --auth-gold-dark: #B8860B;
@@ -1977,6 +1974,54 @@ body:has(> .menu + section.bg-surface) {
     background: #fff;
 }
 
+/* CHAMP MOT DE PASSE AVEC ŒIL (afficher/masquer)
+   .auth-modal__password enveloppe l'input + le bouton œil.
+   position: relative → sert de repère pour positionner l'œil en absolute.
+   L'input prend toute la largeur de l'enveloppe et reçoit un padding-right
+   pour que le texte saisi ne passe pas sous l'icône. */
+#authModal .auth-modal__password {
+    position: relative;
+    display: block;
+}
+
+#authModal .auth-modal__password input {
+    width: 100%;
+    /* place à droite pour l'œil, sinon le texte passerait dessous */
+    padding-right: 2.75rem;
+}
+
+/* Bouton œil : collé à droite du champ, centré verticalement.
+   Sans fond ni bordure, il n'affiche que l'icône (couleur brun → doré au survol). */
+#authModal .auth-modal__eye {
+    position: absolute;
+    top: 50%;
+    right: .25rem;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #9a948c;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: .35rem;
+    transition: color .2s ease;
+}
+
+#authModal .auth-modal__eye:hover {
+    color: var(--auth-gold-dark);
+}
+
+/* Accessibilité : contour doré visible quand on navigue au clavier */
+#authModal .auth-modal__eye:focus-visible {
+    outline: 2px solid var(--auth-gold-dark);
+    outline-offset: 2px;
+}
+
 /* Champ en erreur (rouge) / valide (vert) — ajoutés par la validation JS */
 #authModal .auth-modal__field input.auth-modal__input--error {
     border-color: #9b2c2c;
@@ -1993,6 +2038,25 @@ body:has(> .menu + section.bg-surface) {
     color: #9b2c2c;
     font-size: .8rem;
     min-height: .9rem;
+}
+
+/* "SE SOUVENIR DE MOI" : case + libellé alignés sur une ligne */
+#authModal .auth-modal__remember {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .9rem;
+    color: var(--auth-brown);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Case à cocher aux couleurs de la marque (doré quand cochée) */
+#authModal .auth-modal__remember input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--auth-gold-dark);
+    cursor: pointer;
 }
 
 /* Bouton principal (Se connecter / Créer mon compte) */
@@ -2034,5 +2098,172 @@ body:has(> .menu + section.bg-surface) {
 
 /* Quand le modal est ouvert, on empêche le défilement de la page derrière */
 body.auth-modal-open {
+    overflow: hidden;
+}
+
+/* ==================================================================
+   MODAL DES MENTIONS LÉGALES (liens du footer)
+   ==================================================================
+   Même thème que le modal connexion (crème, doré, brun chocolat).
+   Un seul modal (#legalModal) réutilisé pour les 5 documents : le JS
+   affiche le bon panneau (.legal-modal__panel.is-active) et met à jour
+   le titre. Ouverture/fermeture : scripts.js, bloc "MODAL MENTIONS LÉGALES".
+   ================================================================== */
+
+/* Les liens de la colonne "Mention Legal" sont des <button> : on les
+   remet à l'allure d'un simple lien texte (pas de fond ni bordure de bouton). */
+.footer-legal-reset,
+[data-legal-open] {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+#legalModal {
+    --legal-gold: #C9A45C;
+    --legal-gold-dark: #B8860B;
+    --legal-cream: #FBF5E6;
+    --legal-brown: #2F1B14;
+
+    /* masqué par défaut */
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Modal ouvert (classe ajoutée par le JS) */
+#legalModal.is-open {
+    display: flex;
+}
+
+/* Fond sombre derrière la fenêtre */
+#legalModal .legal-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 14, 8, .65);
+    backdrop-filter: blur(3px);
+}
+
+/* Fenêtre : un peu plus large que le modal connexion car les textes sont longs */
+#legalModal .legal-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 40rem;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: var(--legal-cream);
+    color: var(--legal-brown);
+    border-radius: 1rem;
+    border: 1px solid var(--legal-gold);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+    padding: 2.5rem 2rem 2rem;
+    animation: legalModalIn .25s ease;
+}
+
+@keyframes legalModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Bouton de fermeture */
+#legalModal .legal-modal__close {
+    position: absolute;
+    top: .75rem;
+    right: 1rem;
+    border: none;
+    background: none;
+    color: var(--legal-brown);
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color .2s ease;
+}
+
+#legalModal .legal-modal__close:hover {
+    color: var(--legal-gold-dark);
+}
+
+/* Titre du document (mis à jour par le JS) */
+#legalModal .legal-modal__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.6rem;
+    color: var(--legal-brown);
+    margin: 0;
+    text-align: center;
+}
+
+/* Petit trait doré sous le titre */
+#legalModal .legal-modal__divider {
+    display: block;
+    width: 3rem;
+    height: 2px;
+    margin: .75rem auto 1.5rem;
+    background: var(--legal-gold-dark);
+}
+
+/* Zone de contenu */
+#legalModal .legal-modal__body {
+    font-size: .95rem;
+    line-height: 1.6;
+    color: #4a3a30;
+}
+
+/* Panneaux : masqués sauf l'actif (classe ajoutée par le JS) */
+#legalModal .legal-modal__panel {
+    display: none;
+}
+
+#legalModal .legal-modal__panel.is-active {
+    display: block;
+}
+
+/* Sous-titres dorés à l'intérieur d'un document */
+#legalModal .legal-modal__body h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--legal-gold-dark);
+    margin: 1.25rem 0 .4rem;
+}
+
+#legalModal .legal-modal__body p {
+    margin: 0 0 .75rem;
+}
+
+#legalModal .legal-modal__body ul {
+    margin: 0 0 .75rem;
+    padding-left: 1.25rem;
+    list-style: disc;
+}
+
+#legalModal .legal-modal__body li {
+    margin-bottom: .4rem;
+}
+
+#legalModal .legal-modal__body a {
+    color: var(--legal-gold-dark);
+    text-decoration: underline;
+}
+
+/* Quand un modal (connexion OU légal) est ouvert, on bloque le scroll du fond */
+body.legal-modal-open {
     overflow: hidden;
 }

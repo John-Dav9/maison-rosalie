@@ -1,4 +1,4 @@
-    <?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
+<?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
 
 
     <!-- Wrapper global du site : remplace le body pour le ciblage CSS/JS,
@@ -25,25 +25,25 @@
           <!-- Slide 1 : couple en terrasse (visible par défaut grâce à .is-active) -->
           <div class="hero__slide is-active">
             <img
-              src="/public/assets/images/leto_black_couple_eating_chocolate_on_a_terrasse_in_front_of__258a1283-22c6-493-a05a-c4bebf0b6ebc_1.png"
+              src="./assets/images/degustation-de-chocolat-en-terrasse.webp"
               alt="Couple dégustant du chocolat en terrasse" />
           </div>
 
           <!-- Slide 2 : chocolatier en atelier -->
           <div class="hero__slide">
             <img
-              src="/public/assets/images/leto_man_making_chocolate_in_a_rustic_store_with_a_window_beh_ddff26c9-7594-4222-90d8-c5de9d991462_2.png"
+              src="./assets/images/artisan-chocolatier-au-travail.webp"
               alt="Chocolatier au travail dans son atelier" />
           </div>
 
           <!-- Slide 3 : tablette de chocolat artisanal -->
           <div class="hero__slide">
-            <img src="/public/assets/images/d43577a012cd4c1e75acb3d4408c1fa3.jpg" alt="Tablette de chocolat artisanal" />
+            <img src="./assets/images/tablettes-de-chocolat-artisanal.webp" alt="Tablette de chocolat artisanal" />
           </div>
 
           <!-- Slide 4 : fèves de cacao -->
           <div class="hero__slide">
-            <img src="/public/assets/images/9b07e4197347cb2dd46373d336f41a31.jpg" alt="Fèves de cacao" />
+            <img src="./assets/images/emballage-tablette-de-chocolat.webp" alt="Fèves de cacao" />
           </div>
 
         </div>
@@ -95,14 +95,14 @@
 
           <!-- Grande vignette → prévisualise la slide 2 (tablette de chocolat) -->
           <button type="button" class="hero__thumb hero__thumb--lg" data-slide="2" aria-label="Aller à la slide 3">
-            <img src="/public/assets/images/d43577a012cd4c1e75acb3d4408c1fa3.jpg" alt="Miniature tablette de chocolat" />
+            <img src="./assets/images/tablettes-de-chocolat-artisanal.webp" alt="Miniature tablette de chocolat" />
           </button>
 
           <!-- Petite vignette → prévisualise la slide 1 (chocolatier en atelier)
            Dépasse du bord droit grâce à margin-right négatif dans le CSS -->
           <button type="button" class="hero__thumb hero__thumb--sm" data-slide="1" aria-label="Aller à la slide 2">
             <img
-              src="/public/assets/images/leto_man_making_chocolate_in_a_rustic_store_with_a_window_beh_ddff26c9-7594-4222-90d8-c5de9d991462_2.png"
+              src="./assets/images/artisan-chocolatier-au-travail.webp"
               alt="Miniature chocolatier" />
           </button>
 
