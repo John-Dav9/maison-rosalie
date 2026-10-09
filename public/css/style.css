@@ -1120,7 +1120,7 @@ body:has(> .menu + section.bg-surface) {
 }
 
 #connexion, #deconnexion {
-    background-color: #FAEDCD;
+    background-color: #D4A373;
     border-radius: 15px;
     color: black;
     cursor: pointer;
