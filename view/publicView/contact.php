@@ -21,6 +21,12 @@ include "./../view/publicView/inc/menuPublicView.php";
     </div>
 
     <!-- 2. CARTE + FORMULAIRE -->
+    <?php if (is_array($contactFeedback ?? null) && isset($contactFeedback['message']) && is_string($contactFeedback['message'])): ?>
+      <p class="contact__feedback contact__feedback--<?= ($contactFeedback['type'] ?? '') === 'success' ? 'success' : 'error' ?>" role="<?= ($contactFeedback['type'] ?? '') === 'success' ? 'status' : 'alert' ?>" aria-live="polite">
+        <?= htmlspecialchars($contactFeedback['message'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+      </p>
+    <?php endif; ?>
+
     <div class="contact__main">
 
       <!-- Carte interactive Leaflet (initialisée par le script en bas de page) -->
@@ -29,18 +35,20 @@ include "./../view/publicView/inc/menuPublicView.php";
       <!-- Formulaire de contact -->
       <!-- novalidate : on désactive la validation native du navigateur pour utiliser
            la nôtre (messages précis près des champs, comme demandé par FE-41). -->
-      <form class="contact__form" action="./?pg=contact" method="post" novalidate>
+      <form class="contact__form" action="./?pages=contact" method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string) ($contactCsrfToken ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+        <div class="contact__honeypot" aria-hidden="true"><label for="contactWebsite">Ne pas remplir ce champ</label><input type="text" name="website" id="contactWebsite" tabindex="-1" autocomplete="off"></div>
 
         <!-- Nom -->
         <div class="contact__field">
-          <input type="text" name="name" id="contactName" class="contact__input" placeholder="Nom" aria-label="Votre nom" required>
+          <input type="text" name="name" id="contactName" class="contact__input" placeholder="Nom" aria-label="Votre nom" maxlength="100" required>
           <!-- message d'erreur affiché près du champ (FE-41) -->
           <span class="contact__error" data-error-for="name"></span>
         </div>
 
         <!-- Email -->
         <div class="contact__field">
-          <input type="email" name="email" id="contactEmail" class="contact__input" placeholder="Adresse Email" aria-label="Votre adresse email" required>
+          <input type="email" name="email" id="contactEmail" class="contact__input" placeholder="Adresse Email" aria-label="Votre adresse email" maxlength="255" required>
           <span class="contact__error" data-error-for="email"></span>
         </div>
 
@@ -52,7 +60,7 @@ include "./../view/publicView/inc/menuPublicView.php";
 
         <!-- Message (3 à 500 caractères — cahier des charges section 6.1) -->
         <div class="contact__field">
-          <textarea name="message" id="contactMessage" class="contact__input contact__textarea" placeholder="Message" aria-label="Votre message" rows="5" required></textarea>
+          <textarea name="message" id="contactMessage" class="contact__input contact__textarea" placeholder="Message" aria-label="Votre message" rows="5" maxlength="500" required></textarea>
           <span class="contact__error" data-error-for="message"></span>
         </div>
 

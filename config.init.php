@@ -11,6 +11,9 @@ const DB_CHARSET = "utf8";
 const DB_LOGIN = "root";
 const DB_PWD = "";
 
+// adresse mail de reception pour le formualire de contact
+const CONTACT_RECIPIENT_EMAIL = "maison.rosalie.chocolat@gmail.com";
+
 // préparation de la connexion
 const DB_DSN = DB_TYPE . ":host=" . DB_HOST . ";dbname=" . DB_NAME . ";port=" . DB_PORT . ";charset=" . DB_CHARSET . ";";
 
