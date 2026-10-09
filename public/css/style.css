@@ -1228,6 +1228,33 @@ body:has(> .menu + section.bg-surface) {
     display: block;
 }
 
+/* Retour serveur du formulaire de contact : lisible après la redirection PRG. */
+#contact .contact__feedback {
+    margin: 1rem 0;
+    padding: .9rem 1.1rem;
+    border-radius: .5rem;
+    font-weight: 600;
+}
+
+#contact .contact__feedback--success {
+    color: #14532d;
+    background: #dcfce7;
+}
+
+#contact .contact__feedback--error {
+    color: #7f1d1d;
+    background: #fee2e2;
+}
+
+/* Champ piège anti-robot : invisible, hors focus et sans place dans la mise en page. */
+#contact .contact__honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 /* Formulaire : colonne de champs empilés, centrés verticalement */
 #contact .contact__form {
     display: flex;
