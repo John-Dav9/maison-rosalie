@@ -6,6 +6,9 @@ use PDO;
 use Throwable;
 use model\ManagerInterface;
 use model\mapping\ContactMapping;
+use model\ContactText;
+
+require_once __DIR__ . '/../ContactText.php';
 
 /** Gère l'enregistrement et la consultation des messages du formulaire de contact. */
 class ContactManager implements ManagerInterface
@@ -38,11 +41,15 @@ class ContactManager implements ManagerInterface
         try {
             // Le mapping nettoie les espaces et valide le format de l'adresse email.
             $contact = new ContactMapping([
-                'name' => trim($data['name']),
+                'name' => ContactText::plainText($data['name'], true),
                 'email' => trim($data['email']),
-                'subject' => $subject === null || trim($subject) === '' ? null : trim($subject),
-                'message' => trim($data['message']),
+                'subject' => $subject === null || trim($subject) === '' ? null : ContactText::plainText($subject, true),
+                'message' => ContactText::plainText($data['message']),
             ]);
+
+            if ($contact->getSubject() === '') {
+                $contact->setSubject(null);
+            }
 
             $name = $contact->getName();
             $email = $contact->getEmail();
@@ -50,10 +57,10 @@ class ContactManager implements ManagerInterface
             $message = $contact->getMessage();
 
             // Les limites correspondent aux colonnes et aux règles du formulaire.
-            if ($name === null || strlen($name) < 2 || strlen($name) > 100
-                || $email === null || strlen($email) > 255
-                || ($subject !== null && strlen($subject) > 120)
-                || $message === null || strlen($message) < 3 || strlen($message) > 500) {
+            if ($name === null || mb_strlen($name, 'UTF-8') < 2 || mb_strlen($name, 'UTF-8') > 100
+                || $email === null || mb_strlen($email, 'UTF-8') > 255
+                || ($subject !== null && mb_strlen($subject, 'UTF-8') > 120)
+                || $message === null || mb_strlen($message, 'UTF-8') < 3 || mb_strlen($message, 'UTF-8') > 500) {
                 return false;
             }
 
