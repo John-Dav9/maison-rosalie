@@ -780,3 +780,103 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+/* ŒIL AFFICHER / MASQUER LE MOT DE PASSE (modal connexion / inscription)
+   Chaque champ mot de passe du modal est suivi d'un bouton œil (.auth-modal__eye,
+   marqué data-auth-eye). Au clic :
+     - on bascule l'input associé entre type="password" (masqué) et type="text" (visible) ;
+     - on échange l'icône Font Awesome : fa-eye-slash (œil barré = masqué) ↔ fa-eye (œil ouvert = visible) ;
+     - on met à jour aria-pressed et aria-label pour l'accessibilité.
+   Par défaut l'œil est BARRÉ et le mot de passe est masqué (défini dans le HTML).
+   Ne s'exécute que si des boutons œil sont présents sur la page. */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  // Tous les boutons œil du modal (connexion + inscription)
+  const eyeButtons = document.querySelectorAll('[data-auth-eye]');
+  if (eyeButtons.length === 0) return;
+
+  eyeButtons.forEach(function (button) {
+
+    // L'input mot de passe est dans la même enveloppe .auth-modal__password que le bouton
+    const wrapper = button.closest('.auth-modal__password');
+    if (!wrapper) return;
+    const input = wrapper.querySelector('input');
+    const icon = button.querySelector('i');
+    if (!input) return;
+
+    button.addEventListener('click', function () {
+
+      // Le mot de passe est-il actuellement masqué ?
+      const estMasque = input.type === 'password';
+
+      // On bascule le type : masqué → visible, ou visible → masqué
+      input.type = estMasque ? 'text' : 'password';
+
+      // On échange l'icône (si Font Awesome est présent)
+      if (icon) {
+        icon.classList.toggle('fa-eye-slash', !estMasque); // barré quand masqué
+        icon.classList.toggle('fa-eye', estMasque);        // ouvert quand visible
+      }
+
+      // Accessibilité : état du bouton + libellé lu par les lecteurs d'écran
+      button.setAttribute('aria-pressed', estMasque ? 'true' : 'false');
+      button.setAttribute('aria-label', estMasque ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+    });
+  });
+});
+
+/* "SE SOUVENIR DE MOI" — confort côté front (modal connexion)
+   /!\ Ne garde PAS l'utilisateur connecté : ça, c'est le PHP qui le fait
+   (voir le commentaire dans authModal.php). Ici on fait seulement un confort
+   de saisie : si la case est cochée, on mémorise l'EMAIL (jamais le mot de
+   passe) dans localStorage pour le pré-remplir au retour sur le site.
+
+   Pourquoi localStorage et pas sessionStorage : localStorage survit à la
+   fermeture du navigateur, sessionStorage non. On protège les accès par
+   try/catch (navigation privée). Ne s'exécute que si le formulaire existe. */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  const loginForm = document.querySelector('[data-auth-form="login"]');
+  if (!loginForm) return;
+
+  const emailInput = loginForm.querySelector('[name="email"]');
+  const rememberBox = loginForm.querySelector('[data-auth-remember]');
+  if (!emailInput || !rememberBox) return;
+
+  // clé de stockage de l'email mémorisé
+  const STORE_EMAIL = 'authRememberEmail';
+
+  // petits utilitaires protégés (localStorage peut être bloqué)
+  function saveEmail(value) {
+    try { localStorage.setItem(STORE_EMAIL, value); } catch (e) {}
+  }
+  function readEmail() {
+    try { return localStorage.getItem(STORE_EMAIL); } catch (e) { return null; }
+  }
+  function clearEmail() {
+    try { localStorage.removeItem(STORE_EMAIL); } catch (e) {}
+  }
+
+  // AU CHARGEMENT : s'il y a un email mémorisé, on le remet et on coche la case
+  const savedEmail = readEmail();
+  if (savedEmail) {
+    emailInput.value = savedEmail;
+    rememberBox.checked = true;
+  }
+
+  // Si on décoche la case, on oublie tout de suite l'email mémorisé
+  rememberBox.addEventListener('change', function () {
+    if (!rememberBox.checked) clearEmail();
+  });
+
+  // À L'ENVOI : si la case est cochée, on mémorise l'email ; sinon on l'oublie.
+  // (Le mot de passe n'est JAMAIS stocké.)
+  loginForm.addEventListener('submit', function () {
+    if (rememberBox.checked) {
+      saveEmail(emailInput.value.trim());
+    } else {
+      clearEmail();
+    }
+  });
+});
