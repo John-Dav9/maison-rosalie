@@ -644,14 +644,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // ---- RESTAURATION AU CHARGEMENT DE LA PAGE ----
-  // On rétablit d'abord l'onglet mémorisé (login par défaut),
-  // puis on rouvre le modal s'il était ouvert avant le refresh.
+  // Restaure l'onglet mémorisé et rouvre le modal s'il était ouvert ou si une action le demande.
   const savedTab = read(STORE_TAB);
   if (savedTab === 'register') {
     showTab('register');
   }
-  if (read(STORE_OPEN) === 'true') {
+  if (read(STORE_OPEN) === 'true' || modal.getAttribute('data-auth-modal-auto-open') === 'true') {
     openModal();
   }
 });
