@@ -193,6 +193,7 @@ if (!$isPrivateMenu && isset($_SESSION['user_role_id']) && (int) $_SESSION['user
                 <li><a href="./?pages=contact" class="hover:text-gold">Contact</a></li>
                 <?php if ($isPrivateMenu): ?>
                     <li><a href="./?pages=admin" class="hover:text-gold">Administration</a></li>
+                    <li><a href="./?pages=admin&amp;action=messagerie" class="hover:text-gold">Messagerie</a></li>
                 <?php endif; ?>
             </ul>
 

@@ -223,9 +223,104 @@ if (($_GET['pages'] ?? '') === 'contact' && ($_SERVER['REQUEST_METHOD'] ?? '') =
     exit;
 }
 
-// Récupère le message temporaire après la redirection, puis le retire de la session.
+// Les actions de la fiche recette utilisent un jeton distinct contre les envois forgés.
+if (!isset($_SESSION['recipe_action_csrf_token']) || !is_string($_SESSION['recipe_action_csrf_token'])) {
+    $_SESSION['recipe_action_csrf_token'] = bin2hex(random_bytes(32));
+}
+$recipeActionCsrfToken = $_SESSION['recipe_action_csrf_token'];
+
+// Traite les commentaires et les notes avant le rendu de la fiche (POST/Redirect/GET).
+if (($_GET['pages'] ?? '') === 'recipe' && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    require_once BASE_URL . '/model/ManagerInterface.php';
+    require_once BASE_URL . '/model/AbstractMapping.php';
+    require_once BASE_URL . '/model/StringTrait.php';
+    require_once BASE_URL . '/model/mapping/userMapping.php';
+    require_once BASE_URL . '/model/mapping/recetteMapping.php';
+    require_once BASE_URL . '/model/mapping/categoryMapping.php';
+    require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+    require_once BASE_URL . '/model/mapping/stepsMapping.php';
+    require_once BASE_URL . '/model/mapping/commentsMapping.php';
+    require_once BASE_URL . '/model/mapping/noteMapping.php';
+    require_once BASE_URL . '/model/manager/RecetteManager.php';
+    require_once BASE_URL . '/model/manager/CommentManager.php';
+    require_once BASE_URL . '/model/manager/NoteManager.php';
+
+    $recipeSlug = $_GET['slug'] ?? null;
+    $recipeManager = new \model\manager\RecetteManager($connectPDO);
+    $recipeDetails = is_string($recipeSlug) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $recipeSlug)
+        ? $recipeManager->getRecetteDetailsBySlug($recipeSlug)
+        : null;
+
+    if ($recipeDetails === null) {
+        http_response_code(404);
+        include BASE_URL . '/view/publicView/404View.php';
+        exit;
+    }
+
+    $recipeId = (int) $recipeDetails['recette']->getRecetteId();
+    $userId = (int) ($_SESSION['user_id'] ?? 0);
+    $action = $_POST['recipe_action'] ?? '';
+    $feedback = ['type' => 'error', 'message' => 'Cette action n’a pas pu être effectuée.'];
+    $openAuthModal = false;
+
+    if ($userId <= 0) {
+        // N'accepte jamais l'identifiant d'auteur fourni par un formulaire.
+        $feedback['message'] = 'Connectez-vous pour publier un commentaire ou une note.';
+        $openAuthModal = true;
+    } else {
+        $postedToken = $_POST['csrf_token'] ?? null;
+        if (!is_string($postedToken) || !hash_equals($recipeActionCsrfToken, $postedToken)) {
+            $feedback['message'] = 'La session du formulaire a expiré. Rechargez la page puis réessayez.';
+        } else {
+            $commentManager = new \model\manager\CommentManager($connectPDO);
+            $noteManager = new \model\manager\NoteManager($connectPDO);
+
+            if ($action === 'comment_create') {
+                $message = $_POST['message'] ?? null;
+                $saved = is_string($message) ? $commentManager->addComment($recipeId, $userId, $message) : false;
+                $feedback = $saved
+                    ? ['type' => 'success', 'message' => 'Votre commentaire a été publié.']
+                    : ['type' => 'error', 'message' => 'Le commentaire est vide ou dépasse 300 caractères.'];
+            } elseif ($action === 'comment_update') {
+                $commentId = filter_var($_POST['comment_id'] ?? null, FILTER_VALIDATE_INT);
+                $message = $_POST['message'] ?? null;
+                $saved = $commentId !== false && is_string($message)
+                    && $commentManager->updateComment((int) $commentId, $recipeId, $userId, $message);
+                $feedback = $saved
+                    ? ['type' => 'success', 'message' => 'Votre commentaire a été modifié.']
+                    : ['type' => 'error', 'message' => 'Ce commentaire ne peut pas être modifié.'];
+            } elseif ($action === 'comment_delete') {
+                $commentId = filter_var($_POST['comment_id'] ?? null, FILTER_VALIDATE_INT);
+                $deleted = $commentId !== false
+                    && $commentManager->deleteComment((int) $commentId, $recipeId, $userId);
+                $feedback = $deleted
+                    ? ['type' => 'success', 'message' => 'Votre commentaire a été supprimé.']
+                    : ['type' => 'error', 'message' => 'Ce commentaire ne peut pas être supprimé.'];
+            } elseif ($action === 'rating_save') {
+                $rating = filter_var($_POST['rating'] ?? null, FILTER_VALIDATE_INT);
+                $saved = $rating !== false && $noteManager->saveNote((int) $rating, $userId, $recipeId) !== false;
+                $feedback = $saved
+                    ? ['type' => 'success', 'message' => 'Votre note a été enregistrée.']
+                    : ['type' => 'error', 'message' => 'Choisissez une note entre 1 et 5.'];
+            }
+        }
+    }
+
+    $_SESSION['recipe_action_feedback'] = $feedback;
+    if ($openAuthModal) {
+        $_SESSION['recipe_auto_open_auth_modal'] = true;
+    }
+    header('Location: ./?pages=recipe&slug=' . rawurlencode($recipeSlug));
+    exit;
+}
+
+// Récupère les messages temporaires après redirection, puis les retire de la session.
 $authFeedback = $_SESSION['auth_feedback'] ?? null;
 unset($_SESSION['auth_feedback']);
+$recipeActionFeedback = $_SESSION['recipe_action_feedback'] ?? null;
+unset($_SESSION['recipe_action_feedback']);
+$recipeAutoOpenAuthModal = !empty($_SESSION['recipe_auto_open_auth_modal']);
+unset($_SESSION['recipe_auto_open_auth_modal']);
 $contactFeedback = $_SESSION['contact_feedback'] ?? null;
 unset($_SESSION['contact_feedback']);
 if (!isset($_SESSION['contact_csrf_token']) || !is_string($_SESSION['contact_csrf_token'])) {
@@ -235,19 +330,174 @@ $contactCsrfToken = $_SESSION['contact_csrf_token'];
 
 // si non existence de la variable
 // $_GET nommée 'p'
-if (!isset($_GET['pages'])) {
+if (!isset($_GET['pages']) || $_GET['pages'] === 'home') {
+    // L'accueil présente les trois recettes ayant reçu les meilleures notes.
+    require_once BASE_URL . '/model/ManagerInterface.php';
+    require_once BASE_URL . '/model/AbstractMapping.php';
+    require_once BASE_URL . '/model/StringTrait.php';
+    require_once BASE_URL . '/model/mapping/userMapping.php';
+    require_once BASE_URL . '/model/mapping/recetteMapping.php';
+    require_once BASE_URL . '/model/mapping/categoryMapping.php';
+    require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+    require_once BASE_URL . '/model/mapping/stepsMapping.php';
+    require_once BASE_URL . '/model/mapping/noteMapping.php';
+    require_once BASE_URL . '/model/manager/RecetteManager.php';
+    require_once BASE_URL . '/model/manager/NoteManager.php';
 
-    // Nous sommes sur l'accueil
-    // chargement de view/homepage.php
-    include BASE_URL . "/view/publicView/home.php";
+    $homeRecipeManager = new \model\manager\RecetteManager($connectPDO);
+    $homeRecipes = $homeRecipeManager->getAllRecettes();
+    $homeRecipeIds = array_map(
+        static fn($recipe): int => (int) $recipe->getRecetteId(),
+        $homeRecipes
+    );
+    $homeRatingStats = (new \model\manager\NoteManager($connectPDO))
+        ->getRatingSummariesByRecipeIds($homeRecipeIds);
 
-    // sinon si la variable get 'pages' est dans le
-    // tableau VALID_PAGES    
+    $rankedRecipes = [];
+    foreach ($homeRecipes as $homeRecipe) {
+        $recipeId = (int) $homeRecipe->getRecetteId();
+        $rating = $homeRatingStats[$recipeId] ?? ['count' => 0, 'average' => null];
+        $slug = $homeRecipe->getRecetteSlug();
+        if ($rating['count'] < 1 || $rating['average'] === null
+            || !is_string($slug) || !preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $slug)) {
+            continue;
+        }
+
+        $rankedRecipes[] = [
+            'recipe' => $homeRecipe,
+            'id' => $recipeId,
+            'average' => (float) $rating['average'],
+            'count' => (int) $rating['count'],
+        ];
+    }
+
+    // Classe par moyenne, puis par nombre de votes; les dates/ID départagent les égalités.
+    usort($rankedRecipes, static function (array $left, array $right): int {
+        $byAverage = $right['average'] <=> $left['average'];
+        if ($byAverage !== 0) {
+            return $byAverage;
+        }
+        $byCount = $right['count'] <=> $left['count'];
+        if ($byCount !== 0) {
+            return $byCount;
+        }
+        $leftDate = $left['recipe']->getRecetteDateCreate() ?? '';
+        $rightDate = $right['recipe']->getRecetteDateCreate() ?? '';
+        $byDate = strcmp($rightDate, $leftDate);
+        return $byDate !== 0 ? $byDate : ($right['id'] <=> $left['id']);
+    });
+
+    $topRecipes = [];
+    foreach (array_slice($rankedRecipes, 0, 3) as $index => $rankedRecipe) {
+        $recipe = $rankedRecipe['recipe'];
+        $durations = array_filter([
+            $recipe->getRecetteDurationPrep(),
+            $recipe->getRecetteDurationCook(),
+        ], static fn($duration): bool => is_string($duration) && trim($duration) !== '');
+
+        $topRecipes[] = [
+            'rank' => ['1er', '2e', '3e'][$index],
+            'badge' => number_format($rankedRecipe['average'], 1, ',', '') . '/5 · '
+                . $rankedRecipe['count'] . ' ' . ($rankedRecipe['count'] === 1 ? 'note' : 'notes'),
+            'slug' => $recipe->getRecetteSlug() ?? '',
+            'title' => $recipe->getRecetteTitle() ?? 'Recette',
+            'desc' => $recipe->getRecetteDescription() ?? '',
+            'time' => $durations !== [] ? implode(' + ', $durations) : 'Temps non précisé',
+            'level' => $recipe->getRecetteDifficulty() ?? 'Non précisée',
+            'image' => $recipe->getRecetteImage() ?? '',
+        ];
+    }
+
+    include BASE_URL . '/view/publicView/home.php';
+
+    // sinon si la variable get 'pages' est dans le tableau VALID_PAGES
 } elseif (in_array($_GET['pages'], VALID_PAGES)) {
-    // inclusion de la vue autorisée
-    include BASE_URL . "/view/publicView/" . $_GET['pages'] . ".php";
+    // La route recette charge ses dépendances et ses données avant d'inclure la vue.
+    if ($_GET['pages'] === 'recipe') {
+        require_once BASE_URL . '/model/ManagerInterface.php';
+        require_once BASE_URL . '/model/AbstractMapping.php';
+        require_once BASE_URL . '/model/StringTrait.php';
+        require_once BASE_URL . '/model/mapping/userMapping.php';
+        require_once BASE_URL . '/model/mapping/recetteMapping.php';
+        require_once BASE_URL . '/model/mapping/categoryMapping.php';
+        require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+        require_once BASE_URL . '/model/mapping/stepsMapping.php';
+        require_once BASE_URL . '/model/mapping/commentsMapping.php';
+        require_once BASE_URL . '/model/mapping/noteMapping.php';
+        require_once BASE_URL . '/model/manager/RecetteManager.php';
+        require_once BASE_URL . '/model/manager/CommentManager.php';
+        require_once BASE_URL . '/model/manager/NoteManager.php';
 
-    // sinon (pages non valide)    
+        // On n'accepte que des slugs minuscules alphanumériques séparés par des tirets.
+        $recipeSlug = $_GET['slug'] ?? null;
+        $recipeDetails = null;
+        if (is_string($recipeSlug) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $recipeSlug)) {
+            $recipeManager = new \model\manager\RecetteManager($connectPDO);
+            $recipeDetails = $recipeManager->getRecetteDetailsBySlug($recipeSlug);
+        }
+
+        if ($recipeDetails === null) {
+            http_response_code(404);
+            include BASE_URL . '/view/publicView/404View.php';
+        } else {
+            $recipe = $recipeDetails['recette'];
+            $recipeIngredients = $recipeDetails['ingredients'];
+            $recipeSteps = $recipeDetails['etapes'];
+            $recipeId = (int) $recipe->getRecetteId();
+            $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
+
+            // Charge les commentaires et les notes ici pour garder la vue limitée au rendu.
+            $commentManager = new \model\manager\CommentManager($connectPDO);
+            $noteManager = new \model\manager\NoteManager($connectPDO);
+            $comments = $commentManager->getCommentsByRecipeId($recipeId);
+            $recipeRatingStats = $noteManager->getRatingSummariesByRecipeIds([$recipeId]);
+            $recipeRatingSummary = $recipeRatingStats[$recipeId] ?? ['count' => 0, 'average' => null];
+            $currentUserRating = $currentUserId > 0
+                ? $noteManager->getNoteForUserAndRecipe($recipeId, $currentUserId)
+                : null;
+
+            include BASE_URL . '/view/publicView/recipe.php';
+        }
+    } elseif ($_GET['pages'] === 'recettes') {
+        // Charge les dépendances du modèle et récupère les données du catalogue.
+        require_once BASE_URL . '/model/ManagerInterface.php';
+        require_once BASE_URL . '/model/AbstractMapping.php';
+        require_once BASE_URL . '/model/StringTrait.php';
+        require_once BASE_URL . '/model/mapping/userMapping.php';
+        require_once BASE_URL . '/model/mapping/recetteMapping.php';
+        require_once BASE_URL . '/model/mapping/categoryMapping.php';
+        require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+        require_once BASE_URL . '/model/mapping/stepsMapping.php';
+        require_once BASE_URL . '/model/mapping/noteMapping.php';
+        require_once BASE_URL . '/model/manager/RecetteManager.php';
+        require_once BASE_URL . '/model/manager/NoteManager.php';
+
+        $recipeManager = new \model\manager\RecetteManager($connectPDO);
+        $recettes = $recipeManager->getAllRecettes();
+        $categories = $recipeManager->getAllCategories();
+
+        // Les catégories de chaque carte viennent des associations enregistrées.
+        foreach ($recettes as $recette) {
+            $recette->setCategories($recipeManager->getCategoriesByRecetteId((int) $recette->getRecetteId()));
+        }
+
+        $recipeIds = array_map(static fn($recette): int => (int) $recette->getRecetteId(), $recettes);
+        $recipeRatingStats = (new \model\manager\NoteManager($connectPDO))
+            ->getRatingSummariesByRecipeIds($recipeIds);
+
+        $difficultes = array_values(array_unique(array_filter(array_map(
+            static fn($recette): ?string => $recette->getRecetteDifficulty(),
+            $recettes
+        ))));
+        sort($difficultes, SORT_NATURAL | SORT_FLAG_CASE);
+
+        include BASE_URL . '/view/publicView/recettes.php';
+    } else {
+        // Les autres vues publiques gardent leur routage existant.
+        include BASE_URL . "/view/publicView/" . $_GET['pages'] . ".php";
+    }
+
+    // sinon (pages non valide)
 } else {
     include BASE_URL . "/view/publicView/404view.php";
 }

@@ -1,5 +1,26 @@
 
-<?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
+<?php
+require_once "./../view/publicView/inc/menuPublicView.php";
+$escapeRecipeCard = static function ($value): string {
+    return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+};
+$recipeCardImagePath = static function (?string $image): string {
+    if ($image === null || trim($image) === '') {
+        return '';
+    }
+    if (preg_match('~^https?://~i', $image)) {
+        return $image;
+    }
+    $image = ltrim($image, '/');
+    if (str_starts_with($image, './assets/')) {
+        return $image;
+    }
+    if (str_starts_with($image, 'assets/')) {
+        return './' . $image;
+    }
+    return './assets/images/recettes/' . rawurlencode(basename($image));
+};
+?>
 <section class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
     <main class="w-full bg-surface min-h-[calc(100vh-20rem)]">
         <div class="flex flex-col w-full">
@@ -11,28 +32,26 @@
                         <p class="font-body-md text-body-md text-surface-variant max-w-lg pt-1">Savoir-faire artisanal &amp; inspirations gourmandes à savourer et partager</p>
                     </div>
                     <div class="mt-space-lg bg-white/10 backdrop-blur-sm p-space-sm rounded-DEFAULT shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-sm">
-                        <div class="relative w-full md:w-96 flex items-center"><span class="material-symbols-outlined absolute left-3 text-[#fed488] text-[20px] pointer-events-none">search</span><input class="w-full pl-10 pr-space-md py-2 bg-[#211a18]/95 text-surface font-body-sm text-body-sm rounded-DEFAULT focus:outline-none placeholder:text-outline-variant shadow-sm" placeholder="Rechercher une recette, un ingrédient..." type="text"></div>
+                        <div class="relative w-full md:w-96 flex items-center"><span class="material-symbols-outlined absolute left-3 text-[#fed488] text-[20px] pointer-events-none">search</span><input aria-label="Rechercher une recette par son titre" class="w-full pl-10 pr-space-md py-2 bg-[#211a18]/95 text-surface font-body-sm text-body-sm rounded-DEFAULT focus:outline-none placeholder:text-outline-variant shadow-sm" id="recipeSearch" placeholder="Rechercher une recette..." type="text"></div>
                         <div class="flex items-center gap-space-sm w-full md:w-auto justify-end flex-wrap">
-                            <div class="relative inline-flex items-center"><select class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none">
-                                    <option selected="" class="bg-[#211a18] text-surface">Catégorie : Toutes les catégories</option>
-                                    <option class="bg-[#211a18] text-surface">Pâtisserie Fine</option>
-                                    <option class="bg-[#211a18] text-surface">Chocolaterie &amp; Confiserie</option>
-                                    <option class="bg-[#211a18] text-surface">Biscuits &amp; Sablés</option>
-                                    <option class="bg-[#211a18] text-surface">Viennoiseries</option>
-                                    <option class="bg-[#211a18] text-surface">Desserts de Saison</option>
+                            <div class="relative inline-flex items-center"><select aria-label="Filtrer par catégorie" class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeCategoryFilter">
+                                    <option value="" selected="">Catégorie : Toutes les catégories</option>
+                                    <?php foreach ($categories as $category): ?>
+                                        <option value="<?= $escapeRecipeCard($category->getId()) ?>"><?= $escapeRecipeCard($category->getTitle()) ?></option>
+                                    <?php endforeach; ?>
                                 </select><span class="material-symbols-outlined absolute right-2 text-[#fed488] text-[18px] pointer-events-none">expand_more</span></div>
-                            <div class="relative inline-flex items-center"><select class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none">
-                                    <option selected="" class="bg-[#211a18] text-surface">Niveau : Tous niveaux</option>
-                                    <option class="bg-[#211a18] text-surface">Très Facile</option>
-                                    <option class="bg-[#211a18] text-surface">Facile</option>
-                                    <option class="bg-[#211a18] text-surface">Intermédiaire</option>
-                                    <option class="bg-[#211a18] text-surface">Expert</option>
+                            <div class="relative inline-flex items-center"><select aria-label="Filtrer par niveau" class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeDifficultyFilter">
+                                    <option value="" selected="">Niveau : Tous niveaux</option>
+                                    <?php foreach ($difficultes as $difficulte): ?>
+                                        <option value="<?= $escapeRecipeCard($difficulte) ?>"><?= $escapeRecipeCard($difficulte) ?></option>
+                                    <?php endforeach; ?>
                                 </select><span class="material-symbols-outlined absolute right-2 text-[#fed488] text-[18px] pointer-events-none">expand_more</span></div>
-                            <div class="relative inline-flex items-center"><select class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none">
-                                    <option selected="" class="bg-[#211a18] text-surface">Trier par : Plus populaires</option>
-                                    <option class="bg-[#211a18] text-surface">Plus récents</option>
-                                    <option class="bg-[#211a18] text-surface">Temps de préparation</option>
-                                    <option class="bg-[#211a18] text-surface">Mieux notés</option>
+                            <div class="relative inline-flex items-center"><select aria-label="Trier les recettes" class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeSort">
+                                    <option value="recent" selected="" class="bg-[#211a18] text-surface">Trier par : Plus récents</option>
+                                    <option value="oldest" class="bg-[#211a18] text-surface">Plus anciens</option>
+                                    <option value="popular" class="bg-[#211a18] text-surface">Plus populaires</option>
+                                    <option value="preparation" class="bg-[#211a18] text-surface">Temps de préparation</option>
+                                    <option value="rating" class="bg-[#211a18] text-surface">Mieux notées</option>
                                 </select><span class="material-symbols-outlined absolute right-2 text-[#fed488] text-[18px] pointer-events-none">expand_more</span></div>
                         </div>
                     </div>
@@ -40,201 +59,83 @@
             </section>
             <!-- Recipe Grid: 4 Columns desktop -->
             <section class="w-full max-w-[1280px] mx-auto px-margin py-space-sm">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
-                    <!-- Card 1 -->
-                    <article class="group bg-surface-container-lowest rounded-DEFAULT overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between" style="border: 1.5px solid rgb(139, 94, 60);">
-                        <div class="flex flex-col">
-                            <!-- Frame Inner Wrapper -->
-                            <div class="relative m-2 overflow-hidden rounded-DEFAULT bg-surface-container aspect-square">
-                                <img alt="Biscuit S'more &amp; Ganache" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC23zp6xtQZXh7a4ywUaB4WuEGpXRjcxtVnlyvHwx6GuQAyx5G-Tg8p2hx7PekL26czAhnB6ASwAtKxugu8uzp1_HhEDp-ZcteY6EB2k29S1zw__klnYRe9-CJ7OIDg1R5qDtLKqs64PKjDu_3yl8fAT8cEDVCqQs1x9mYS-ApLIinX3M1Sg16Uqu3NOLYrT-prI5FEfhTx9fm0G_Mx8pkYPuS_tpdoyHPi5uqs0s5bwjsiz593CoxpKrRQPdpP0Yd7Jw">
-                                <div class="absolute top-2 left-2 flex items-center gap-1.5">
-                                    <span class="px-2 py-0.5 bg-surface/90 backdrop-blur-sm text-on-surface font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT shadow-sm">
-                                        nouveau
-                                    </span>
-                                </div>
-                                <button aria-label="Aperçu rapide" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-surface/85 backdrop-blur-sm text-on-surface hover:bg-surface hover:text-secondary flex items-center justify-center transition-colors shadow-sm" type="button">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                            </div>
-                            <!-- Content Details -->
-                            <div class="px-4 pt-2 pb-1 flex flex-col">
-                                <div class="flex items-center justify-between text-outline text-body-sm mb-1">
-                                    <div class="flex items-center gap-1 text-secondary">
-                                        <span class="flex items-center text-[13px] tracking-tight">
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px]">star_half</span>
-                                        </span>
-                                        <span class="text-outline font-body-sm text-xs ml-0.5">(48 avis)</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter" id="recipeGrid">
+                    <?php if ($recettes === []): ?>
+                        <p class="col-span-full text-center py-12 text-on-surface-variant">Aucune recette n’est encore enregistrée.</p>
+                    <?php else: ?>
+                        <?php foreach ($recettes as $recette): ?>
+                            <?php
+                            $recipeTitle = $recette->getRecetteTitle() ?? 'Recette';
+                            $recipeSlug = $recette->getRecetteSlug() ?? '';
+                            $recipeImage = $recipeCardImagePath($recette->getRecetteImage());
+                            $recipeCategories = $recette->getCategories() ?? [];
+                            $categoryNames = array_map(static fn($category): string => $category->getTitle() ?? '', $recipeCategories);
+                            $categoryIds = array_values(array_filter(array_map(static fn($category): ?int => $category->getId(), $recipeCategories), static fn($id): bool => $id !== null));
+                            $categoryLabel = $categoryNames !== [] ? implode(' · ', $categoryNames) : 'Non classée';
+                            $recipeId = (int) $recette->getRecetteId();
+                            $recipeRating = $recipeRatingStats[$recipeId] ?? ['count' => 0, 'average' => null];
+                            $recipeRatingCount = (int) $recipeRating['count'];
+                            $recipeRatingAverage = $recipeRating['average'];
+                            $recipeRatingValue = $recipeRatingAverage === null
+                                ? 0.0
+                                : max(0.0, min(5.0, (float) $recipeRatingAverage));
+                            $recipePrepText = $recette->getRecetteDurationPrep() ?? '';
+                            $recipeCreatedAt = strtotime($recette->getRecetteDateCreate() ?? '') ?: 0;
+                            ?>
+                            <article class="group bg-surface-container-lowest rounded-DEFAULT overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between" data-recipe-card data-recipe-title="<?= $escapeRecipeCard($recipeTitle) ?>" data-category-ids="<?= $escapeRecipeCard(implode(',', $categoryIds)) ?>" data-difficulty="<?= $escapeRecipeCard($recette->getRecetteDifficulty()) ?>" data-created-at="<?= $recipeCreatedAt ?>" data-preparation-time="<?= $escapeRecipeCard($recipePrepText) ?>" data-rating-count="<?= (int) $recipeRating['count'] ?>" data-rating-average="<?= $recipeRating['average'] === null ? '' : number_format((float) $recipeRating['average'], 6, '.', '') ?>" style="border: 1.5px solid rgb(139, 94, 60);">
+                                <div class="flex flex-col">
+                                    <div class="relative m-2 overflow-hidden rounded-DEFAULT bg-surface-container aspect-square">
+                                        <!-- Garder l’image même si la base ne contient pas encore de chemin. -->
+                                        <img alt="<?= $escapeRecipeCard($recipeTitle) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" src="<?= $escapeRecipeCard($recipeImage) ?>">
+                                        <?php if ($categoryLabel !== 'Non classée'): ?>
+                                            <div class="absolute top-2 left-2 flex items-center gap-1.5">
+                                                <span class="px-2 py-0.5 bg-surface/90 backdrop-blur-sm text-on-surface font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT shadow-sm"><?= $escapeRecipeCard($categoryLabel) ?></span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <button aria-label="Aperçu rapide de <?= $escapeRecipeCard($recipeTitle) ?>" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-surface/85 backdrop-blur-sm text-on-surface hover:bg-surface hover:text-secondary flex items-center justify-center transition-colors shadow-sm" type="button">
+                                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                        </button>
                                     </div>
-                                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Biscuits</span>
-                                </div>
-                                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
-                                    Biscuit S'more &amp; Ganache
-                                </h3>
-                                <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
-                                    Sablé doré pur beurre, guimauve fondante vanille de Madagascar et nappage chocolat noir intense 70%.
-                                </p>
-                                <div class="bg-surface-container-low px-2.5 py-1.5 rounded-DEFAULT text-on-surface-variant font-body-sm text-xs flex items-center justify-between">
-                                    <span class="">⏱ 25 min</span>
-                                    <span class="font-medium text-secondary">Facile</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Footer Card -->
-                        <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
-                            <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°01</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-smore-ganache" href="./?pages=recipe">
-                                Voir la recette
-                            </a>
-                        </div>
-                    </article>
-                    <!-- Card 2 -->
-                    <article class="group bg-surface-container-lowest rounded-DEFAULT overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between" style="border: 1.5px solid rgb(139, 94, 60);">
-                        <div class="flex flex-col">
-                            <div class="relative m-2 overflow-hidden rounded-DEFAULT bg-surface-container aspect-square">
-                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="Artisanal chocolate bars with toasted hazelnuts and coarse sea salt crystals scattered over glossy dark chocolate surface, warm cinematic bakery studio lighting, rich brown tones, high-end pastry monograph" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFKbsfb6r0zMIKVJLLidCy_RdEam6wuKXvIcWmCcmKWCYU-wF3ZyldSMe1D9YTnus8e-9LorwFAwi9eqVpSt691ij0hNLHmvcX_9UWjZcxU4953RQLuWuWTElUf1rhAX5goelj8zkV0UqOVG9OQqZ5EEqRSlUzdFo4UtLzIgPcAm5MWNAj_OEfxQuoQJFKHRK2OfAoQkmkQd1_qqyqo2YEUdIZXbQqC6-x2IlBAwmcmY5DpPGfuvqZ">
-                                <div class="absolute top-2 left-2 flex items-center gap-1.5">
-                                    <span class="px-2 py-0.5 bg-surface/90 backdrop-blur-sm text-on-surface font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT shadow-sm">
-                                        nouveau
-                                    </span>
-                                </div>
-                                <button aria-label="Aperçu rapide" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-surface/85 backdrop-blur-sm text-on-surface hover:bg-surface hover:text-secondary flex items-center justify-center transition-colors shadow-sm" type="button">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                            </div>
-                            <div class="px-4 pt-2 pb-1 flex flex-col">
-                                <div class="flex items-center justify-between text-outline text-body-sm mb-1">
-                                    <div class="flex items-center gap-1 text-secondary">
-                                        <span class="flex items-center text-[13px] tracking-tight">
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px]">star_border</span>
-                                        </span>
-                                        <span class="text-outline font-body-sm text-xs ml-0.5">(32 avis)</span>
+                                    <div class="px-4 pt-2 pb-1 flex flex-col">
+                                        <div class="flex items-center justify-between text-outline text-body-sm mb-1">
+                                            <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold"><?= $escapeRecipeCard($categoryLabel) ?></span>
+                                            <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold"><?= $escapeRecipeCard($recette->getRecetteDifficulty()) ?></span>
+                                        </div>
+                                        <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
+                                            <?= $escapeRecipeCard($recipeTitle) ?>
+                                        </h3>
+                                        <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
+                                            <?= $escapeRecipeCard($recette->getRecetteDescription()) ?>
+                                        </p>
+                                        <!-- Même remplissage proportionnel que sur la fiche recette; zéro vote = cinq étoiles vides. -->
+                                        <p class="font-label-sm text-label-sm text-secondary mb-3 inline-flex items-center gap-0.5 text-lg" aria-label="<?= $recipeRatingCount > 0 ? 'Moyenne de ' . number_format((float) $recipeRatingAverage, 1, ',', '') . ' sur 5, ' . $recipeRatingCount . ' ' . ($recipeRatingCount > 1 ? 'notes' : 'note') : 'Aucune note' ?>">
+                                            <?php for ($starIndex = 1; $starIndex <= 5; $starIndex++): ?>
+                                                <?php $starFill = max(0, min(100, ($recipeRatingValue - ($starIndex - 1)) * 100)); ?>
+                                                <span class="relative inline-block leading-none text-[#8B5E3C]" aria-hidden="true">
+                                                    ☆
+                                                    <span class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-[#C9A45C]" style="width: <?= $starFill ?>%">★</span>
+                                                </span>
+                                            <?php endfor; ?>
+                                            <?php if ($recipeRatingCount > 0): ?>
+                                                <span class="ml-1 text-xs text-on-surface-variant">(<?= $recipeRatingCount ?> <?= $recipeRatingCount > 1 ? 'notes' : 'note' ?>)</span>
+                                            <?php endif; ?>
+                                        </p>
+                                        <div class="bg-surface-container-low px-2.5 py-1.5 rounded-DEFAULT text-on-surface-variant font-body-sm text-xs flex items-center justify-between gap-2">
+                                            <span>⏱ Préparation : <?= $escapeRecipeCard($recette->getRecetteDurationPrep()) ?></span>
+                                            <span>Cuisson : <?= $escapeRecipeCard($recette->getRecetteDurationCook()) ?></span>
+                                        </div>
                                     </div>
-                                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Chocolaterie</span>
                                 </div>
-                                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
-                                    Tablettes Praliné &amp; Fleur de Sel
-                                </h3>
-                                <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
-                                    Chocolat de dégustation tempéré artisanalement, incrusté d'éclats de noisettes torréfiées et sel de Guérande.
-                                </p>
-                                <div class="bg-surface-container-low px-2.5 py-1.5 rounded-DEFAULT text-on-surface-variant font-body-sm text-xs flex items-center justify-between">
-                                    <span class="">⏱ 45 min</span>
-                                    <span class="">🍫 3 tablettes</span>
-                                    <span class="font-medium text-secondary">Intermédiaire</span>
+                                <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
+                                    <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°<?= str_pad((string) $recipeId, 2, '0', STR_PAD_LEFT) ?></span>
+                                    <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="<?= $escapeRecipeCard($recipeSlug) ?>" href="./?pages=recipe&amp;slug=<?= rawurlencode($recipeSlug) ?>">
+                                        Voir la recette
+                                    </a>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
-                            <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°02</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-tablettes-praline" href="#">
-                                Voir la recette
-                            </a>
-                        </div>
-                    </article>
-                    <!-- Card 3 -->
-                    <article class="group bg-surface-container-lowest rounded-DEFAULT overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between" style="border: 1.5px solid rgb(139, 94, 60);">
-                        <div class="flex flex-col">
-                            <div class="relative m-2 overflow-hidden rounded-DEFAULT bg-surface-container aspect-square">
-                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="Handcrafted dark chocolate cocoa truffles dusted in rich Ecuadorian cocoa powder arranged inside an elegant vintage presentation box, tactile soft morning light, shallow depth of field, warm umber and cream palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaR0xeQlR_ckXc_qAWXzlu97Knp1RZNA4cVo6gSgIsX6pxZ0BK_AGuBG5kLPrat-vJlAllglLgq2lvhKig8WpcNCBfau9eUPlZq7oahDgahYaFolZ8FNtNHX_jbP0TWRu9PXMag87PX552QK_SJZYl6534oEajpk9oj1W2lnqr5cwjrI0Sc2k4o_wKd8rFFblvlJBKHPonrEsC9X6dnbnYTqaqHpMPUf3o1l5ji2vhErdiVyYaQD4O">
-                                <div class="absolute top-2 left-2 flex items-center gap-1.5">
-                                    <span class="px-2 py-0.5 bg-secondary text-on-secondary font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT shadow-sm">
-                                        coup de cœur
-                                    </span>
-                                </div>
-                                <button aria-label="Aperçu rapide" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-surface/85 backdrop-blur-sm text-on-surface hover:bg-surface hover:text-secondary flex items-center justify-center transition-colors shadow-sm" type="button">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                            </div>
-                            <div class="px-4 pt-2 pb-1 flex flex-col">
-                                <div class="flex items-center justify-between text-outline text-body-sm mb-1">
-                                    <div class="flex items-center gap-1 text-secondary">
-                                        <span class="flex items-center text-[13px] tracking-tight">
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                        </span>
-                                        <span class="text-outline font-body-sm text-xs ml-0.5">(56 avis)</span>
-                                    </div>
-                                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Douceurs</span>
-                                </div>
-                                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
-                                    Truffes Cacao &amp; Infusion Café
-                                </h3>
-                                <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
-                                    Une texture soyeuse ultra-fondante enrobée d'un voile de cacao amer d'Équateur avec une note d'espresso.
-                                </p>
-                                <div class="bg-surface-container-low px-2.5 py-1.5 rounded-DEFAULT text-on-surface-variant font-body-sm text-xs flex items-center justify-between">
-                                    <span class="">⏱ 20 min (+2h)</span>
-                                    <span class="">🍬 20 pièces</span>
-                                    <span class="font-medium text-secondary">Très Facile</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
-                            <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°03</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-truffes-cacao" href="#">
-                                Voir la recette
-                            </a>
-                        </div>
-                    </article>
-                    <!-- Card 4 -->
-                    <article class="group bg-surface-container-lowest rounded-DEFAULT overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between" style="border: 1.5px solid rgb(139, 94, 60);">
-                        <div class="flex flex-col">
-                            <div class="relative m-2 overflow-hidden rounded-DEFAULT bg-surface-container aspect-square">
-                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="Wrapped artisan confectionary biscuits tied with twine, generous hazelnut gianduja chocolate filling visible through crisp shortbread cookies, culinary flatlay on linen surface, warm golden tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7Z_5EJt4u2kFsc5gETD_AvRI_So6-EIBlvtrgT4EkjwAgGQ2c30I3Of4VdY3xd8Grc7gRc1EcNzjYvxytFhXodhQeG9tiIyUSXjoNfROEV9Crbkn3MmSkUUEIUwAiZgkNLoGsjDx-t5lm628ZOiV2pqjavUA_vIN0dXdJJxhA6DKzI1tte43-gLCk2O-0p17fwdWopEjaB6KrQcgNeoW17uzjXH3sDzREukXM1Y8ykSg8uo3hGz4F">
-                                <div class="absolute top-2 left-2 flex items-center gap-1.5">
-                                    <span class="px-2 py-0.5 bg-surface/90 backdrop-blur-sm text-on-surface font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT shadow-sm">
-                                        nouveau
-                                    </span>
-                                </div>
-                                <button aria-label="Aperçu rapide" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-surface/85 backdrop-blur-sm text-on-surface hover:bg-surface hover:text-secondary flex items-center justify-center transition-colors shadow-sm" type="button">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                            </div>
-                            <div class="px-4 pt-2 pb-1 flex flex-col">
-                                <div class="flex items-center justify-between text-outline text-body-sm mb-1">
-                                    <div class="flex items-center gap-1 text-secondary">
-                                        <span class="flex items-center text-[13px] tracking-tight">
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[15px]">star_border</span>
-                                        </span>
-                                        <span class="text-outline font-body-sm text-xs ml-0.5">(41 avis)</span>
-                                    </div>
-                                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Pâtisserie</span>
-                                </div>
-                                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
-                                    Sablé Noisette &amp; Cœur Gianduja
-                                </h3>
-                                <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
-                                    Pâte sablée croustillante aux noisettes du Piémont et garniture généreuse de gianduja onctueux.
-                                </p>
-                                <div class="bg-surface-container-low px-2.5 py-1.5 rounded-DEFAULT text-on-surface-variant font-body-sm text-xs flex items-center justify-between">
-                                    <span class="">⏱ 35 min</span>
-                                    <span class="">👥 6 pers.</span>
-                                    <span class="font-medium text-secondary">Facile</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
-                            <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°04</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-sable-noisette" href="#">
-                                Voir la recette
-                            </a>
-                        </div>
-                    </article>
+                            </article>
+                        <?php endforeach; ?>
+                        <p class="hidden col-span-full text-center py-12 text-on-surface-variant" hidden id="recipeNoResults" role="status">Aucune recette ne correspond à ces critères.</p>
+                    <?php endif; ?>
                 </div>
             </section>
             

@@ -17,7 +17,7 @@
       (fa-eye). Voir scripts.js, bloc "ŒIL AFFICHER / MASQUER LE MOT DE PASSE".
       (Les icônes viennent de Font Awesome, déjà chargé dans menuPublicView.php.)
 -->
-<div id="authModal" class="auth-modal" aria-hidden="true">
+<div id="authModal" class="auth-modal" aria-hidden="true" data-auth-modal-auto-open="<?= !empty($recipeAutoOpenAuthModal) ? 'true' : 'false' ?>">
 
     <!-- Fond sombre semi-transparent : un clic dessus ferme le modal -->
     <div class="auth-modal__overlay" data-auth-close></div>

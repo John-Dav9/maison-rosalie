@@ -9,12 +9,16 @@ use model\StringTrait;
 class RecetteMapping extends AbstractMapping
 {
     protected ?int $recette_id = null;
+    // Slug permanent lu depuis la base et utilisé pour les URL publiques.
+    protected ?string $recette_slug = null;
     protected ?string $recette_title = null;
     protected ?string $recette_description = null;
     protected ?string $recette_image = null;
     protected ?string $recette_duration_prep = null;
     protected ?string $recette_duration_cook = null;
     protected ?string $recette_difficulty = null;
+    // Nombre de portions initial utilisé par la fiche et le calcul des quantités.
+    protected ?int $recette_portions = 1;
     protected ?string $recette_date_create = null;
     protected ?int $recette_user_id = null;
 
@@ -37,6 +41,21 @@ class RecetteMapping extends AbstractMapping
         $this->recette_id = $recette_id;
     }
 
+    public function getRecetteSlug(): ?string
+    {
+        return $this->recette_slug;
+    }
+
+    public function setRecetteSlug(?string $recette_slug): void
+    {
+        if ($recette_slug !== null
+            && ($recette_slug === '' || strlen($recette_slug) > 150
+                || !preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $recette_slug))) {
+            throw new Exception("Le slug de la recette n'est pas valide");
+        }
+        $this->recette_slug = $recette_slug;
+    }
+
     public function getRecetteTitle(): ?string
     {
         return $this->recette_title;
@@ -56,14 +75,6 @@ class RecetteMapping extends AbstractMapping
         $this->recette_title = $recette_title;
     }
 
-    /** Le slug est calculé depuis le titre et n'est pas enregistré en base. */
-    public function getRecetteSlug(): ?string
-    {
-        if ($this->recette_title === null || trim($this->recette_title) === '') {
-            return null;
-        }
-        return self::slugify($this->recette_title, false);
-    }
 
     public function getRecetteDescription(): ?string
     {
@@ -117,6 +128,19 @@ class RecetteMapping extends AbstractMapping
     public function setRecetteDifficulty(?string $recette_difficulty): void
     {
         $this->recette_difficulty = $recette_difficulty;
+    }
+
+    public function getRecettePortions(): ?int
+    {
+        return $this->recette_portions;
+    }
+
+    public function setRecettePortions(?int $recette_portions): void
+    {
+        if ($recette_portions !== null && $recette_portions < 1) {
+            throw new Exception("Le nombre de portions doit être supérieur à zéro");
+        }
+        $this->recette_portions = $recette_portions;
     }
 
     public function getRecetteDateCreate(): ?string
