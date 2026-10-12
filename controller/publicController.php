@@ -330,14 +330,87 @@ $contactCsrfToken = $_SESSION['contact_csrf_token'];
 
 // si non existence de la variable
 // $_GET nommée 'p'
-if (!isset($_GET['pages'])) {
+if (!isset($_GET['pages']) || $_GET['pages'] === 'home') {
+    // L'accueil présente les trois recettes ayant reçu les meilleures notes.
+    require_once BASE_URL . '/model/ManagerInterface.php';
+    require_once BASE_URL . '/model/AbstractMapping.php';
+    require_once BASE_URL . '/model/StringTrait.php';
+    require_once BASE_URL . '/model/mapping/userMapping.php';
+    require_once BASE_URL . '/model/mapping/recetteMapping.php';
+    require_once BASE_URL . '/model/mapping/categoryMapping.php';
+    require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+    require_once BASE_URL . '/model/mapping/stepsMapping.php';
+    require_once BASE_URL . '/model/mapping/noteMapping.php';
+    require_once BASE_URL . '/model/manager/RecetteManager.php';
+    require_once BASE_URL . '/model/manager/NoteManager.php';
 
-    // Nous sommes sur l'accueil
-    // chargement de view/homepage.php
-    include BASE_URL . "/view/publicView/home.php";
+    $homeRecipeManager = new \model\manager\RecetteManager($connectPDO);
+    $homeRecipes = $homeRecipeManager->getAllRecettes();
+    $homeRecipeIds = array_map(
+        static fn($recipe): int => (int) $recipe->getRecetteId(),
+        $homeRecipes
+    );
+    $homeRatingStats = (new \model\manager\NoteManager($connectPDO))
+        ->getRatingSummariesByRecipeIds($homeRecipeIds);
 
-    // sinon si la variable get 'pages' est dans le
-    // tableau VALID_PAGES    
+    $rankedRecipes = [];
+    foreach ($homeRecipes as $homeRecipe) {
+        $recipeId = (int) $homeRecipe->getRecetteId();
+        $rating = $homeRatingStats[$recipeId] ?? ['count' => 0, 'average' => null];
+        $slug = $homeRecipe->getRecetteSlug();
+        if ($rating['count'] < 1 || $rating['average'] === null
+            || !is_string($slug) || !preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $slug)) {
+            continue;
+        }
+
+        $rankedRecipes[] = [
+            'recipe' => $homeRecipe,
+            'id' => $recipeId,
+            'average' => (float) $rating['average'],
+            'count' => (int) $rating['count'],
+        ];
+    }
+
+    // Classe par moyenne, puis par nombre de votes; les dates/ID départagent les égalités.
+    usort($rankedRecipes, static function (array $left, array $right): int {
+        $byAverage = $right['average'] <=> $left['average'];
+        if ($byAverage !== 0) {
+            return $byAverage;
+        }
+        $byCount = $right['count'] <=> $left['count'];
+        if ($byCount !== 0) {
+            return $byCount;
+        }
+        $leftDate = $left['recipe']->getRecetteDateCreate() ?? '';
+        $rightDate = $right['recipe']->getRecetteDateCreate() ?? '';
+        $byDate = strcmp($rightDate, $leftDate);
+        return $byDate !== 0 ? $byDate : ($right['id'] <=> $left['id']);
+    });
+
+    $topRecipes = [];
+    foreach (array_slice($rankedRecipes, 0, 3) as $index => $rankedRecipe) {
+        $recipe = $rankedRecipe['recipe'];
+        $durations = array_filter([
+            $recipe->getRecetteDurationPrep(),
+            $recipe->getRecetteDurationCook(),
+        ], static fn($duration): bool => is_string($duration) && trim($duration) !== '');
+
+        $topRecipes[] = [
+            'rank' => ['1er', '2e', '3e'][$index],
+            'badge' => number_format($rankedRecipe['average'], 1, ',', '') . '/5 · '
+                . $rankedRecipe['count'] . ' ' . ($rankedRecipe['count'] === 1 ? 'note' : 'notes'),
+            'slug' => $recipe->getRecetteSlug() ?? '',
+            'title' => $recipe->getRecetteTitle() ?? 'Recette',
+            'desc' => $recipe->getRecetteDescription() ?? '',
+            'time' => $durations !== [] ? implode(' + ', $durations) : 'Temps non précisé',
+            'level' => $recipe->getRecetteDifficulty() ?? 'Non précisée',
+            'image' => $recipe->getRecetteImage() ?? '',
+        ];
+    }
+
+    include BASE_URL . '/view/publicView/home.php';
+
+    // sinon si la variable get 'pages' est dans le tableau VALID_PAGES
 } elseif (in_array($_GET['pages'], VALID_PAGES)) {
     // La route recette charge ses dépendances et ses données avant d'inclure la vue.
     if ($_GET['pages'] === 'recipe') {
