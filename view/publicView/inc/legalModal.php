@@ -44,7 +44,7 @@
                 <h3>Durée de conservation</h3>
                 <p>Vos données sont conservées le temps nécessaire à la finalité pour laquelle elles ont été collectées, puis supprimées.</p>
                 <h3>Vos droits</h3>
-                <p>Vous pouvez à tout moment demander l'accès, la rectification ou la suppression de vos données en nous écrivant à <a href="mailto:admin@maisonRosalie.be">admin@maisonRosalie.be</a>.</p>
+                <p>Vous pouvez à tout moment demander l'accès, la rectification ou la suppression de vos données en nous écrivant à <a href="mailto:maison.rosalie.chocolat@gmail.com">maison.rosalie.chocolat@gmail.com</a>.</p>
             </section>
 
             <!-- 2. POLITIQUE DES COOKIES -->
@@ -72,7 +72,7 @@
                     <li><strong>Droit d'opposition</strong> : vous opposer à certains traitements.</li>
                 </ul>
                 <h3>Exercer vos droits</h3>
-                <p>Pour exercer l'un de ces droits, écrivez-nous à <a href="mailto:admin@maisonRosalie.be">admin@maisonRosalie.be</a>. Vous pouvez également introduire une réclamation auprès de l'Autorité de protection des données.</p>
+                <p>Pour exercer l'un de ces droits, écrivez-nous à <a href="mailto:maison.rosalie.chocolat@gmail.com">maison.rosalie.chocolat@gmail.com</a>. Vous pouvez également introduire une réclamation auprès de l'Autorité de protection des données.</p>
             </section>
 
             <!-- 4. TRAITEMENT DES DONNÉES -->
