@@ -3,6 +3,3 @@ config.php
 
 # Ignorer les données sensible
 data/data-base.sql
-
-# Ignorer toutes les assets
-public/assets/*

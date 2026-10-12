@@ -1,12 +1,12 @@
 <!---------footer pour le fond marron------->
-<footer class="bg-[#2F1B14] px-16 py-10">
+<footer class="bg-[#2F1B14] px-16 py-2 font-sans">
 
       <!------ligne de séparation----->
-      <hr class="my-10 border-white" />
-      <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-y-12 gap-x-6 sm:gap-x-8 text-center">
+      <hr class="mt-4 mb-6 border-white" />
+<div class="w-full grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-y-12 gap-x-12 text-center">
             <!--les colonnes -->
             <!-- Logo en image -->
-            <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-32">
+            <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-24 mx-auto">
             <div class="space-y-6">
                   <!--Colonne 1 : navigation-->
                   <h3 class="text-[#C9A45C] font-bold mb-6">Navigation</h3>
@@ -65,7 +65,7 @@
                <h3 class="text-[#C9A45C] font-bold mb-6">
                      <i class="fa-regular fa-envelope mr-2"></i> Newsletter
                </h3>
-               <p class="text-white text-sm mt-2">Recevez nos nouvelles recettes chaque mois.</p>
+               <p class="text-white text-sm">Recevez nos nouvelles recettes chaque mois.</p>
                <form class="flex flex-col gap-2">
                      <input type="email" placeholder="Votre adresse email"
                            class="w-full bg-transparent border border-[#C9A45C] text-white placeholder-[#BFA58A] px-3 py-1.5 text-sm">
@@ -80,9 +80,9 @@
       </div>
       </div>
       <!------ligne de séparation----->
-      <hr class="my-10 border-white" />
+      <hr class="mt-6 mb-3 border-white" />
       <!-----Copyright, centré ---->
-      <p class="text-center text-[#BFA58A]">
+      <p class="text-center text-[#BFA58A] mb-3">
             &lt&lt © 2026 Maison Rosalie - Tous droits réservés. &gt&gt
       </p>
 
