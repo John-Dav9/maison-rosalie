@@ -1,4 +1,22 @@
- <?php require_once "./../view/publicView/inc/menuPublicView.php" ?>
+ <?php
+// Les données de recette sont chargées par le contrôleur à partir du slug demandé.
+$escapeRecipeValue = static function ($value): string {
+    return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+};
+$recipeImagePath = static function (?string $image, string $folder): string {
+    if ($image === null || trim($image) === '') {
+        return '';
+    }
+    if (preg_match('~^https?://~i', $image)) {
+        return $image;
+    }
+    return './assets/images/' . trim($folder, '/') . '/' . rawurlencode(basename($image));
+};
+$recipeTitle = $recipe->getRecetteTitle() ?? 'Recette';
+$recipeImage = $recipeImagePath($recipe->getRecetteImage(), 'recettes');
+$categories = $recipe->getCategories() ?? [];
+require_once "./../view/publicView/inc/menuPublicView.php";
+?>
  <!--=========Fond créme pour toute la section ================-->
  <section id="recettes" class="bg-[#FBF5E6] text-[#2F1B14] pb-16">
 
@@ -6,20 +24,19 @@
     <div class="text-center py-20">
        <a href="#" class="text-[#B8860B] underline font-['Playfair_Display']">L'atelier Maison Rosalie</a>
        <h2 class="text-5xl font-bold font-['Playfair_Display'] mt-2">
-          <span class="text-[#C9A45C] text-xl">◆</span> Recettes au chocolat
+          <span class="text-[#C9A45C] text-xl">◆</span> <?= $escapeRecipeValue($recipeTitle) ?>
        </h2>
        <p class="text-sm mt-4">
-          apprenez nos recettes délicieuses et trop bonne qu'on peut<br>
-          manger quand on a faim ou quoi tu vois.
+          <?= nl2br($escapeRecipeValue($recipe->getRecetteDescription())) ?>
        </p>
     </div>
 
     <!--  === ==========Boutons des catégories ========= -->
     <!--============= Le bouton foncé = la catégorie choisie ============-->
     <div class="flex justify-center gap-5 mb-10">
-       <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']"> Ganache</span>
-       <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Praline</span>
-       <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']">Truffe</span>
+       <?php foreach ($categories as $category): ?>
+          <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']"><?= $escapeRecipeValue($category->getTitle()) ?></span>
+       <?php endforeach; ?>
     </div>
 
     <!-- ================= CARTE DE LA RECETTE ================= -->
@@ -29,25 +46,20 @@
        <div class="grid grid-cols-2 gap-8 p-6">
 
           <!--================Image de la recette ================-->
-           <img src="./assets/images/ingredients/ganache-chocolat-thermomix-800x600.webp" alt="Ganache noir 85%" class="w-full h-72 object-cover border border-[#C9A45C] mt-8">
+          <img src="<?= $escapeRecipeValue($recipeImage) ?>" alt="<?= $escapeRecipeValue($recipeTitle) ?>" class="w-full h-72 object-cover border border-[#C9A45C] mt-8">
 
           <!-- ==============Infos de la recette ============-->
           <div>
              <!--============= Étiquette Moyen, en haut à droite============== -->
              <p class="text-right">
-                <span class="bg-[#F8EDD3] px-6 py-2 font-bold font-['Playfair_Display']">Moyen</span>
+                <span class="bg-[#F8EDD3] px-6 py-2 font-bold font-['Playfair_Display']"><?= $escapeRecipeValue($recipe->getRecetteDifficulty()) ?></span>
              </p>
 
              <!-- ==============Titre ==============-->
-             <h3 class="text-3xl font-bold font-['Playfair_Display'] mt-4">Ganache noir 85%</h3>
+             <h3 class="text-3xl font-bold font-['Playfair_Display'] mt-4"><?= $escapeRecipeValue($recipeTitle) ?></h3>
 
-             <!--============== Description + lien "Lire plus" =============-->
-             <p class="text-xs mt-2">
-                lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Quisquam, quod. Lorem ipsum
-                dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-                <a href="#" class="text-[#B8860B] underline">Lire plus</a>
-             </p>
+             <!-- Description issue de la recette sélectionnée. -->
+             <p class="text-xs mt-2"><?= nl2br($escapeRecipeValue($recipe->getRecetteDescription())) ?></p>
 
              <!-- ===========Note : 4 étoiles rouges sur 5 ================-->
              <p class="text-red-600 text-lg mt-2">
@@ -62,15 +74,15 @@
              <div class="grid grid-cols-3 gap-3 mt-4 text-center">
                 <div class="border border-[#C9A45C] py-3">
                    <p class="text-xs">TEMPS PREP</p>
-                   <p class="font-bold font-['Playfair_Display']">20 Mins</p>
+                   <p class="font-bold font-['Playfair_Display']"><?= $escapeRecipeValue($recipe->getRecetteDurationPrep()) ?></p>
                 </div>
                 <div class="border border-[#C9A45C] py-3">
-                   <p class="text-xs">TEMPS TOT</p>
-                   <p class="font-bold font-['Playfair_Display']">120 Mins</p>
+                   <p class="text-xs">CUISSON</p>
+                   <p class="font-bold font-['Playfair_Display']"><?= $escapeRecipeValue($recipe->getRecetteDurationCook()) ?></p>
                 </div>
                 <div class="border border-[#C9A45C] py-3">
                    <p class="text-xs">DIFFICULTÉ</p>
-                   <p class="font-bold font-['Playfair_Display']">Moyen</p>
+                   <p class="font-bold font-['Playfair_Display']"><?= $escapeRecipeValue($recipe->getRecetteDifficulty()) ?></p>
                 </div>
              </div>
 
@@ -82,7 +94,7 @@
                 </div>
                 <div class="flex items-center gap-2 bg-white border border-[#C9A45C] rounded-full px-2 py-1">
                    <button id="moins" class="bg-[#F8EDD3] px-2">−</button>
-                   <span class="font-bold font-['Playfair_Display']"><span id="portions">4</span> Pers</span>
+                   <span class="font-bold font-['Playfair_Display']"><span id="portions">1</span> Pers</span>
                    <button id="plus" class="bg-[#F8EDD3] px-2">+</button>
                 </div>
              </div>
@@ -95,52 +107,26 @@
              <h3 class="text-3xl font-bold font-['Playfair_Display']">
                 <i class="fa-solid fa-basket-shopping text-[#C9A45C] text-xl"></i>Les ingrédients
              </h3>
-             <p class="text-sm">ajusté pour <b><span id="portions-texte">4</span>personnes</b></p>
+             <p class="text-sm">ajusté pour <b><span id="portions-texte">1</span> <span id="portions-label">personne</span></b></p>
           </div>
 
           <!-- Carrousel : les cartes défilent de gauche à droite -->
           <div id="carrousel" class=" flex gap-4 overflow-x-auto scroll-smooth">
 
-             <!-- Une carte = un ingrédient. data-quantite = quantité pour 4 personnes -->
-             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-                <div class="overflow-hidden rounded">
-                   <img src="./assets/images/ingredients/ganache1.webp" alt="Chocolat noir" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+             <!-- Les ingrédients, quantités et visuels proviennent de la recette choisie. -->
+             <?php foreach ($recipeIngredients as $ingredient): ?>
+                <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
+                   <div class="overflow-hidden rounded">
+                      <?php $ingredientImage = $recipeImagePath($ingredient['image'] ?? null, 'ingredients'); ?>
+                      <!-- Laisser le chemin DB tel quel (même vide) : le navigateur affichera le texte alt si l'image échoue. -->
+                      <img src="<?= $escapeRecipeValue($ingredientImage) ?>" alt="<?= $escapeRecipeValue($ingredient['name'] ?? '') ?>" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
+                   </div>
+                   <p class="font-bold font-['Playfair_Display'] text-sm mt-3"><?= $escapeRecipeValue($ingredient['name'] ?? '') ?></p>
+                   <?php if (!empty($ingredient['quantite'])): ?>
+                      <p class="text-xs text-[#B8860B] mt-1 quantite" data-quantite="<?= $escapeRecipeValue($ingredient['quantite']) ?>" data-portions-base="1"><?= $escapeRecipeValue($ingredient['quantite']) ?></p>
+                   <?php endif; ?>
                 </div>
-                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">70% Chocolat noir</p>
-                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="200">200</span>g</p>
-             </div>
-
-             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-                <div class="overflow-hidden rounded">
-                   <img src="./assets/images/ingredients/beurre.webp" alt="Beurre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
-                </div>
-                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Beurre</p>
-                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
-             </div>
-
-             <div class=" flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-                <div class="overflow-hidden rounded">
-                   <img src="./assets/images/ingredients/sucre.webp" alt="Sucre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
-                </div>
-                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Sucre</p>
-                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="120">120</span>g</p>
-             </div>
-
-             <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-                <div class="overflow-hidden rounded">
-                   <img src="./assets/images/ingredients/oeufs.webp" alt="Œufs" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
-                </div>
-                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Œufs</p>
-                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="4">4</span></p>
-             </div>
-
-             <div class="flex-1 min-w-48 bg-[#FBF5E6] border border-[#C9A45C] rounded-xl p-2 text-center">
-                <div class="overflow-hidden rounded">
-                   <img src="./assets/images/ingredients/cacoa.webp" alt="Cacao en poudre" class="h-20 w-full object-cover rounded transition duration-300 hover:scale-110">
-                </div>
-                <p class="font-bold font-['Playfair_Display'] text-sm mt-3">Cacao en poudre</p>
-                <p class="text-xs text-[#B8860B] mt-1"><span class="quantite" data-quantite="30">30</span>g</p>
-             </div>
+             <?php endforeach; ?>
 
           </div>
           <!---=======Fleches du carrousel ===== ----->
@@ -159,53 +145,24 @@
           <h3 class="text-3xl font-bold font-['Playfair_Display'] mb-6">
              <i class="fa-solid fa-list-ol text-[#C9A45C] text"></i> Les étapes
           </h3>
-          <!---===== Une étape = une case à cocher + un titre + un text ======----->
+          <!-- Les étapes affichées sont celles de cette recette, dans l'ordre du manager. -->
           <div class="space-y-4">
-             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
-                <input type="checkbox" class="mt-1">
-                <div>
-                   <p class="text-sm text-[#B8860B]">ÉTAPE 1</p>
-                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem
-                      a corrupti rerum possimus repellendus quidem voluptate.</p>
-                </div>
-             </label>
-             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
-                <input type="checkbox" class="mt-1">
-                <div>
-                   <p class="text-sm text-[#B8860B]">ÉTAPE 2</p>
-                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem
-                      a corrupti rerum possimus repellendus quidem voluptate.</p>
-                </div>
-             </label>
-             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
-                <input type="checkbox" class="mt-1">
-                <div>
-                   <p class="text-sm text-[#B8860B]">ÉTAPE 3</p>
-                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem
-                      a corrupti rerum possimus repellendus quidem voluptate.</p>
-                </div>
-             </label>
-             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
-                <input type="checkbox" class="mt-1">
-                <div>
-                   <p class="text-sm text-[#B8860B]">ÉTAPE 4</p>
-                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem
-                      a corrupti rerum possimus repellendus quidem voluptate.</p>
-                </div>
-             </label>
-             <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
-                <input type="checkbox" class="mt-1">
-                <div>
-                   <p class="text-sm text-[#B8860B]">ÉTAPE 5</p>
-                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Nisi quisquam tempore voluptatibus animi, aspernatur nam consectetur eaque inventore ratione delectus odio cupiditate dolorem
-                      a corrupti rerum possimus repellendus quidem voluptate.</p>
-                </div>
-             </label>
+             <?php if ($recipeSteps === []): ?>
+                <p>Les étapes de cette recette ne sont pas encore renseignées.</p>
+             <?php else: ?>
+                <?php foreach ($recipeSteps as $step): ?>
+                   <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+                      <input type="checkbox" class="mt-1">
+                      <div>
+                         <p class="text-sm text-[#B8860B]">ÉTAPE <?= (int) $step->getNbStep() ?></p>
+                         <?php if ($step->getTitle()): ?><p class="font-bold"><?= $escapeRecipeValue($step->getTitle()) ?></p><?php endif; ?>
+                         <p><?= nl2br($escapeRecipeValue($step->getDescription())) ?></p>
+                         <?php $stepImage = $recipeImagePath($step->getImage(), 'etapes'); ?>
+                         <?php if ($stepImage !== ''): ?><img src="<?= $escapeRecipeValue($stepImage) ?>" alt="Illustration de l'étape <?= (int) $step->getNbStep() ?>" class="mt-3 max-h-64 object-cover"><?php endif; ?>
+                      </div>
+                   </label>
+                <?php endforeach; ?>
+             <?php endif; ?>
           </div>
        </section>
     </article>
@@ -287,8 +244,8 @@
 
           <!-- Bouton Envoyer, à droite -->
           <div class="text-right mt-2">
-             <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer 
-              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out 
+             <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer
+              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out
               hover:opacity-90 focus:opacity-90 focus:outline-none active:shadow-none active:translate-y-[6px]">Envoyer
              </button>
           </div>
@@ -310,8 +267,8 @@
                 </select>
              </div>
              <div class="text-right mt-6">
-                <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer 
-              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out 
+                <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer
+              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out
               hover:opacity-90 focus:opacity-90 focus:outline-none active:shadow-none active:translate-y-[6px]">Envoyer
                 </button>
              </div>
@@ -321,7 +278,7 @@
     </article>
  </section>
  <?php require_once "./../view/publicView/inc/footer.php" ?>
- <script src="./js/scripts.js"></script>
+ <script src="./js/scripts.js?v=<?= filemtime(__DIR__ . '/../../public/js/scripts.js') ?>"></script>
  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 

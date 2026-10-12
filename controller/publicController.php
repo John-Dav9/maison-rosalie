@@ -244,10 +244,75 @@ if (!isset($_GET['pages'])) {
     // sinon si la variable get 'pages' est dans le
     // tableau VALID_PAGES    
 } elseif (in_array($_GET['pages'], VALID_PAGES)) {
-    // inclusion de la vue autorisée
-    include BASE_URL . "/view/publicView/" . $_GET['pages'] . ".php";
+    // La route recette charge ses dépendances et ses données avant d'inclure la vue.
+    if ($_GET['pages'] === 'recipe') {
+        require_once BASE_URL . '/model/ManagerInterface.php';
+        require_once BASE_URL . '/model/AbstractMapping.php';
+        require_once BASE_URL . '/model/StringTrait.php';
+        require_once BASE_URL . '/model/mapping/userMapping.php';
+        require_once BASE_URL . '/model/mapping/recetteMapping.php';
+        require_once BASE_URL . '/model/mapping/categoryMapping.php';
+        require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+        require_once BASE_URL . '/model/mapping/stepsMapping.php';
+        require_once BASE_URL . '/model/manager/RecetteManager.php';
 
-    // sinon (pages non valide)    
+        // On n'accepte que des slugs minuscules alphanumériques séparés par des tirets.
+        $recipeSlug = $_GET['slug'] ?? null;
+        $recipeDetails = null;
+        if (is_string($recipeSlug) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $recipeSlug)) {
+            $recipeManager = new \model\manager\RecetteManager($connectPDO);
+            $recipeDetails = $recipeManager->getRecetteDetailsBySlug($recipeSlug);
+        }
+
+        if ($recipeDetails === null) {
+            http_response_code(404);
+            include BASE_URL . '/view/publicView/404View.php';
+        } else {
+            $recipe = $recipeDetails['recette'];
+            $recipeIngredients = $recipeDetails['ingredients'];
+            $recipeSteps = $recipeDetails['etapes'];
+            include BASE_URL . '/view/publicView/recipe.php';
+        }
+    } elseif ($_GET['pages'] === 'recettes') {
+        // Charge les dépendances du modèle et récupère les données du catalogue.
+        require_once BASE_URL . '/model/ManagerInterface.php';
+        require_once BASE_URL . '/model/AbstractMapping.php';
+        require_once BASE_URL . '/model/StringTrait.php';
+        require_once BASE_URL . '/model/mapping/userMapping.php';
+        require_once BASE_URL . '/model/mapping/recetteMapping.php';
+        require_once BASE_URL . '/model/mapping/categoryMapping.php';
+        require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+        require_once BASE_URL . '/model/mapping/stepsMapping.php';
+        require_once BASE_URL . '/model/mapping/noteMapping.php';
+        require_once BASE_URL . '/model/manager/RecetteManager.php';
+        require_once BASE_URL . '/model/manager/NoteManager.php';
+
+        $recipeManager = new \model\manager\RecetteManager($connectPDO);
+        $recettes = $recipeManager->getAllRecettes();
+        $categories = $recipeManager->getAllCategories();
+
+        // Les catégories de chaque carte viennent des associations enregistrées.
+        foreach ($recettes as $recette) {
+            $recette->setCategories($recipeManager->getCategoriesByRecetteId((int) $recette->getRecetteId()));
+        }
+
+        $recipeIds = array_map(static fn($recette): int => (int) $recette->getRecetteId(), $recettes);
+        $recipeRatingStats = (new \model\manager\NoteManager($connectPDO))
+            ->getRatingSummariesByRecipeIds($recipeIds);
+
+        $difficultes = array_values(array_unique(array_filter(array_map(
+            static fn($recette): ?string => $recette->getRecetteDifficulty(),
+            $recettes
+        ))));
+        sort($difficultes, SORT_NATURAL | SORT_FLAG_CASE);
+
+        include BASE_URL . '/view/publicView/recettes.php';
+    } else {
+        // Les autres vues publiques gardent leur routage existant.
+        include BASE_URL . "/view/publicView/" . $_GET['pages'] . ".php";
+    }
+
+    // sinon (pages non valide)
 } else {
     include BASE_URL . "/view/publicView/404view.php";
 }

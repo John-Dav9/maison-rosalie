@@ -58,6 +58,7 @@ class RecetteManager implements ManagerInterface
             // Le mapping valide le titre et la description avant l'écriture en base.
             $recipe = new RecetteMapping([
                 'recette_title' => $data['recette_title'],
+                'recette_slug' => $this->createUniqueRecipeSlug($data['recette_slug'] ?? $data['recette_title']),
                 'recette_description' => $data['recette_description'],
                 'recette_image' => $data['recette_image'],
                 'recette_duration_prep' => $data['recette_duration_prep'],
@@ -71,11 +72,12 @@ class RecetteManager implements ManagerInterface
 
             // Insère d'abord la recette pour obtenir son ID auto-incrémenté.
             $sqlRecipe = "INSERT INTO `Recipe`
-                (`Title`, `Description`, `Image`, `duration_prep`, `duration_cook`, `difficulty`, `Created_at`, `Users_Id`)
-                VALUES (:title, :description, :image, :duration_prep, :duration_cook, :difficulty, :created_at, :user_id)";
+                (`Title`, `Slug`, `Description`, `Image`, `duration_prep`, `duration_cook`, `difficulty`, `Created_at`, `Users_Id`)
+                VALUES (:title, :slug, :description, :image, :duration_prep, :duration_cook, :difficulty, :created_at, :user_id)";
             $stmtRecipe = $this->connect->prepare($sqlRecipe);
             $stmtRecipe->execute([
                 'title' => $recipe->getRecetteTitle(),
+                'slug' => $recipe->getRecetteSlug(),
                 'description' => $recipe->getRecetteDescription(),
                 'image' => $recipe->getRecetteImage(),
                 'duration_prep' => $recipe->getRecetteDurationPrep(),
@@ -204,6 +206,25 @@ class RecetteManager implements ManagerInterface
         }
     }
 
+    /** Recherche une recette via son slug public validé. */
+    public function getRecetteBySlug(string $slug): ?RecetteMapping
+    {
+        if (!preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $slug)) {
+            return null;
+        }
+
+        try {
+            $stmt = $this->connect->prepare($this->recipeSelectSql() . " WHERE `Slug` = :slug LIMIT 1");
+            $stmt->execute(['slug' => $slug]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+            return $row === false ? null : new RecetteMapping($row);
+        } catch (Throwable $e) {
+            error_log('Échec de récupération de la recette par slug : ' . $e->getMessage());
+            return null;
+        }
+    }
+
     /** Donne au formulaire la liste des catégories déjà enregistrées. */
     public function getAllCategories(): array
     {
@@ -313,6 +334,32 @@ class RecetteManager implements ManagerInterface
         ];
     }
 
+    /** Charge le détail complet d'une recette à partir de son slug stable. */
+    public function getRecetteDetailsBySlug(string $slug): ?array
+    {
+        $recipe = $this->getRecetteBySlug($slug);
+        return $recipe === null ? null : $this->getRecetteDetails((int) $recipe->getRecetteId());
+    }
+
+    /** Génère un slug lisible, puis ajoute un suffixe si ce slug existe déjà. */
+    private function createUniqueRecipeSlug(string $source): string
+    {
+        $base = RecetteMapping::slugify($source, false);
+        $slug = $base;
+        $suffix = 2;
+        $check = $this->connect->prepare("SELECT 1 FROM `Recipe` WHERE `Slug` = :slug LIMIT 1");
+
+        while (true) {
+            $check->execute(['slug' => $slug]);
+            $exists = $check->fetchColumn() !== false;
+            $check->closeCursor();
+            if (!$exists) {
+                return $slug;
+            }
+            $slug = $base . '-' . $suffix++;
+        }
+    }
+
     /**
      * Trouve une catégorie par son ID ou son titre; crée-la si le formulaire fournit un nouveau titre.
      */
@@ -404,6 +451,7 @@ class RecetteManager implements ManagerInterface
     {
         return "SELECT
                     `Id` AS `recette_id`,
+                    `Slug` AS `recette_slug`,
                     `Title` AS `recette_title`,
                     `Description` AS `recette_description`,
                     `Image` AS `recette_image`,

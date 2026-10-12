@@ -385,6 +385,40 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+// Calcule une quantité pour le nouveau nombre de portions sans supprimer son unité.
+function calculerQuantite(quantiteBase, portionsBase, portionsActuelles) {
+  const texte = String(quantiteBase ?? '').trim();
+  if (!Number.isFinite(portionsBase) || portionsBase <= 0 || !Number.isFinite(portionsActuelles)) return texte;
+  // Les quantités non numériques (ex. « au goût ») restent inchangées.
+  const indexFraction = texte.indexOf('/');
+  if (indexFraction > 0) {
+    const numerateur = Number(texte.slice(0, indexFraction).trim());
+    const denominateur = texte.slice(indexFraction + 1).match(/^([0-9]+)(.*)$/u);
+    if (!Number.isFinite(numerateur) || !denominateur || Number(denominateur[1]) === 0) return texte;
+    const valeurFraction = numerateur / Number(denominateur[1]) * portionsActuelles / portionsBase;
+    return String(Number(valeurFraction.toFixed(3))) + denominateur[2];
+  }
+
+  const correspondance = texte.match(/^([0-9]+(?:[.,][0-9]+)?)(.*)$/u);
+  if (!correspondance) return texte;
+
+  const nombreOriginal = correspondance[1].replace(/\\s/g, '');
+  let valeurBase;
+  if (nombreOriginal.includes('/')) {
+    const [numerateur, denominateur] = nombreOriginal.split('/').map(Number);
+    if (!denominateur) return texte;
+    valeurBase = numerateur / denominateur;
+  } else {
+    valeurBase = Number(nombreOriginal.replace(',', '.'));
+  }
+  if (!Number.isFinite(valeurBase) || !Number.isFinite(portionsBase) || portionsBase <= 0) return texte;
+
+  const valeurAjustee = valeurBase * portionsActuelles / portionsBase;
+  let nombreFormate = String(Number(valeurAjustee.toFixed(3)));
+  if (correspondance[1].includes(',')) nombreFormate = nombreFormate.replace('.', ',');
+  return nombreFormate + correspondance[2];
+}
+
 /* JAVASCRIPT DE LA PAGE RECETTE
    IMPORTANT : ce bloc est protégé. Il ne s'exécute QUE si les éléments de la
    page recette existent (portions, +, -, etc.). Sinon il s'arrête tout de suite.
@@ -397,6 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Éléments de base de la page recette (portions + boutons +/-)
   const portionsEl = document.getElementById('portions');
   const portionsTexteEl = document.getElementById('portions-texte');
+  const portionsLabelEl = document.getElementById('portions-label');
   const plusBtn = document.getElementById('plus');
   const moinsBtn = document.getElementById('moins');
 
@@ -404,14 +439,18 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!portionsEl || !plusBtn || !moinsBtn) return;
 
   // 1) Portions : + et - changent le nombre de personnes et les quantités
-  let portions = 4;
+  let portions = 1;
   function mettreAJour() {
     portionsEl.textContent = portions;
     if (portionsTexteEl) portionsTexteEl.textContent = portions;
+    if (portionsLabelEl) portionsLabelEl.textContent = portions === 1 ? 'personne' : 'personnes';
     document.querySelectorAll('.quantite').forEach(function (q) {
-      q.textContent = Math.round(q.dataset.quantite / 4 * portions);
+      const quantiteBase = q.dataset.quantite;
+      const portionsBase = Number(q.dataset.portionsBase || 1);
+      q.textContent = calculerQuantite(quantiteBase, portionsBase, portions);
     });
   }
+  mettreAJour();
   plusBtn.addEventListener('click', function () {
     portions = portions + 1;
     mettreAJour();
@@ -946,3 +985,150 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+// Recherche, filtres et tri du catalogue affiché depuis la base de données.
+(function (global, documentRef) {
+  function normalizeText(value) {
+    return String(value == null ? '' : value)
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase('fr')
+      .trim();
+  }
+
+  function categoryIdsOf(value) {
+    if (Array.isArray(value)) return value.map(String);
+    return String(value == null ? '' : value).split(',').map(function (id) { return id.trim(); }).filter(Boolean);
+  }
+
+  function numberOrNull(value) {
+    if (value === null || value === undefined || value === '') return null;
+    var number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  function compareOptionalDescending(left, right) {
+    var leftNumber = numberOrNull(left);
+    var rightNumber = numberOrNull(right);
+    if (leftNumber === null && rightNumber === null) return 0;
+    if (leftNumber === null) return 1;
+    if (rightNumber === null) return -1;
+    return rightNumber - leftNumber;
+  }
+
+  function parsePreparationMinutes(value) {
+    var text = normalizeText(value).replace(',', '.');
+    if (!text) return null;
+
+    var clock = text.match(/^(\d+):(\d{2})(?::(\d{2}))?$/);
+    if (clock) {
+      return Number(clock[1]) * 60 + Number(clock[2]) + (clock[3] ? Number(clock[3]) / 60 : 0);
+    }
+
+    var compactHours = text.match(/^(\d+(?:\.\d+)?)\s*h\s*(\d+(?:\.\d+)?)?$/);
+    if (compactHours) return Number(compactHours[1]) * 60 + Number(compactHours[2] || 0);
+
+    var hours = text.match(/(\d+(?:\.\d+)?)\s*(?:h|heures?)/);
+    var minutes = text.match(/(\d+(?:\.\d+)?)\s*(?:min|minutes?|m)\b/);
+    if (hours || minutes) return (hours ? Number(hours[1]) * 60 : 0) + (minutes ? Number(minutes[1]) : 0);
+
+    var firstNumber = text.match(/\d+(?:\.\d+)?/);
+    return firstNumber ? Number(firstNumber[0]) : null;
+  }
+
+  function filterAndSort(recipes, options) {
+    options = options || {};
+    var query = normalizeText(options.query);
+    var category = String(options.category || '');
+    var difficulty = normalizeText(options.difficulty);
+    var sort = options.sort || 'recent';
+
+    return recipes.map(function (recipe, index) { return { recipe: recipe, index: index }; })
+      .filter(function (item) {
+        var recipe = item.recipe;
+        var titleMatches = !query || normalizeText(recipe.title).includes(query);
+        var recipeCategories = categoryIdsOf(recipe.categoryIds);
+        var categoryMatches = !category || recipeCategories.indexOf(category) !== -1;
+        var difficultyMatches = !difficulty || normalizeText(recipe.difficulty) === difficulty;
+        return titleMatches && categoryMatches && difficultyMatches;
+      })
+      .sort(function (leftItem, rightItem) {
+        var left = leftItem.recipe;
+        var right = rightItem.recipe;
+        var comparison = 0;
+        if (sort === 'recent') {
+          comparison = compareOptionalDescending(left.createdAt, right.createdAt);
+        } else if (sort === 'oldest') {
+          var leftCreatedAt = numberOrNull(left.createdAt);
+          var rightCreatedAt = numberOrNull(right.createdAt);
+          comparison = leftCreatedAt === null ? (rightCreatedAt === null ? 0 : 1) : (rightCreatedAt === null ? -1 : leftCreatedAt - rightCreatedAt);
+        } else if (sort === 'preparation') {
+          var leftPrep = numberOrNull(left.prepMinutes);
+          var rightPrep = numberOrNull(right.prepMinutes);
+          comparison = leftPrep === null ? (rightPrep === null ? 0 : 1) : (rightPrep === null ? -1 : leftPrep - rightPrep);
+        } else if (sort === 'rating') {
+          comparison = compareOptionalDescending(left.ratingAverage, right.ratingAverage);
+          if (comparison === 0) comparison = compareOptionalDescending(left.ratingCount, right.ratingCount);
+        } else if (sort === 'title') {
+          comparison = normalizeText(left.title).localeCompare(normalizeText(right.title), 'fr');
+        } else {
+          comparison = compareOptionalDescending(left.ratingCount, right.ratingCount);
+        }
+        return comparison || leftItem.index - rightItem.index;
+      })
+      .map(function (item) { return item.recipe; });
+  }
+
+  function init(documentObject) {
+    var grid = documentObject.getElementById('recipeGrid');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('[data-recipe-card]'));
+    if (cards.length === 0) return;
+
+    var search = documentObject.getElementById('recipeSearch');
+    var category = documentObject.getElementById('recipeCategoryFilter');
+    var difficulty = documentObject.getElementById('recipeDifficultyFilter');
+    var sort = documentObject.getElementById('recipeSort');
+    var noResults = documentObject.getElementById('recipeNoResults');
+    if (!search || !category || !difficulty || !sort || !noResults) return;
+
+    var records = cards.map(function (card) {
+      return {
+        card: card,
+        title: card.dataset.recipeTitle || '',
+        categoryIds: categoryIdsOf(card.dataset.categoryIds),
+        difficulty: card.dataset.difficulty || '',
+        createdAt: numberOrNull(card.dataset.createdAt),
+        prepMinutes: parsePreparationMinutes(card.dataset.preparationTime),
+        ratingCount: numberOrNull(card.dataset.ratingCount) || 0,
+        ratingAverage: numberOrNull(card.dataset.ratingAverage),
+      };
+    });
+
+    function render() {
+      var options = { query: search.value, category: category.value, difficulty: difficulty.value, sort: sort.value };
+      var matching = new Set(filterAndSort(records, options));
+      var ordered = filterAndSort(records, { sort: options.sort });
+      ordered.forEach(function (record) {
+        var visible = matching.has(record);
+        record.card.hidden = !visible;
+        record.card.style.display = visible ? '' : 'none';
+        if (record.card.classList) record.card.classList.toggle('hidden', !visible);
+        grid.appendChild(record.card);
+      });
+      noResults.hidden = matching.size !== 0;
+      if (noResults.classList) noResults.classList.toggle('hidden', matching.size !== 0);
+    }
+
+    search.addEventListener('input', render);
+    [category, difficulty, sort].forEach(function (control) { control.addEventListener('change', render); });
+    render();
+  }
+
+  global.recipeCatalogInteractions = {
+    filterAndSort: filterAndSort,
+    parsePreparationMinutes: parsePreparationMinutes,
+    init: init,
+  };
+  documentRef.addEventListener('DOMContentLoaded', function () { init(documentRef); });
+})(window, document);
