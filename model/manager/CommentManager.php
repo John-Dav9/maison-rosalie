@@ -94,4 +94,60 @@ class CommentManager implements ManagerInterface
             return [];
         }
     }
+
+    /** Modifie le texte seulement si le commentaire appartient à l'utilisateur connecté. */
+    public function updateComment(int $commentId, int $recipeId, int $userId, string $message): bool
+    {
+        $message = trim($message);
+        if ($commentId <= 0 || $recipeId <= 0 || $userId <= 0 || $message === '' || strlen($message) > 300) {
+            return false;
+        }
+
+        try {
+            // Vérifie la propriété dans la base plutôt que de faire confiance au formulaire.
+            $ownerQuery = $this->connect->prepare(
+                "SELECT `Id` FROM `Comments` WHERE `Id` = :id AND `Recipe_Id` = :recipe_id AND `Users_Id` = :user_id LIMIT 1"
+            );
+            $ownerQuery->execute(['id' => $commentId, 'recipe_id' => $recipeId, 'user_id' => $userId]);
+            $ownedCommentId = $ownerQuery->fetchColumn();
+            $ownerQuery->closeCursor();
+            if ($ownedCommentId === false) {
+                return false;
+            }
+
+            // Le filtre propriétaire reste dans l'UPDATE pour protéger aussi contre une course concurrente.
+            $stmt = $this->connect->prepare(
+                "UPDATE `Comments` SET `Message` = :message WHERE `Id` = :id AND `Recipe_Id` = :recipe_id AND `Users_Id` = :user_id"
+            );
+            $stmt->execute([
+                'message' => $message,
+                'id' => $commentId,
+                'recipe_id' => $recipeId,
+                'user_id' => $userId,
+            ]);
+            return true;
+        } catch (Throwable $e) {
+            error_log('Échec de modification du commentaire : ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /** Supprime uniquement un commentaire appartenant à l'utilisateur connecté. */
+    public function deleteComment(int $commentId, int $recipeId, int $userId): bool
+    {
+        if ($commentId <= 0 || $recipeId <= 0 || $userId <= 0) {
+            return false;
+        }
+
+        try {
+            $stmt = $this->connect->prepare(
+                "DELETE FROM `Comments` WHERE `Id` = :id AND `Recipe_Id` = :recipe_id AND `Users_Id` = :user_id"
+            );
+            $stmt->execute(['id' => $commentId, 'recipe_id' => $recipeId, 'user_id' => $userId]);
+            return $stmt->rowCount() === 1;
+        } catch (Throwable $e) {
+            error_log('Échec de suppression du commentaire : ' . $e->getMessage());
+            return false;
+        }
+    }
 }

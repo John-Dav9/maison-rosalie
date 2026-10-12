@@ -17,52 +17,29 @@ class NoteManager implements ManagerInterface
         $this->connect = $connect;
     }
 
-    /**
-     * Enregistre une note associée à une recette et à un utilisateur.
-     * Le schéma SQL définit Note comme un TINYINT signé; aucune échelle métier
-     * (par exemple 1 à 5) n'est imposée ici, car elle n'est pas indiquée dans la base.
-     */
+    /** Enregistre ou remplace la note d'un utilisateur pour une recette. */
     public function addNote(int $note, int $userId, int $recipeId): NoteMapping|false
     {
-        if ($userId <= 0 || $recipeId <= 0 || $note < -128 || $note > 127) {
-            return false;
-        }
-
-        try {
-            // La date et l'identifiant de la note sont créés automatiquement.
-            $sql = "INSERT INTO `Note` (`Note`, `Created_at`, `Users_Id`, `Recipe_Id`)
-                    VALUES (:note, CURRENT_TIMESTAMP, :user_id, :recipe_id)";
-            $stmt = $this->connect->prepare($sql);
-            $stmt->execute([
-                'note' => $note,
-                'user_id' => $userId,
-                'recipe_id' => $recipeId,
-            ]);
-
-            return new NoteMapping([
-                'Id' => (int) $this->connect->lastInsertId(),
-                'Note' => $note,
-                'Created_at' => date('Y-m-d H:i:s'),
-                'Users_Id' => $userId,
-                'Recipe_Id' => $recipeId,
-            ]);
-        } catch (Throwable $e) {
-            error_log('Échec d’ajout de la note : ' . $e->getMessage());
-            return false;
-        }
+        return $this->saveNote($note, $userId, $recipeId);
     }
 
-    /** Retourne toutes les notes associées à une recette. */
+    /** Retourne uniquement la note actuelle de chaque utilisateur pour une recette. */
     public function getNotesByRecipeId(int $recipeId): array
     {
         if ($recipeId <= 0) {
             return [];
         }
 
-        $sql = "SELECT `Id`, `Note`, `Created_at`, `Users_Id`, `Recipe_Id`
-                FROM `Note`
-                WHERE `Recipe_Id` = :recipe_id
-                ORDER BY `Created_at` DESC, `Id` DESC";
+        // Ignore les anciennes lignes dupliquées qui peuvent exister avant le remplacement des notes.
+        $sql = "SELECT `current_note`.`Id`, `current_note`.`Note`, `current_note`.`Created_at`, `current_note`.`Users_Id`, `current_note`.`Recipe_Id`
+                FROM `Note` AS `current_note`
+                INNER JOIN (
+                    SELECT MAX(`Id`) AS `latest_id`
+                    FROM `Note`
+                    WHERE `Recipe_Id` = :recipe_id
+                    GROUP BY `Recipe_Id`, `Users_Id`
+                ) AS `latest_notes` ON `latest_notes`.`latest_id` = `current_note`.`Id`
+                ORDER BY `current_note`.`Created_at` DESC, `current_note`.`Id` DESC";
 
         try {
             $stmt = $this->connect->prepare($sql);
@@ -77,22 +54,101 @@ class NoteManager implements ManagerInterface
         }
     }
 
-    /** Calcule la moyenne des notes; retourne null si la recette n'a encore aucune note. */
+    /** Calcule la moyenne des notes actuelles, en ne gardant qu'un vote par utilisateur. */
     public function getAverageForRecipe(int $recipeId): ?float
     {
         if ($recipeId <= 0) {
             return null;
         }
 
-        try {
-            $stmt = $this->connect->prepare("SELECT AVG(`Note`) FROM `Note` WHERE `Recipe_Id` = :recipe_id");
-            $stmt->execute(['recipe_id' => $recipeId]);
-            $average = $stmt->fetchColumn();
-            $stmt->closeCursor();
+        $summary = $this->getRatingSummariesByRecipeIds([$recipeId]);
+        return $summary[$recipeId]['average'] ?? null;
+    }
 
-            return $average === false || $average === null ? null : (float) $average;
+    /**
+     * Enregistre la note actuelle de l'utilisateur pour une recette.
+     * Une nouvelle ligne n'est créée que si aucune note n'existe encore.
+     */
+    public function saveNote(int $note, int $userId, int $recipeId): NoteMapping|false
+    {
+        if ($note < 1 || $note > 5 || $userId <= 0 || $recipeId <= 0) {
+            return false;
+        }
+
+        try {
+            $this->connect->beginTransaction();
+
+            // Le verrouillage de la recette sérialise les premiers votes simultanés sur cette recette.
+            $recipeLock = $this->connect->prepare("SELECT `Id` FROM `Recipe` WHERE `Id` = :recipe_id FOR UPDATE");
+            $recipeLock->execute(['recipe_id' => $recipeId]);
+            if ($recipeLock->fetchColumn() === false) {
+                $recipeLock->closeCursor();
+                $this->connect->rollBack();
+                return false;
+            }
+            $recipeLock->closeCursor();
+
+            // Les anciennes versions pouvaient créer plusieurs lignes; on réutilise la plus récente.
+            $existingQuery = $this->connect->prepare(
+                "SELECT `Id` FROM `Note` WHERE `Recipe_Id` = :recipe_id AND `Users_Id` = :user_id ORDER BY `Id` DESC LIMIT 1 FOR UPDATE"
+            );
+            $existingQuery->execute(['recipe_id' => $recipeId, 'user_id' => $userId]);
+            $existingId = $existingQuery->fetchColumn();
+            $existingQuery->closeCursor();
+
+            if ($existingId !== false) {
+                $noteId = (int) $existingId;
+                $stmt = $this->connect->prepare(
+                    "UPDATE `Note` SET `Note` = :note, `Created_at` = CURRENT_TIMESTAMP WHERE `Id` = :id AND `Recipe_Id` = :recipe_id AND `Users_Id` = :user_id"
+                );
+                $stmt->execute([
+                    'note' => $note,
+                    'id' => $noteId,
+                    'recipe_id' => $recipeId,
+                    'user_id' => $userId,
+                ]);
+            } else {
+                $stmt = $this->connect->prepare(
+                    "INSERT INTO `Note` (`Note`, `Created_at`, `Users_Id`, `Recipe_Id`) VALUES (:note, CURRENT_TIMESTAMP, :user_id, :recipe_id)"
+                );
+                $stmt->execute(['note' => $note, 'user_id' => $userId, 'recipe_id' => $recipeId]);
+                $noteId = (int) $this->connect->lastInsertId();
+            }
+
+            $this->connect->commit();
+            return new NoteMapping([
+                'Id' => $noteId,
+                'Note' => $note,
+                'Created_at' => date('Y-m-d H:i:s'),
+                'Users_Id' => $userId,
+                'Recipe_Id' => $recipeId,
+            ]);
         } catch (Throwable $e) {
-            error_log('Échec de calcul de la moyenne des notes : ' . $e->getMessage());
+            if ($this->connect->inTransaction()) {
+                $this->connect->rollBack();
+            }
+            error_log('Échec d’enregistrement de la note : ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /** Retourne la dernière note d'un utilisateur pour une recette, s'il en a déjà donné une. */
+    public function getNoteForUserAndRecipe(int $recipeId, int $userId): ?NoteMapping
+    {
+        if ($recipeId <= 0 || $userId <= 0) {
+            return null;
+        }
+
+        try {
+            $stmt = $this->connect->prepare(
+                "SELECT `Id`, `Note`, `Created_at`, `Users_Id`, `Recipe_Id` FROM `Note` WHERE `Recipe_Id` = :recipe_id AND `Users_Id` = :user_id ORDER BY `Id` DESC LIMIT 1"
+            );
+            $stmt->execute(['recipe_id' => $recipeId, 'user_id' => $userId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+            return $row === false ? null : new NoteMapping($row);
+        } catch (Throwable $e) {
+            error_log('Échec de récupération de la note utilisateur : ' . $e->getMessage());
             return null;
         }
     }
@@ -116,9 +172,14 @@ class NoteManager implements ManagerInterface
             $parameters['recipe_' . $index] = $recipeId;
         }
 
-        $sql = 'SELECT `Recipe_Id` AS recipe_id, COUNT(*) AS rating_count, AVG(`Note`) AS rating_average '
+        // Une ancienne version pouvant avoir empilé des votes, on ne compte que la dernière note de chaque utilisateur.
+        $sql = 'SELECT `current_note`.`Recipe_Id` AS recipe_id, COUNT(*) AS rating_count, AVG(`current_note`.`Note`) AS rating_average '
+            . 'FROM `Note` AS `current_note` '
+            . 'INNER JOIN (SELECT `Recipe_Id`, `Users_Id`, MAX(`Id`) AS `latest_id` '
             . 'FROM `Note` WHERE `Recipe_Id` IN (' . implode(', ', $placeholders) . ') '
-            . 'GROUP BY `Recipe_Id`';
+            . 'GROUP BY `Recipe_Id`, `Users_Id`) AS `latest_notes` '
+            . 'ON `latest_notes`.`latest_id` = `current_note`.`Id` '
+            . 'GROUP BY `current_note`.`Recipe_Id`';
 
         try {
             $stmt = $this->connect->prepare($sql);

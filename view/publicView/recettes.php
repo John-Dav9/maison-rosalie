@@ -74,6 +74,11 @@ $recipeCardImagePath = static function (?string $image): string {
                             $categoryLabel = $categoryNames !== [] ? implode(' · ', $categoryNames) : 'Non classée';
                             $recipeId = (int) $recette->getRecetteId();
                             $recipeRating = $recipeRatingStats[$recipeId] ?? ['count' => 0, 'average' => null];
+                            $recipeRatingCount = (int) $recipeRating['count'];
+                            $recipeRatingAverage = $recipeRating['average'];
+                            $recipeRatingValue = $recipeRatingAverage === null
+                                ? 0.0
+                                : max(0.0, min(5.0, (float) $recipeRatingAverage));
                             $recipePrepText = $recette->getRecetteDurationPrep() ?? '';
                             $recipeCreatedAt = strtotime($recette->getRecetteDateCreate() ?? '') ?: 0;
                             ?>
@@ -101,6 +106,19 @@ $recipeCardImagePath = static function (?string $image): string {
                                         </h3>
                                         <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
                                             <?= $escapeRecipeCard($recette->getRecetteDescription()) ?>
+                                        </p>
+                                        <!-- Même remplissage proportionnel que sur la fiche recette; zéro vote = cinq étoiles vides. -->
+                                        <p class="font-label-sm text-label-sm text-secondary mb-3 inline-flex items-center gap-0.5 text-lg" aria-label="<?= $recipeRatingCount > 0 ? 'Moyenne de ' . number_format((float) $recipeRatingAverage, 1, ',', '') . ' sur 5, ' . $recipeRatingCount . ' ' . ($recipeRatingCount > 1 ? 'notes' : 'note') : 'Aucune note' ?>">
+                                            <?php for ($starIndex = 1; $starIndex <= 5; $starIndex++): ?>
+                                                <?php $starFill = max(0, min(100, ($recipeRatingValue - ($starIndex - 1)) * 100)); ?>
+                                                <span class="relative inline-block leading-none text-[#8B5E3C]" aria-hidden="true">
+                                                    ☆
+                                                    <span class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-[#C9A45C]" style="width: <?= $starFill ?>%">★</span>
+                                                </span>
+                                            <?php endfor; ?>
+                                            <?php if ($recipeRatingCount > 0): ?>
+                                                <span class="ml-1 text-xs text-on-surface-variant">(<?= $recipeRatingCount ?> <?= $recipeRatingCount > 1 ? 'notes' : 'note' ?>)</span>
+                                            <?php endif; ?>
                                         </p>
                                         <div class="bg-surface-container-low px-2.5 py-1.5 rounded-DEFAULT text-on-surface-variant font-body-sm text-xs flex items-center justify-between gap-2">
                                             <span>⏱ Préparation : <?= $escapeRecipeCard($recette->getRecetteDurationPrep()) ?></span>

@@ -15,6 +15,12 @@ $recipeImagePath = static function (?string $image, string $folder): string {
 $recipeTitle = $recipe->getRecetteTitle() ?? 'Recette';
 $recipeImage = $recipeImagePath($recipe->getRecetteImage(), 'recettes');
 $categories = $recipe->getCategories() ?? [];
+$recipeRatingCount = (int) ($recipeRatingSummary['count'] ?? 0);
+$recipeRatingAverage = $recipeRatingSummary['average'] ?? null;
+$recipeRatingValue = $recipeRatingAverage === null
+    ? 0.0
+    : max(0.0, min(5.0, (float) $recipeRatingAverage));
+$recipeActionUrl = './?pages=recipe&slug=' . rawurlencode((string) $recipeSlug);
 require_once "./../view/publicView/inc/menuPublicView.php";
 ?>
  <!--=========Fond créme pour toute la section ================-->
@@ -61,13 +67,18 @@ require_once "./../view/publicView/inc/menuPublicView.php";
              <!-- Description issue de la recette sélectionnée. -->
              <p class="text-xs mt-2"><?= nl2br($escapeRecipeValue($recipe->getRecetteDescription())) ?></p>
 
-             <!-- ===========Note : 4 étoiles rouges sur 5 ================-->
-             <p class="text-red-600 text-lg mt-2">
-                <i class="fa-solid fa-star"></i>
-                <i class="fa-solid fa-star"></i>
-                <i class="fa-solid fa-star"></i>
-                <i class="fa-solid fa-star"></i>
-                <i class="fa-solid fa-star text-gray-300"></i>
+             <!-- Remplit chaque étoile selon la moyenne; sans vote, les cinq restent vides. -->
+             <p class="inline-flex items-center gap-0.5 text-2xl mt-2" aria-label="<?= $recipeRatingCount > 0 ? 'Moyenne de ' . number_format((float) $recipeRatingAverage, 1, ',', '') . ' sur 5, ' . $recipeRatingCount . ' ' . ($recipeRatingCount > 1 ? 'notes' : 'note') : 'Aucune note' ?>">
+                <?php for ($starIndex = 1; $starIndex <= 5; $starIndex++): ?>
+                   <?php $starFill = max(0, min(100, ($recipeRatingValue - ($starIndex - 1)) * 100)); ?>
+                   <span class="relative inline-block leading-none text-[#8B5E3C]" aria-hidden="true">
+                      ☆
+                      <span class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-[#C9A45C]" style="width: <?= $starFill ?>%">★</span>
+                   </span>
+                <?php endfor; ?>
+                <?php if ($recipeRatingCount > 0): ?>
+                   <span class="ml-2 text-sm text-[#2F1B14]">(<?= $recipeRatingCount ?> <?= $recipeRatingCount > 1 ? 'notes' : 'note' ?>)</span>
+                <?php endif; ?>
              </p>
 
              <!-- ==============Les 3 cases : temps de préparation, temps total, difficulté ==================-->
@@ -172,106 +183,106 @@ require_once "./../view/publicView/inc/menuPublicView.php";
  <section id="commentaires" class="bg-[#FBF5E6] text-[#2F1B14] pb-16">
     <article class="max-w-6xl mx-auto bg-white border border-[#C9A45C] rounded-lg px-12 py-6">
 
-       <!-- En-tête : titre, phrase, bouton -->
+       <!-- En-tête des retours réellement enregistrés pour cette recette. -->
        <div class="text-center">
           <h2 class="text-5xl font-bold font-['Playfair_Display']">
              Commentaires et critiques<span class="text-[#B8860B] text-sm">◆</span>
           </h2>
-          <p class="text-sm mt-2">Vos commentaire et réaction sont toujours les bienvenus.</p>
-          <button class="w-96 bg-[#2F1B14] text-white text-sm py-2 mt-6 font-['Playfair_Display']">
-             <i class="fa-solid fa-feather-pointed text-xs mr-2"></i> Écrivez un commentaire
-          </button>
+          <p class="text-sm mt-2">Vos commentaires et réactions sont toujours les bienvenus.</p>
        </div>
 
-       <!-- Commentaire 1 : photo + nom + email + étoiles + texte -->
-       <div class="flex gap-4 bg-[#FBF5E6] border border-[#E5C98A] p-4 min-h-40 mt-6">
-          <!--- ===== Icon User =====-------->
-          <div class="w-16 h-16 rounded-full flex items-center justify-center">
-             <i class="fa-regular fa-user text-3xl text-[#2F1B14]"></i>
-          </div>
+       <?php if (is_array($recipeActionFeedback) && isset($recipeActionFeedback['message'])): ?>
+          <p class="mt-4 text-center <?= ($recipeActionFeedback['type'] ?? '') === 'success' ? 'text-green-700' : 'text-red-700' ?>" role="status">
+             <?= $escapeRecipeValue($recipeActionFeedback['message']) ?>
+          </p>
+       <?php endif; ?>
 
-          <div class="flex-1">
-             <div class="flex justify-between">
-                <div>
-                   <p class="font-bold font-['Playfair_Display'] text-sm">Darrell Steward</p>
-                   <p class="text-sm mt-1">Darrell.Steward@cf2000.com</p>
-                </div>
+       <div class="mt-6 space-y-4">
+          <?php if (empty($comments)): ?>
+             <p class="bg-[#FBF5E6] border border-[#E5C98A] p-4 text-center">Aucun commentaire pour le moment.</p>
+          <?php else: ?>
+             <?php foreach ($comments as $comment): ?>
+                <article class="flex gap-4 bg-[#FBF5E6] border border-[#E5C98A] p-4 rounded-md">
+                   <div class="w-12 h-12 shrink-0 rounded-full flex items-center justify-center" aria-hidden="true">
+                      <i class="fa-regular fa-user text-2xl text-[#2F1B14]"></i>
+                   </div>
+                   <div class="flex-1 min-w-0">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                         <p class="font-bold font-['Playfair_Display'] text-sm"><?= $escapeRecipeValue($comment->getAuthor()) ?></p>
+                         <time class="text-xs" datetime="<?= $escapeRecipeValue($comment->getCreatedAt()) ?>">
+                            <?= $escapeRecipeValue($comment->getCreatedAt()) ?>
+                         </time>
+                      </div>
+                      <?php if ($comment->getSubject()): ?>
+                         <p class="font-semibold mt-2"><?= $escapeRecipeValue($comment->getSubject()) ?></p>
+                      <?php endif; ?>
+                      <p class="text-sm mt-2 whitespace-pre-line"><?= $escapeRecipeValue($comment->getMessage()) ?></p>
 
-             </div>
-             <p class="text-xs mt-3">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Vero dolore autem similique minima eveniet, fugit sapiente necessitatibus cum consectetur laborum, deserunt
-                quod temporibus perspiciatis nam odit vitae quia eaque harum!
-                lorem ipsum dolor sit amet consectetur adipisicing elit. Vero dolore autem similique minima eveniet, fugit sapiente necessitatibus cum consectetur laborum, deserunt
-                quod temporibus perspiciatis nam odit vitae quia eaque harum!
-             </p>
-          </div>
+                      <?php if ($currentUserId > 0 && $currentUserId === (int) $comment->getUsersId()): ?>
+                         <details class="mt-3">
+                            <summary class="cursor-pointer text-sm font-semibold text-[#8B5E3C]">Modifier mon commentaire</summary>
+                            <form action="<?= $escapeRecipeValue($recipeActionUrl) ?>" method="post" class="mt-2 space-y-2">
+                               <input type="hidden" name="csrf_token" value="<?= $escapeRecipeValue($recipeActionCsrfToken) ?>">
+                               <input type="hidden" name="recipe_action" value="comment_update">
+                               <input type="hidden" name="comment_id" value="<?= (int) $comment->getId() ?>">
+                               <label class="sr-only" for="edit-comment-<?= (int) $comment->getId() ?>">Modifier le commentaire</label>
+                               <textarea id="edit-comment-<?= (int) $comment->getId() ?>" class="w-full min-h-20 resize-y bg-white border border-[#E5C98A] p-2" maxlength="300" name="message" required><?= $escapeRecipeValue($comment->getMessage()) ?></textarea>
+                               <button class="bg-[#2F1B14] text-white text-sm px-4 py-2 rounded" type="submit">Enregistrer la modification</button>
+                            </form>
+                         </details>
+                         <form action="<?= $escapeRecipeValue($recipeActionUrl) ?>" method="post" class="mt-2">
+                            <input type="hidden" name="csrf_token" value="<?= $escapeRecipeValue($recipeActionCsrfToken) ?>">
+                            <input type="hidden" name="recipe_action" value="comment_delete">
+                            <input type="hidden" name="comment_id" value="<?= (int) $comment->getId() ?>">
+                            <button class="text-sm text-red-700 underline" type="submit">Supprimer mon commentaire</button>
+                         </form>
+                      <?php endif; ?>
+                   </div>
+                </article>
+             <?php endforeach; ?>
+          <?php endif; ?>
        </div>
-
-       <!-- Commentaire 2 -->
-       <div class="flex gap-4 bg-[#FBF5E6] border border-[#E5C98A] p-4 min-h-40 mt-6">
-          <!--- ===== Icon User =====-------->
-          <div class="w-16 h-16 rounded-full flex items-center justify-center">
-             <i class="fa-regular fa-user text-3xl text-[#2F1B14]"></i>
-          </div>
-          <div class="flex-1">
-             <div class="flex justify-between">
-                <div>
-                   <p class="font-bold font-['Playfair_Display'] text-sm">Annette Black</p>
-                   <p class="text-sm mt-1">Annette.Black@cf2000.com</p>
-                </div>
-
-             </div>
-             <p class="text-xs mt-3">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Vero dolore autem similique minima eveniet, fugit sapiente necessitatibus cum consectetur laborum, deserunt
-                quod temporibus perspiciatis nam odit vitae quia eaque harum!
-                lorem ipsum dolor sit amet consectetur adipisicing elit. Vero dolore autem similique minima eveniet, fugit sapiente necessitatibus cum consectetur laborum, deserunt
-                quod temporibus perspiciatis nam odit vitae quia eaque harum!
-               </p>
-            </div>
-         </div>
-         <!-- ================= FORMULAIRE : Note + Commentaire + Envoyer ================= -->
-         <div class="bg-[#FBF5E6] border border-[#E5C98A] px-8 py-6 mt-6">
-
-
-          <!-- Commentaire : grande case pour écrire -->
-          <div class="mt-4">
-             <p class="text-sm font-bold mb-1">Commentaire</p>
-             <textarea class="w-full h-20 resize-none bg-white border border-[#E5C98A] p-2"></textarea>
+       <!-- Les deux actions sont de vrais formulaires, protégés côté serveur et par jeton CSRF. -->
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div class="bg-[#FBF5E6] border border-[#E5C98A] p-6 rounded-md">
+             <h3 class="text-lg font-bold font-['Playfair_Display'] mb-3">Laisser un commentaire</h3>
+             <?php if ($currentUserId > 0): ?>
+                <form action="<?= $escapeRecipeValue($recipeActionUrl) ?>" method="post" class="space-y-3">
+                   <input type="hidden" name="csrf_token" value="<?= $escapeRecipeValue($recipeActionCsrfToken) ?>">
+                   <input type="hidden" name="recipe_action" value="comment_create">
+                   <label class="block text-sm font-semibold" for="new-recipe-comment">Votre commentaire</label>
+                   <textarea id="new-recipe-comment" class="w-full min-h-28 resize-y bg-white border border-[#E5C98A] p-2" maxlength="300" name="message" required></textarea>
+                   <p class="text-xs">300 caractères maximum.</p>
+                   <button class="bg-[#2F1B14] text-white text-sm px-5 py-2 rounded" type="submit">Publier le commentaire</button>
+                </form>
+             <?php else: ?>
+                <p class="text-sm mb-3">Connectez-vous pour publier un commentaire.</p>
+                <button class="bg-[#2F1B14] text-white text-sm px-5 py-2 rounded" data-auth-open type="button">Connexion / inscription</button>
+             <?php endif; ?>
           </div>
 
-
-          <!-- Bouton Envoyer, à droite -->
-          <div class="text-right mt-2">
-             <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer
-              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out
-              hover:opacity-90 focus:opacity-90 focus:outline-none active:shadow-none active:translate-y-[6px]">Envoyer
-             </button>
-          </div>
-       </div>
-       <div class="grid grid-cols-2 gap-x-16">
-
-
-          <!-- Note : 5 étoiles + texte + flèche (colonne de droite) -->
-          <div class=" bg-[#FBF5E6] border border-[#E5C98A] p-4 min-h-40 mt-6">
-
-             <div class="flex-1 text-center">
-                <p class="text-sm font-bold mb-2">Note</p>
-                <select class="w-1/2 -translate-x-6 bg-white border border-[#E5C98A] px-3 py-2 text-sm">
-                   <option>★★★★★ (5/5) excellent</option>
-                   <option>★★★★☆ (4/5) très bon</option>
-                   <option>★★★☆☆ (3/5) bon</option>
-                   <option>★★☆☆☆ (2/5) moyen</option>
-                   <option>★☆☆☆☆ (1/5) mauvais</option>
-                </select>
-             </div>
-             <div class="text-right mt-6">
-                <button class="bg-[#2F1B14] text-white text-lg px-6 py-1 font-['Playfair_Display'] rounded-[5px] cursor-pointer
-              shadow-[0_6px_0_#1A0F0B,0_5px_15px_-4px_#000] transition-all duration-200 ease-in-out
-              hover:opacity-90 focus:opacity-90 focus:outline-none active:shadow-none active:translate-y-[6px]">Envoyer
-                </button>
-             </div>
+          <div class="bg-[#FBF5E6] border border-[#E5C98A] p-6 rounded-md">
+             <h3 class="text-lg font-bold font-['Playfair_Display'] mb-3">Votre note</h3>
+             <?php if ($currentUserId > 0): ?>
+                <form action="<?= $escapeRecipeValue($recipeActionUrl) ?>" method="post" class="space-y-3">
+                   <input type="hidden" name="csrf_token" value="<?= $escapeRecipeValue($recipeActionCsrfToken) ?>">
+                   <input type="hidden" name="recipe_action" value="rating_save">
+                   <label class="block text-sm font-semibold" for="recipe-rating">Choisissez une note sur 5</label>
+                   <select id="recipe-rating" class="w-full bg-white border border-[#E5C98A] px-3 py-2 text-sm" name="rating" required>
+                      <option value="" disabled <?= $currentUserRating === null ? 'selected' : '' ?>>Sélectionner une note</option>
+                      <?php foreach ([5, 4, 3, 2, 1] as $ratingOption): ?>
+                         <option value="<?= $ratingOption ?>" <?= $currentUserRating !== null && $currentUserRating->getNote() === $ratingOption ? 'selected' : '' ?>><?= str_repeat('★', $ratingOption) . str_repeat('☆', 5 - $ratingOption) ?> (<?= $ratingOption ?>/5)</option>
+                      <?php endforeach; ?>
+                   </select>
+                   <?php if ($currentUserRating !== null): ?>
+                      <p class="text-xs">Votre note précédente sera remplacée.</p>
+                   <?php endif; ?>
+                   <button class="bg-[#2F1B14] text-white text-sm px-5 py-2 rounded" type="submit">Enregistrer ma note</button>
+                </form>
+             <?php else: ?>
+                <p class="text-sm mb-3">Connectez-vous pour noter cette recette.</p>
+                <button class="bg-[#2F1B14] text-white text-sm px-5 py-2 rounded" data-auth-open type="button">Connexion / inscription</button>
+             <?php endif; ?>
           </div>
        </div>
 
