@@ -30,11 +30,11 @@ class RecetteManager implements ManagerInterface
      * Crée une recette, ses étapes, ses catégories et ses ingrédients.
      *
      * Format attendu pour $data :
-     * - recette_title, recette_description, recette_image,
+     * - recette_title, recette_description, recette_image, portions,
      *   recette_duration_prep, recette_duration_cook, recette_difficulty
      * - categories : ID existants, ou tableaux ['title' => ..., 'description' => ...]
-     * - ingredients : tableaux ['id' => ID, 'quantite' => ...] ou
-     *   ['name' => ..., 'image' => ..., 'quantite' => ...] pour un nouvel ingrédient
+     * - ingredients : tableaux ['id' => ID, 'quantite' => ..., 'unit' => ...] ou
+     *   ['name' => ..., 'image' => ..., 'quantite' => ..., 'unit' => ...]
      * - steps : tableaux ['title' => ..., 'description' => ..., 'image' => ...]
      *
      * L'identifiant du créateur est fourni séparément pour éviter de le prendre
@@ -42,7 +42,9 @@ class RecetteManager implements ManagerInterface
      */
     public function createRecipe(array $data, int $userId): RecetteMapping|false
     {
-        if ($userId <= 0 || !$this->hasRequiredRecipeFields($data)) {
+        $portions = filter_var($data['portions'] ?? 1, FILTER_VALIDATE_INT);
+        if ($userId <= 0 || !$this->hasRequiredRecipeFields($data)
+            || $portions === false || $portions < 1) {
             return false;
         }
 
@@ -60,10 +62,11 @@ class RecetteManager implements ManagerInterface
                 'recette_title' => $data['recette_title'],
                 'recette_slug' => $this->createUniqueRecipeSlug($data['recette_slug'] ?? $data['recette_title']),
                 'recette_description' => $data['recette_description'],
-                'recette_image' => $data['recette_image'],
+                'recette_image' => $data['recette_image'] ?? '',
                 'recette_duration_prep' => $data['recette_duration_prep'],
                 'recette_duration_cook' => $data['recette_duration_cook'],
                 'recette_difficulty' => $data['recette_difficulty'],
+                'recette_portions' => $portions,
                 'recette_date_create' => date('Y-m-d H:i:s'),
                 'recette_user_id' => $userId,
             ]);
@@ -72,8 +75,8 @@ class RecetteManager implements ManagerInterface
 
             // Insère d'abord la recette pour obtenir son ID auto-incrémenté.
             $sqlRecipe = "INSERT INTO `Recipe`
-                (`Title`, `Slug`, `Description`, `Image`, `duration_prep`, `duration_cook`, `difficulty`, `Created_at`, `Users_Id`)
-                VALUES (:title, :slug, :description, :image, :duration_prep, :duration_cook, :difficulty, :created_at, :user_id)";
+                (`Title`, `Slug`, `Description`, `Image`, `duration_prep`, `duration_cook`, `difficulty`, `Created_at`, `Users_Id`, `portions`)
+                VALUES (:title, :slug, :description, :image, :duration_prep, :duration_cook, :difficulty, :created_at, :user_id, :portions)";
             $stmtRecipe = $this->connect->prepare($sqlRecipe);
             $stmtRecipe->execute([
                 'title' => $recipe->getRecetteTitle(),
@@ -85,6 +88,7 @@ class RecetteManager implements ManagerInterface
                 'difficulty' => $recipe->getRecetteDifficulty(),
                 'created_at' => $recipe->getRecetteDateCreate(),
                 'user_id' => $userId,
+                'portions' => $portions,
             ]);
 
             $recipeId = (int) $this->connect->lastInsertId();
@@ -113,14 +117,18 @@ class RecetteManager implements ManagerInterface
 
                 $ingredientId = $this->resolveIngredientId($ingredient);
                 $quantity = $ingredient['quantite'] ?? $ingredient['quantity'] ?? null;
+                $unit = $ingredient['unit'] ?? null;
                 if ($quantity !== null && (!is_string($quantity) || strlen($quantity) > 45)) {
                     throw new InvalidArgumentException("La quantité ne doit pas dépasser 45 caractères");
                 }
+                if ($unit !== null && (!is_string($unit) || strlen($unit) > 45)) {
+                    throw new InvalidArgumentException("L'unité ne doit pas dépasser 45 caractères");
+                }
 
                 $stmtIngredientLink = $this->connect->prepare(
-                    "INSERT INTO `Ingredient_has_Recipe` (`Ingredient_Id`, `Recipe_Id`, `quantite`) VALUES (?, ?, ?)"
+                    "INSERT INTO `Ingredient_has_Recipe` (`Ingredient_Id`, `Recipe_Id`, `quantite`, `unit`) VALUES (?, ?, ?, ?)"
                 );
-                $stmtIngredientLink->execute([$ingredientId, $recipeId, $quantity]);
+                $stmtIngredientLink->execute([$ingredientId, $recipeId, $quantity, $unit]);
             }
 
             // Les deux colonnes de recette présentes dans Steps reçoivent le même ID.
@@ -183,6 +191,63 @@ class RecetteManager implements ManagerInterface
         } catch (Throwable $e) {
             error_log('Échec de récupération des recettes : ' . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Supprime une recette et toutes ses données dépendantes dans une transaction.
+     * Les ingrédients et catégories partagés restent en base; seules leurs liaisons
+     * avec cette recette sont retirées.
+     */
+    public function deleteRecipe(int $recipeId): bool
+    {
+        if ($recipeId <= 0) {
+            return false;
+        }
+
+        try {
+            $this->connect->beginTransaction();
+
+            // Verrouille la recette pour empêcher une suppression concurrente partielle.
+            $lock = $this->connect->prepare("SELECT `Id` FROM `Recipe` WHERE `Id` = :recipe_id FOR UPDATE");
+            $lock->execute(['recipe_id' => $recipeId]);
+            $foundId = $lock->fetchColumn();
+            $lock->closeCursor();
+            if ($foundId === false) {
+                $this->connect->rollBack();
+                return false;
+            }
+
+            // Supprime les dépendances avant la recette car leurs clés étrangères ne cascade pas.
+            $deleteSteps = $this->connect->prepare(
+                "DELETE FROM `Steps` WHERE `Recipe_Id` = :recipe_id OR `Recette_id` = :legacy_recipe_id"
+            );
+            $deleteSteps->execute(['recipe_id' => $recipeId, 'legacy_recipe_id' => $recipeId]);
+
+            foreach ([
+                "DELETE FROM `Comments` WHERE `Recipe_Id` = :recipe_id",
+                "DELETE FROM `Note` WHERE `Recipe_Id` = :recipe_id",
+                "DELETE FROM `Ingredient_has_Recipe` WHERE `Recipe_Id` = :recipe_id",
+                "DELETE FROM `Category_has_Recipe` WHERE `Recipe_Id` = :recipe_id",
+            ] as $sql) {
+                $statement = $this->connect->prepare($sql);
+                $statement->execute(['recipe_id' => $recipeId]);
+            }
+
+            $deleteRecipe = $this->connect->prepare("DELETE FROM `Recipe` WHERE `Id` = :recipe_id");
+            $deleteRecipe->execute(['recipe_id' => $recipeId]);
+            if ($deleteRecipe->rowCount() !== 1) {
+                throw new RuntimeException("La recette n'a pas pu être supprimée");
+            }
+
+            $this->connect->commit();
+            return true;
+        } catch (Throwable $e) {
+            if ($this->connect->inTransaction()) {
+                $this->connect->rollBack();
+            }
+            error_log('Échec de suppression de la recette : ' . $e->getMessage());
+            return false;
         }
     }
 
@@ -277,7 +342,7 @@ class RecetteManager implements ManagerInterface
     /** Retourne les ingrédients et leur quantité pour une recette donnée. */
     public function getIngredientsByRecetteId(int $recipeId): array
     {
-        $sql = "SELECT i.`Id` AS `ingredient_id`, i.`Name` AS `name`, i.`image`, ir.`quantite`
+        $sql = "SELECT i.`Id` AS `ingredient_id`, i.`Name` AS `name`, i.`image`, ir.`quantite`, ir.`unit`
                 FROM `Ingredient_has_Recipe` ir
                 INNER JOIN `Ingredient` i ON i.`Id` = ir.`Ingredient_Id`
                 WHERE ir.`Recipe_Id` = :id
@@ -458,6 +523,7 @@ class RecetteManager implements ManagerInterface
                     `duration_prep` AS `recette_duration_prep`,
                     `duration_cook` AS `recette_duration_cook`,
                     `difficulty` AS `recette_difficulty`,
+                    `portions` AS `recette_portions`,
                     `Created_at` AS `recette_date_create`,
                     `Users_Id` AS `recette_user_id`
                 FROM `Recipe`";
@@ -467,7 +533,7 @@ class RecetteManager implements ManagerInterface
     private function hasRequiredRecipeFields(array $data): bool
     {
         foreach ([
-            'recette_title', 'recette_description', 'recette_image',
+            'recette_title', 'recette_description',
             'recette_duration_prep', 'recette_duration_cook', 'recette_difficulty',
         ] as $field) {
             if (!isset($data[$field]) || !is_string($data[$field]) || trim($data[$field]) === '') {
@@ -475,7 +541,8 @@ class RecetteManager implements ManagerInterface
             }
         }
 
-        return strlen($data['recette_image']) <= 300
+        $image = $data['recette_image'] ?? '';
+        return is_string($image) && strlen($image) <= 300
             && strlen($data['recette_duration_prep']) <= 45
             && strlen($data['recette_duration_cook']) <= 45
             && strlen($data['recette_difficulty']) <= 45;

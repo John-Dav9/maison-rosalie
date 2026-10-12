@@ -439,7 +439,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!portionsEl || !plusBtn || !moinsBtn) return;
 
   // 1) Portions : + et - changent le nombre de personnes et les quantités
-  let portions = 1;
+  // Le nombre de portions affiché est aussi la base des quantités enregistrées.
+  let portions = Number(portionsEl.textContent) || 1;
   function mettreAJour() {
     portionsEl.textContent = portions;
     if (portionsTexteEl) portionsTexteEl.textContent = portions;
@@ -447,7 +448,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.quantite').forEach(function (q) {
       const quantiteBase = q.dataset.quantite;
       const portionsBase = Number(q.dataset.portionsBase || 1);
-      q.textContent = calculerQuantite(quantiteBase, portionsBase, portions);
+      const quantiteAjustee = calculerQuantite(quantiteBase, portionsBase, portions);
+      const unit = q.dataset.unit || '';
+      q.textContent = [quantiteAjustee, unit].filter(Boolean).join(' ');
     });
   }
   mettreAJour();

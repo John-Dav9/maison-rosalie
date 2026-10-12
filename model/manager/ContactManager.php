@@ -130,4 +130,21 @@ class ContactManager implements ManagerInterface
             return null;
         }
     }
+
+    /** Supprime définitivement un message de contact par son identifiant. */
+    public function deleteContact(int $contactId): bool
+    {
+        if ($contactId <= 0) {
+            return false;
+        }
+
+        try {
+            $stmt = $this->connect->prepare("DELETE FROM `Contact` WHERE `Id` = :id");
+            $stmt->execute(['id' => $contactId]);
+            return $stmt->rowCount() === 1;
+        } catch (Throwable $e) {
+            error_log('Échec de suppression du message de contact : ' . $e->getMessage());
+            return false;
+        }
+    }
 }

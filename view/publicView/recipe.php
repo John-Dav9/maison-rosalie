@@ -13,6 +13,7 @@ $recipeImagePath = static function (?string $image, string $folder): string {
     return './assets/images/' . trim($folder, '/') . '/' . rawurlencode(basename($image));
 };
 $recipeTitle = $recipe->getRecetteTitle() ?? 'Recette';
+$recipePortions = max(1, (int) ($recipe->getRecettePortions() ?? 1));
 $recipeImage = $recipeImagePath($recipe->getRecetteImage(), 'recettes');
 $categories = $recipe->getCategories() ?? [];
 $recipeRatingCount = (int) ($recipeRatingSummary['count'] ?? 0);
@@ -105,7 +106,7 @@ require_once "./../view/publicView/inc/menuPublicView.php";
                 </div>
                 <div class="flex items-center gap-2 bg-white border border-[#C9A45C] rounded-full px-2 py-1">
                    <button id="moins" class="bg-[#F8EDD3] px-2">−</button>
-                   <span class="font-bold font-['Playfair_Display']"><span id="portions">1</span> Pers</span>
+                   <span class="font-bold font-['Playfair_Display']"><span id="portions"><?= $recipePortions ?></span> Pers</span>
                    <button id="plus" class="bg-[#F8EDD3] px-2">+</button>
                 </div>
              </div>
@@ -118,7 +119,7 @@ require_once "./../view/publicView/inc/menuPublicView.php";
              <h3 class="text-3xl font-bold font-['Playfair_Display']">
                 <i class="fa-solid fa-basket-shopping text-[#C9A45C] text-xl"></i>Les ingrédients
              </h3>
-             <p class="text-sm">ajusté pour <b><span id="portions-texte">1</span> <span id="portions-label">personne</span></b></p>
+             <p class="text-sm">ajusté pour <b><span id="portions-texte"><?= $recipePortions ?></span> <span id="portions-label"><?= $recipePortions === 1 ? 'personne' : 'personnes' ?></span></b></p>
           </div>
 
           <!-- Carrousel : les cartes défilent de gauche à droite -->
@@ -134,7 +135,9 @@ require_once "./../view/publicView/inc/menuPublicView.php";
                    </div>
                    <p class="font-bold font-['Playfair_Display'] text-sm mt-3"><?= $escapeRecipeValue($ingredient['name'] ?? '') ?></p>
                    <?php if (!empty($ingredient['quantite'])): ?>
-                      <p class="text-xs text-[#B8860B] mt-1 quantite" data-quantite="<?= $escapeRecipeValue($ingredient['quantite']) ?>" data-portions-base="1"><?= $escapeRecipeValue($ingredient['quantite']) ?></p>
+                      <p class="text-xs text-[#B8860B] mt-1 quantite" data-quantite="<?= $escapeRecipeValue($ingredient['quantite']) ?>" data-portions-base="<?= $recipePortions ?>" data-unit="<?= $escapeRecipeValue($ingredient['unit'] ?? '') ?>">
+                         <?= $escapeRecipeValue($ingredient['quantite']) ?><?= !empty($ingredient['unit']) ? ' ' . $escapeRecipeValue($ingredient['unit']) : '' ?>
+                      </p>
                    <?php endif; ?>
                 </div>
              <?php endforeach; ?>
