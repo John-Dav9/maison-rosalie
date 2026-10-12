@@ -96,4 +96,48 @@ class NoteManager implements ManagerInterface
             return null;
         }
     }
+
+    /** Retourne le nombre et la moyenne des notes pour les recettes fournies. */
+    public function getRatingSummariesByRecipeIds(array $recipeIds): array
+    {
+        $recipeIds = array_values(array_unique(array_filter(
+            array_map('intval', $recipeIds),
+            static fn(int $id): bool => $id > 0
+        )));
+        if ($recipeIds === []) {
+            return [];
+        }
+
+        $placeholders = [];
+        $parameters = [];
+        foreach ($recipeIds as $index => $recipeId) {
+            $placeholder = ':recipe_' . $index;
+            $placeholders[] = $placeholder;
+            $parameters['recipe_' . $index] = $recipeId;
+        }
+
+        $sql = 'SELECT `Recipe_Id` AS recipe_id, COUNT(*) AS rating_count, AVG(`Note`) AS rating_average '
+            . 'FROM `Note` WHERE `Recipe_Id` IN (' . implode(', ', $placeholders) . ') '
+            . 'GROUP BY `Recipe_Id`';
+
+        try {
+            $stmt = $this->connect->prepare($sql);
+            $stmt->execute($parameters);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            $summaries = [];
+            foreach ($rows as $row) {
+                $recipeId = (int) $row['recipe_id'];
+                $summaries[$recipeId] = [
+                    'count' => (int) $row['rating_count'],
+                    'average' => $row['rating_average'] === null ? null : (float) $row['rating_average'],
+                ];
+            }
+            return $summaries;
+        } catch (Throwable $e) {
+            error_log('Échec de récupération des résumés de notes : ' . $e->getMessage());
+            return [];
+        }
+    }
 }

@@ -985,3 +985,150 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+// Recherche, filtres et tri du catalogue affiché depuis la base de données.
+(function (global, documentRef) {
+  function normalizeText(value) {
+    return String(value == null ? '' : value)
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase('fr')
+      .trim();
+  }
+
+  function categoryIdsOf(value) {
+    if (Array.isArray(value)) return value.map(String);
+    return String(value == null ? '' : value).split(',').map(function (id) { return id.trim(); }).filter(Boolean);
+  }
+
+  function numberOrNull(value) {
+    if (value === null || value === undefined || value === '') return null;
+    var number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  function compareOptionalDescending(left, right) {
+    var leftNumber = numberOrNull(left);
+    var rightNumber = numberOrNull(right);
+    if (leftNumber === null && rightNumber === null) return 0;
+    if (leftNumber === null) return 1;
+    if (rightNumber === null) return -1;
+    return rightNumber - leftNumber;
+  }
+
+  function parsePreparationMinutes(value) {
+    var text = normalizeText(value).replace(',', '.');
+    if (!text) return null;
+
+    var clock = text.match(/^(\d+):(\d{2})(?::(\d{2}))?$/);
+    if (clock) {
+      return Number(clock[1]) * 60 + Number(clock[2]) + (clock[3] ? Number(clock[3]) / 60 : 0);
+    }
+
+    var compactHours = text.match(/^(\d+(?:\.\d+)?)\s*h\s*(\d+(?:\.\d+)?)?$/);
+    if (compactHours) return Number(compactHours[1]) * 60 + Number(compactHours[2] || 0);
+
+    var hours = text.match(/(\d+(?:\.\d+)?)\s*(?:h|heures?)/);
+    var minutes = text.match(/(\d+(?:\.\d+)?)\s*(?:min|minutes?|m)\b/);
+    if (hours || minutes) return (hours ? Number(hours[1]) * 60 : 0) + (minutes ? Number(minutes[1]) : 0);
+
+    var firstNumber = text.match(/\d+(?:\.\d+)?/);
+    return firstNumber ? Number(firstNumber[0]) : null;
+  }
+
+  function filterAndSort(recipes, options) {
+    options = options || {};
+    var query = normalizeText(options.query);
+    var category = String(options.category || '');
+    var difficulty = normalizeText(options.difficulty);
+    var sort = options.sort || 'recent';
+
+    return recipes.map(function (recipe, index) { return { recipe: recipe, index: index }; })
+      .filter(function (item) {
+        var recipe = item.recipe;
+        var titleMatches = !query || normalizeText(recipe.title).includes(query);
+        var recipeCategories = categoryIdsOf(recipe.categoryIds);
+        var categoryMatches = !category || recipeCategories.indexOf(category) !== -1;
+        var difficultyMatches = !difficulty || normalizeText(recipe.difficulty) === difficulty;
+        return titleMatches && categoryMatches && difficultyMatches;
+      })
+      .sort(function (leftItem, rightItem) {
+        var left = leftItem.recipe;
+        var right = rightItem.recipe;
+        var comparison = 0;
+        if (sort === 'recent') {
+          comparison = compareOptionalDescending(left.createdAt, right.createdAt);
+        } else if (sort === 'oldest') {
+          var leftCreatedAt = numberOrNull(left.createdAt);
+          var rightCreatedAt = numberOrNull(right.createdAt);
+          comparison = leftCreatedAt === null ? (rightCreatedAt === null ? 0 : 1) : (rightCreatedAt === null ? -1 : leftCreatedAt - rightCreatedAt);
+        } else if (sort === 'preparation') {
+          var leftPrep = numberOrNull(left.prepMinutes);
+          var rightPrep = numberOrNull(right.prepMinutes);
+          comparison = leftPrep === null ? (rightPrep === null ? 0 : 1) : (rightPrep === null ? -1 : leftPrep - rightPrep);
+        } else if (sort === 'rating') {
+          comparison = compareOptionalDescending(left.ratingAverage, right.ratingAverage);
+          if (comparison === 0) comparison = compareOptionalDescending(left.ratingCount, right.ratingCount);
+        } else if (sort === 'title') {
+          comparison = normalizeText(left.title).localeCompare(normalizeText(right.title), 'fr');
+        } else {
+          comparison = compareOptionalDescending(left.ratingCount, right.ratingCount);
+        }
+        return comparison || leftItem.index - rightItem.index;
+      })
+      .map(function (item) { return item.recipe; });
+  }
+
+  function init(documentObject) {
+    var grid = documentObject.getElementById('recipeGrid');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('[data-recipe-card]'));
+    if (cards.length === 0) return;
+
+    var search = documentObject.getElementById('recipeSearch');
+    var category = documentObject.getElementById('recipeCategoryFilter');
+    var difficulty = documentObject.getElementById('recipeDifficultyFilter');
+    var sort = documentObject.getElementById('recipeSort');
+    var noResults = documentObject.getElementById('recipeNoResults');
+    if (!search || !category || !difficulty || !sort || !noResults) return;
+
+    var records = cards.map(function (card) {
+      return {
+        card: card,
+        title: card.dataset.recipeTitle || '',
+        categoryIds: categoryIdsOf(card.dataset.categoryIds),
+        difficulty: card.dataset.difficulty || '',
+        createdAt: numberOrNull(card.dataset.createdAt),
+        prepMinutes: parsePreparationMinutes(card.dataset.preparationTime),
+        ratingCount: numberOrNull(card.dataset.ratingCount) || 0,
+        ratingAverage: numberOrNull(card.dataset.ratingAverage),
+      };
+    });
+
+    function render() {
+      var options = { query: search.value, category: category.value, difficulty: difficulty.value, sort: sort.value };
+      var matching = new Set(filterAndSort(records, options));
+      var ordered = filterAndSort(records, { sort: options.sort });
+      ordered.forEach(function (record) {
+        var visible = matching.has(record);
+        record.card.hidden = !visible;
+        record.card.style.display = visible ? '' : 'none';
+        if (record.card.classList) record.card.classList.toggle('hidden', !visible);
+        grid.appendChild(record.card);
+      });
+      noResults.hidden = matching.size !== 0;
+      if (noResults.classList) noResults.classList.toggle('hidden', matching.size !== 0);
+    }
+
+    search.addEventListener('input', render);
+    [category, difficulty, sort].forEach(function (control) { control.addEventListener('change', render); });
+    render();
+  }
+
+  global.recipeCatalogInteractions = {
+    filterAndSort: filterAndSort,
+    parsePreparationMinutes: parsePreparationMinutes,
+    init: init,
+  };
+  documentRef.addEventListener('DOMContentLoaded', function () { init(documentRef); });
+})(window, document);

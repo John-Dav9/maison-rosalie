@@ -273,6 +273,40 @@ if (!isset($_GET['pages'])) {
             $recipeSteps = $recipeDetails['etapes'];
             include BASE_URL . '/view/publicView/recipe.php';
         }
+    } elseif ($_GET['pages'] === 'recettes') {
+        // Charge les dépendances du modèle et récupère les données du catalogue.
+        require_once BASE_URL . '/model/ManagerInterface.php';
+        require_once BASE_URL . '/model/AbstractMapping.php';
+        require_once BASE_URL . '/model/StringTrait.php';
+        require_once BASE_URL . '/model/mapping/userMapping.php';
+        require_once BASE_URL . '/model/mapping/recetteMapping.php';
+        require_once BASE_URL . '/model/mapping/categoryMapping.php';
+        require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+        require_once BASE_URL . '/model/mapping/stepsMapping.php';
+        require_once BASE_URL . '/model/mapping/noteMapping.php';
+        require_once BASE_URL . '/model/manager/RecetteManager.php';
+        require_once BASE_URL . '/model/manager/NoteManager.php';
+
+        $recipeManager = new \model\manager\RecetteManager($connectPDO);
+        $recettes = $recipeManager->getAllRecettes();
+        $categories = $recipeManager->getAllCategories();
+
+        // Les catégories de chaque carte viennent des associations enregistrées.
+        foreach ($recettes as $recette) {
+            $recette->setCategories($recipeManager->getCategoriesByRecetteId((int) $recette->getRecetteId()));
+        }
+
+        $recipeIds = array_map(static fn($recette): int => (int) $recette->getRecetteId(), $recettes);
+        $recipeRatingStats = (new \model\manager\NoteManager($connectPDO))
+            ->getRatingSummariesByRecipeIds($recipeIds);
+
+        $difficultes = array_values(array_unique(array_filter(array_map(
+            static fn($recette): ?string => $recette->getRecetteDifficulty(),
+            $recettes
+        ))));
+        sort($difficultes, SORT_NATURAL | SORT_FLAG_CASE);
+
+        include BASE_URL . '/view/publicView/recettes.php';
     } else {
         // Les autres vues publiques gardent leur routage existant.
         include BASE_URL . "/view/publicView/" . $_GET['pages'] . ".php";
