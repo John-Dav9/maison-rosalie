@@ -18,13 +18,86 @@ require_once BASE_URL . '/model/mapping/categoryMapping.php';
 require_once BASE_URL . '/model/mapping/ingredientMapping.php';
 require_once BASE_URL . '/model/mapping/stepsMapping.php';
 require_once BASE_URL . '/model/manager/RecetteManager.php';
+require_once BASE_URL . '/model/mapping/contactMapping.php';
+require_once BASE_URL . '/model/manager/ContactManager.php';
+require_once BASE_URL . '/model/manager/ContactMailer.php';
 
 $recipeManager = new model\manager\RecetteManager($connectPDO);
+$contactManager = new model\manager\ContactManager($connectPDO);
+$contactMailer = new model\manager\ContactMailer();
 $recipeFormAction = './?pages=admin&action=new-recipe';
 $recipeFormCsrfToken = $_SESSION['admin_recipe_csrf_token'] ?? null;
 if (!is_string($recipeFormCsrfToken) || strlen($recipeFormCsrfToken) !== 64) {
     $recipeFormCsrfToken = bin2hex(random_bytes(32));
     $_SESSION['admin_recipe_csrf_token'] = $recipeFormCsrfToken;
+}
+
+$showMessagingPage = (($_GET['action'] ?? '') === 'messagerie');
+$selectedContactId = filter_var($_GET['contact_id'] ?? null, FILTER_VALIDATE_INT);
+$selectedContactId = $selectedContactId === false || $selectedContactId === null ? 0 : (int) $selectedContactId;
+
+// Protège l'envoi des réponses et les suppressions de messages par rôle admin et jeton CSRF.
+$messagingPostAction = $_POST['admin_action'] ?? '';
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
+    && in_array($messagingPostAction, ['delete_contact', 'reply_contact'], true)) {
+    $postedToken = $_POST['csrf_token'] ?? null;
+    $contactId = filter_var($_POST['contact_id'] ?? null, FILTER_VALIDATE_INT);
+    $isValidRequest = is_string($postedToken)
+        && hash_equals($recipeFormCsrfToken, $postedToken)
+        && $contactId !== false && $contactId > 0;
+
+    if ($messagingPostAction === 'reply_contact' && is_string($_POST['reply'] ?? null)) {
+        $_SESSION['admin_messaging_reply_draft'] = trim($_POST['reply']);
+    }
+
+    if (!$isValidRequest) {
+        $_SESSION['admin_messaging_feedback'] = [
+            'type' => 'error',
+            'message' => 'La demande est invalide ou a expiré. Rechargez la messagerie puis réessayez.',
+        ];
+        header('Location: ./?pages=admin&action=messagerie');
+        exit;
+    }
+
+    if ($messagingPostAction === 'delete_contact') {
+        $deleted = $contactManager->deleteContact((int) $contactId);
+        $_SESSION['admin_messaging_feedback'] = [
+            'type' => $deleted ? 'success' : 'error',
+            'message' => $deleted
+                ? 'Le message a été supprimé de la base de données.'
+                : 'Le message n’a pas pu être supprimé ou a déjà été retiré.',
+        ];
+        header('Location: ./?pages=admin&action=messagerie');
+        exit;
+    }
+
+    $reply = trim((string) ($_POST['reply'] ?? ''));
+    $contact = $contactManager->getContactById((int) $contactId);
+    if ($reply === '' || mb_strlen($reply, 'UTF-8') > 10000) {
+        $replySent = false;
+        $replyError = 'La réponse doit contenir entre 1 et 10 000 caractères.';
+    } elseif ($contact === null) {
+        $replySent = false;
+        $replyError = 'Ce message n’existe plus ou ne peut pas être consulté.';
+    } else {
+        $replySent = $contactMailer->sendReply([
+            'name' => $contact->getName() ?? '',
+            'email' => $contact->getEmail() ?? '',
+        ], $reply);
+        $replyError = 'L’envoi du courriel a échoué. Vérifiez la configuration mail du serveur puis réessayez.';
+    }
+
+    if ($replySent) {
+        unset($_SESSION['admin_messaging_reply_draft']);
+        $_SESSION['admin_messaging_feedback'] = [
+            'type' => 'success',
+            'message' => 'La réponse a été transmise au service mail pour envoi.',
+        ];
+    } else {
+        $_SESSION['admin_messaging_feedback'] = ['type' => 'error', 'message' => $replyError];
+    }
+    header('Location: ./?pages=admin&action=messagerie&contact_id=' . (int) $contactId);
+    exit;
 }
 
 // Convertit les champs attendus en chaînes simples pour réafficher le formulaire sans risque.
@@ -295,14 +368,25 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
 
 $adminFeedback = $_SESSION['admin_recipe_feedback'] ?? null;
 unset($_SESSION['admin_recipe_feedback']);
+$messagingFeedback = $_SESSION['admin_messaging_feedback'] ?? null;
+unset($_SESSION['admin_messaging_feedback']);
+$replyDraft = $_SESSION['admin_messaging_reply_draft'] ?? '';
+unset($_SESSION['admin_messaging_reply_draft']);
+$replyDraft = is_string($replyDraft) ? $replyDraft : '';
 $categories = $showRecipeForm ? $recipeManager->getAllCategories() : [];
 $availableIngredients = $showRecipeForm ? $recipeManager->getAllIngredients() : [];
-$adminRecipes = $showRecipeForm ? [] : $recipeManager->getAllRecettes();
+$adminRecipes = ($showRecipeForm || $showMessagingPage) ? [] : $recipeManager->getAllRecettes();
+$adminContacts = $showMessagingPage ? $contactManager->getAllContacts() : [];
+$selectedContact = $showMessagingPage && $selectedContactId > 0
+    ? $contactManager->getContactById($selectedContactId)
+    : null;
 
-// Charge le menu privé commun avant le tableau de bord ou le formulaire.
+// Charge le menu privé commun avant d'afficher la vue d'administration demandée.
 require_once BASE_URL . '/view/privateView/inc/menuPrivateView.php';
 if ($showRecipeForm) {
     require BASE_URL . '/view/privateView/newRecipe.php';
+} elseif ($showMessagingPage) {
+    require BASE_URL . '/view/privateView/messagerie.php';
 } else {
     require BASE_URL . '/view/privateView/admin.php';
 }

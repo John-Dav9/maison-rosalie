@@ -23,6 +23,16 @@ $escapeAdminDashboard = static function ($value): string {
 
             <div class="flex flex-col items-start justify-between gap-5 rounded-lg border border-[#E5C98A] bg-[#FBF5E6] p-6 sm:flex-row sm:items-center">
                 <div>
+                    <h2 class="text-2xl font-bold font-['Playfair_Display']">Messagerie</h2>
+                    <p class="mt-2 text-on-surface-variant">Consultez les messages du formulaire de contact et répondez par e-mail.</p>
+                </div>
+                <a class="inline-flex shrink-0 items-center gap-2 rounded bg-[#2F1B14] px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-secondary" href="./?pages=admin&amp;action=messagerie">
+                    Ouvrir la messagerie
+                </a>
+            </div>
+
+            <div class="flex flex-col items-start justify-between gap-5 rounded-lg border border-[#E5C98A] bg-[#FBF5E6] p-6 sm:flex-row sm:items-center">
+                <div>
                     <h2 class="text-2xl font-bold font-['Playfair_Display']">Recettes</h2>
                     <p class="mt-2 text-on-surface-variant">Ajoutez une recette avec ses ingrédients, ses mesures, ses étapes et ses catégories.</p>
                 </div>

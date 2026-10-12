@@ -65,4 +65,41 @@ final class ContactMailer
             return false;
         }
     }
+
+    /** Envoie la réponse de l'administrateur à l'adresse associée au message d'origine. */
+    public function sendReply(array $contact, string $reply): bool
+    {
+        if (!isset($contact['email'], $contact['name'])
+            || !is_string($contact['email'])
+            || !is_string($contact['name'])) {
+            return false;
+        }
+
+        $recipient = trim($contact['email']);
+        if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+
+        try {
+            $name = ContactText::plainText($contact['name'], true);
+            $reply = ContactText::plainText($reply);
+            if ($reply === '' || mb_strlen($reply, 'UTF-8') > 10000) {
+                return false;
+            }
+
+            // Le sujet ASCII évite les en-têtes mal encodés et les injections CRLF.
+            $subject = 'Re: Maison Rosalie contact message';
+            $body = "Bonjour {$name},\n\n{$reply}\n\nCordialement,\nMaison Rosalie\n";
+            $headers = "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8";
+            $from = getenv('CONTACT_FROM_EMAIL');
+            if (is_string($from) && filter_var($from, FILTER_VALIDATE_EMAIL)) {
+                $headers .= "\r\nFrom: Maison Rosalie <{$from}>";
+            }
+
+            return (bool) ($this->transport)($recipient, $subject, $body, $headers);
+        } catch (Throwable $e) {
+            error_log('Échec d’envoi d’une réponse à un message de contact : ' . $e->getMessage());
+            return false;
+        }
+    }
 }
