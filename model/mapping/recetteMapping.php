@@ -17,6 +17,8 @@ class RecetteMapping extends AbstractMapping
     protected ?string $recette_duration_prep = null;
     protected ?string $recette_duration_cook = null;
     protected ?string $recette_difficulty = null;
+    // Nombre de portions initial utilisé par la fiche et le calcul des quantités.
+    protected ?int $recette_portions = 1;
     protected ?string $recette_date_create = null;
     protected ?int $recette_user_id = null;
 
@@ -126,6 +128,19 @@ class RecetteMapping extends AbstractMapping
     public function setRecetteDifficulty(?string $recette_difficulty): void
     {
         $this->recette_difficulty = $recette_difficulty;
+    }
+
+    public function getRecettePortions(): ?int
+    {
+        return $this->recette_portions;
+    }
+
+    public function setRecettePortions(?int $recette_portions): void
+    {
+        if ($recette_portions !== null && $recette_portions < 1) {
+            throw new Exception("Le nombre de portions doit être supérieur à zéro");
+        }
+        $this->recette_portions = $recette_portions;
     }
 
     public function getRecetteDateCreate(): ?string
