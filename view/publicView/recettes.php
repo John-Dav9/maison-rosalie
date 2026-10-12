@@ -72,7 +72,7 @@
                                     <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Biscuits</span>
                                 </div>
                                 <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
-                                    Biscuit S'more &amp; Ganache
+                                    Brownie au chocolat
                                 </h3>
                                 <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
                                     Sablé doré pur beurre, guimauve fondante vanille de Madagascar et nappage chocolat noir intense 70%.
@@ -86,7 +86,7 @@
                         <!-- Footer Card -->
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°01</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-smore-ganache" href="./?pages=recipe">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="brownie-au-chocolat" href="./?pages=recipe&amp;slug=brownie-au-chocolat">
                                 Voir la recette
                             </a>
                         </div>
@@ -120,7 +120,7 @@
                                     <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Chocolaterie</span>
                                 </div>
                                 <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
-                                    Tablettes Praliné &amp; Fleur de Sel
+                                    Mousse au chocolat
                                 </h3>
                                 <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
                                     Chocolat de dégustation tempéré artisanalement, incrusté d'éclats de noisettes torréfiées et sel de Guérande.
@@ -134,7 +134,7 @@
                         </div>
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°02</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-tablettes-praline" href="#">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="mousse-au-chocolat" href="./?pages=recipe&amp;slug=mousse-au-chocolat">
                                 Voir la recette
                             </a>
                         </div>
@@ -168,7 +168,7 @@
                                     <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Douceurs</span>
                                 </div>
                                 <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
-                                    Truffes Cacao &amp; Infusion Café
+                                    Cookies aux pépites de chocolat
                                 </h3>
                                 <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
                                     Une texture soyeuse ultra-fondante enrobée d'un voile de cacao amer d'Équateur avec une note d'espresso.
@@ -182,7 +182,7 @@
                         </div>
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°03</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-truffes-cacao" href="#">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="cookies-aux-pepites-de-chocolat" href="./?pages=recipe&amp;slug=cookies-aux-pepites-de-chocolat">
                                 Voir la recette
                             </a>
                         </div>
@@ -216,7 +216,7 @@
                                     <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Pâtisserie</span>
                                 </div>
                                 <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-secondary transition-colors line-clamp-1 mb-1">
-                                    Sablé Noisette &amp; Cœur Gianduja
+                                    Fondant au chocolat
                                 </h3>
                                 <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-snug mb-3">
                                     Pâte sablée croustillante aux noisettes du Piémont et garniture généreuse de gianduja onctueux.
@@ -230,7 +230,7 @@
                         </div>
                         <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                             <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°04</span>
-                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="recette-sable-noisette" href="#">
+                            <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="fondant-au-chocolat" href="./?pages=recipe&amp;slug=fondant-au-chocolat">
                                 Voir la recette
                             </a>
                         </div>

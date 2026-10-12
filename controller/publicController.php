@@ -244,10 +244,41 @@ if (!isset($_GET['pages'])) {
     // sinon si la variable get 'pages' est dans le
     // tableau VALID_PAGES    
 } elseif (in_array($_GET['pages'], VALID_PAGES)) {
-    // inclusion de la vue autorisée
-    include BASE_URL . "/view/publicView/" . $_GET['pages'] . ".php";
+    // La route recette charge ses dépendances et ses données avant d'inclure la vue.
+    if ($_GET['pages'] === 'recipe') {
+        require_once BASE_URL . '/model/ManagerInterface.php';
+        require_once BASE_URL . '/model/AbstractMapping.php';
+        require_once BASE_URL . '/model/StringTrait.php';
+        require_once BASE_URL . '/model/mapping/userMapping.php';
+        require_once BASE_URL . '/model/mapping/recetteMapping.php';
+        require_once BASE_URL . '/model/mapping/categoryMapping.php';
+        require_once BASE_URL . '/model/mapping/ingredientMapping.php';
+        require_once BASE_URL . '/model/mapping/stepsMapping.php';
+        require_once BASE_URL . '/model/manager/RecetteManager.php';
 
-    // sinon (pages non valide)    
+        // On n'accepte que des slugs minuscules alphanumériques séparés par des tirets.
+        $recipeSlug = $_GET['slug'] ?? null;
+        $recipeDetails = null;
+        if (is_string($recipeSlug) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $recipeSlug)) {
+            $recipeManager = new \model\manager\RecetteManager($connectPDO);
+            $recipeDetails = $recipeManager->getRecetteDetailsBySlug($recipeSlug);
+        }
+
+        if ($recipeDetails === null) {
+            http_response_code(404);
+            include BASE_URL . '/view/publicView/404View.php';
+        } else {
+            $recipe = $recipeDetails['recette'];
+            $recipeIngredients = $recipeDetails['ingredients'];
+            $recipeSteps = $recipeDetails['etapes'];
+            include BASE_URL . '/view/publicView/recipe.php';
+        }
+    } else {
+        // Les autres vues publiques gardent leur routage existant.
+        include BASE_URL . "/view/publicView/" . $_GET['pages'] . ".php";
+    }
+
+    // sinon (pages non valide)
 } else {
     include BASE_URL . "/view/publicView/404view.php";
 }

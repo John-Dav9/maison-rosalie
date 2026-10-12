@@ -385,6 +385,40 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+// Calcule une quantité pour le nouveau nombre de portions sans supprimer son unité.
+function calculerQuantite(quantiteBase, portionsBase, portionsActuelles) {
+  const texte = String(quantiteBase ?? '').trim();
+  if (!Number.isFinite(portionsBase) || portionsBase <= 0 || !Number.isFinite(portionsActuelles)) return texte;
+  // Les quantités non numériques (ex. « au goût ») restent inchangées.
+  const indexFraction = texte.indexOf('/');
+  if (indexFraction > 0) {
+    const numerateur = Number(texte.slice(0, indexFraction).trim());
+    const denominateur = texte.slice(indexFraction + 1).match(/^([0-9]+)(.*)$/u);
+    if (!Number.isFinite(numerateur) || !denominateur || Number(denominateur[1]) === 0) return texte;
+    const valeurFraction = numerateur / Number(denominateur[1]) * portionsActuelles / portionsBase;
+    return String(Number(valeurFraction.toFixed(3))) + denominateur[2];
+  }
+
+  const correspondance = texte.match(/^([0-9]+(?:[.,][0-9]+)?)(.*)$/u);
+  if (!correspondance) return texte;
+
+  const nombreOriginal = correspondance[1].replace(/\\s/g, '');
+  let valeurBase;
+  if (nombreOriginal.includes('/')) {
+    const [numerateur, denominateur] = nombreOriginal.split('/').map(Number);
+    if (!denominateur) return texte;
+    valeurBase = numerateur / denominateur;
+  } else {
+    valeurBase = Number(nombreOriginal.replace(',', '.'));
+  }
+  if (!Number.isFinite(valeurBase) || !Number.isFinite(portionsBase) || portionsBase <= 0) return texte;
+
+  const valeurAjustee = valeurBase * portionsActuelles / portionsBase;
+  let nombreFormate = String(Number(valeurAjustee.toFixed(3)));
+  if (correspondance[1].includes(',')) nombreFormate = nombreFormate.replace('.', ',');
+  return nombreFormate + correspondance[2];
+}
+
 /* JAVASCRIPT DE LA PAGE RECETTE
    IMPORTANT : ce bloc est protégé. Il ne s'exécute QUE si les éléments de la
    page recette existent (portions, +, -, etc.). Sinon il s'arrête tout de suite.
@@ -397,6 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Éléments de base de la page recette (portions + boutons +/-)
   const portionsEl = document.getElementById('portions');
   const portionsTexteEl = document.getElementById('portions-texte');
+  const portionsLabelEl = document.getElementById('portions-label');
   const plusBtn = document.getElementById('plus');
   const moinsBtn = document.getElementById('moins');
 
@@ -404,14 +439,18 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!portionsEl || !plusBtn || !moinsBtn) return;
 
   // 1) Portions : + et - changent le nombre de personnes et les quantités
-  let portions = 4;
+  let portions = 1;
   function mettreAJour() {
     portionsEl.textContent = portions;
     if (portionsTexteEl) portionsTexteEl.textContent = portions;
+    if (portionsLabelEl) portionsLabelEl.textContent = portions === 1 ? 'personne' : 'personnes';
     document.querySelectorAll('.quantite').forEach(function (q) {
-      q.textContent = Math.round(q.dataset.quantite / 4 * portions);
+      const quantiteBase = q.dataset.quantite;
+      const portionsBase = Number(q.dataset.portionsBase || 1);
+      q.textContent = calculerQuantite(quantiteBase, portionsBase, portions);
     });
   }
+  mettreAJour();
   plusBtn.addEventListener('click', function () {
     portions = portions + 1;
     mettreAJour();

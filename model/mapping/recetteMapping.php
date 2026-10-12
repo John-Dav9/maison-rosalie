@@ -9,6 +9,8 @@ use model\StringTrait;
 class RecetteMapping extends AbstractMapping
 {
     protected ?int $recette_id = null;
+    // Slug permanent lu depuis la base et utilisé pour les URL publiques.
+    protected ?string $recette_slug = null;
     protected ?string $recette_title = null;
     protected ?string $recette_description = null;
     protected ?string $recette_image = null;
@@ -37,6 +39,21 @@ class RecetteMapping extends AbstractMapping
         $this->recette_id = $recette_id;
     }
 
+    public function getRecetteSlug(): ?string
+    {
+        return $this->recette_slug;
+    }
+
+    public function setRecetteSlug(?string $recette_slug): void
+    {
+        if ($recette_slug !== null
+            && ($recette_slug === '' || strlen($recette_slug) > 150
+                || !preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $recette_slug))) {
+            throw new Exception("Le slug de la recette n'est pas valide");
+        }
+        $this->recette_slug = $recette_slug;
+    }
+
     public function getRecetteTitle(): ?string
     {
         return $this->recette_title;
@@ -56,14 +73,6 @@ class RecetteMapping extends AbstractMapping
         $this->recette_title = $recette_title;
     }
 
-    /** Le slug est calculé depuis le titre et n'est pas enregistré en base. */
-    public function getRecetteSlug(): ?string
-    {
-        if ($this->recette_title === null || trim($this->recette_title) === '') {
-            return null;
-        }
-        return self::slugify($this->recette_title, false);
-    }
 
     public function getRecetteDescription(): ?string
     {
