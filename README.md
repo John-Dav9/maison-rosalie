@@ -98,7 +98,7 @@ Les fichiers HTML, CSS et JavaScript gèrent ce que la personne voit et les inte
 | **HTML** | Organise le contenu d’une page : titres, paragraphes, images, formulaires et liens. |
 | **CSS** | Définit l’apparence du site : couleurs, tailles, espacements et mise en page. |
 | **JavaScript** | Permet d’ajouter des interactions dans le navigateur. |
-| **Bootstrap** | Fournit des outils de mise en page qui aident le site à s’adapter aux téléphones, tablettes et ordinateurs. |
+| **Tailwind CSS** | Fournit des classes CSS utilitaires qui permettent de définir l’apparence des éléments et de créer une mise en page adaptée aux téléphones, tablettes et ordinateurs. |
 | **PHP** | Exécute les traitements sur le serveur, par exemple récupérer une recette ou enregistrer un message. |
 | **MariaDB / MySQL** | Conserve les données dans des tables reliées entre elles. Le fichier SQL fourni a été exporté depuis MariaDB. |
 | **PDO** | Permet au code PHP de communiquer avec la base de données. |
