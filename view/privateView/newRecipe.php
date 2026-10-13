@@ -36,7 +36,7 @@ $selectedNewCategoryNames = $recipeFormValues['new_categories'] ?? [];
                 </p>
             <?php endif; ?>
 
-            <form action="<?= $escapeAdminRecipe($recipeFormAction) ?>" class="space-y-8" method="post">
+            <form action="<?= $escapeAdminRecipe($recipeFormAction) ?>" class="space-y-8" enctype="multipart/form-data" method="post">
                 <input name="csrf_token" type="hidden" value="<?= $escapeAdminRecipe($recipeFormCsrfToken) ?>">
                 <input name="admin_action" type="hidden" value="create_recipe">
 
@@ -50,8 +50,8 @@ $selectedNewCategoryNames = $recipeFormValues['new_categories'] ?? [];
                             <input class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="recette-title" maxlength="100" name="recette_title" required type="text" value="<?= $escapeAdminRecipe($recipeFormValues['recette_title']) ?>">
                         </label>
                         <label class="space-y-1 text-sm font-semibold" for="recette-image">
-                            Chemin ou URL de l’image <span class="font-normal">(facultatif)</span>
-                            <input class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="recette-image" maxlength="300" name="recette_image" placeholder="assets/images/recettes/ma-recette.webp" type="text" value="<?= $escapeAdminRecipe($recipeFormValues['recette_image']) ?>">
+                            Image de la recette <span class="font-normal">(facultative · .webp, .jpg ou .jpeg · 300 Ko maximum)</span>
+                            <input accept=".webp,.jpg,.jpeg,image/webp,image/jpeg" class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="recette-image" name="recette_image_file" type="file">
                         </label>
                     </div>
                     <label class="block space-y-1 text-sm font-semibold" for="recette-description">
@@ -139,8 +139,8 @@ $selectedNewCategoryNames = $recipeFormValues['new_categories'] ?? [];
                                 <input class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="new-ingredient-name" maxlength="100" name="new_ingredient_name" placeholder="Ex. Farine de noisette" type="text" value="<?= $escapeAdminRecipe($recipeFormValues['new_ingredient_name']) ?>">
                             </label>
                             <label class="space-y-1 text-sm font-semibold" for="new-ingredient-image">
-                                Lien de l’image <span class="font-normal">(facultatif)</span>
-                                <input class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="new-ingredient-image" maxlength="200" name="new_ingredient_image" placeholder="https://exemple.fr/image.webp" type="url" value="<?= $escapeAdminRecipe($recipeFormValues['new_ingredient_image']) ?>">
+                                Image de l’ingrédient <span class="font-normal">(facultative · .webp, .jpg ou .jpeg · 300 Ko maximum)</span>
+                                <input accept=".webp,.jpg,.jpeg,image/webp,image/jpeg" class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="new-ingredient-image" type="file">
                             </label>
                             <button class="rounded bg-[#2F1B14] px-5 py-2 font-semibold text-white hover:bg-secondary" data-add-new-ingredient type="button">Ajouter à la liste</button>
                         </div>
@@ -149,7 +149,7 @@ $selectedNewCategoryNames = $recipeFormValues['new_categories'] ?? [];
                             <?php foreach ($newIngredientDefinitions as $newIngredientIndex => $newIngredient): ?>
                                 <div data-new-ingredient-definition>
                                     <input data-new-ingredient-name name="new_ingredients[<?= $newIngredientIndex ?>][name]" type="hidden" value="<?= $escapeAdminRecipe($newIngredient['name']) ?>">
-                                    <input name="new_ingredients[<?= $newIngredientIndex ?>][image]" type="hidden" value="<?= $escapeAdminRecipe($newIngredient['image']) ?>">
+                                    <input accept=".webp,.jpg,.jpeg,image/webp,image/jpeg" class="hidden" name="new_ingredient_images[<?= $newIngredientIndex ?>]" type="file">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -205,8 +205,8 @@ $selectedNewCategoryNames = $recipeFormValues['new_categories'] ?? [];
                                         <input class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="step-<?= $index ?>-title" maxlength="100" name="steps[<?= $index ?>][title]" required type="text" value="<?= $escapeAdminRecipe($stepRow['title']) ?>">
                                     </label>
                                     <label class="space-y-1 text-sm font-semibold" for="step-<?= $index ?>-image">
-                                        Chemin de l’image <span class="font-normal">(facultatif)</span>
-                                        <input class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="step-<?= $index ?>-image" maxlength="300" name="steps[<?= $index ?>][image]" type="text" value="<?= $escapeAdminRecipe($stepRow['image']) ?>">
+                                        Image de l’étape <span class="font-normal">(facultative · .webp, .jpg ou .jpeg · 300 Ko maximum)</span>
+                                        <input accept=".webp,.jpg,.jpeg,image/webp,image/jpeg" class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="step-<?= $index ?>-image" name="step_images[<?= $index ?>]" type="file">
                                     </label>
                                 </div>
                                 <label class="block space-y-1 text-sm font-semibold" for="step-<?= $index ?>-description">
@@ -267,8 +267,8 @@ $selectedNewCategoryNames = $recipeFormValues['new_categories'] ?? [];
                 <input class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="step-__INDEX__-title" maxlength="100" name="steps[__INDEX__][title]" required type="text">
             </label>
             <label class="space-y-1 text-sm font-semibold" for="step-__INDEX__-image">
-                Chemin de l’image <span class="font-normal">(facultatif)</span>
-                <input class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="step-__INDEX__-image" maxlength="300" name="steps[__INDEX__][image]" type="text">
+                Image de l’étape <span class="font-normal">(facultative · .webp, .jpg ou .jpeg · 300 Ko maximum)</span>
+                <input accept=".webp,.jpg,.jpeg,image/webp,image/jpeg" class="w-full rounded border border-[#C9A45C] bg-white px-3 py-2 font-normal" id="step-__INDEX__-image" name="step_images[__INDEX__]" type="file">
             </label>
         </div>
         <label class="block space-y-1 text-sm font-semibold" for="step-__INDEX__-description">
@@ -312,26 +312,24 @@ document.addEventListener('DOMContentLoaded', function () {
         return row;
     }
 
-    // Ajoute un nouvel ingrédient aux sélecteurs et garde nom/image pour le POST.
+    // Ajoute un nouvel ingrédient à la liste et associe son image locale au POST.
     function addNewIngredientToList() {
         if (!newIngredientDefinitions || !newIngredientNameInput || !ingredientTemplate) return;
         const name = newIngredientNameInput.value.trim();
-        const image = newIngredientImageInput?.value.trim() || '';
+        const imageFile = newIngredientImageInput?.files?.[0] || null;
         if (!name) {
             if (newIngredientFeedback) newIngredientFeedback.textContent = 'Saisissez le nom de l’ingrédient avant de l’ajouter.';
             newIngredientNameInput.focus();
             return;
         }
-        if (name.length > 100 || image.length > 200) {
-            if (newIngredientFeedback) newIngredientFeedback.textContent = 'Le nom est limité à 100 caractères et le lien à 200 caractères.';
+        if (name.length > 100) {
+            if (newIngredientFeedback) newIngredientFeedback.textContent = 'Le nom de l’ingrédient ne doit pas dépasser 100 caractères.';
             return;
         }
-        if (image) {
-            try {
-                const imageUrl = new URL(image);
-                if (!['http:', 'https:'].includes(imageUrl.protocol)) throw new Error('Lien non autorisé');
-            } catch (error) {
-                if (newIngredientFeedback) newIngredientFeedback.textContent = 'Saisissez un lien d’image valide commençant par http:// ou https://.';
+        if (imageFile) {
+            const extension = imageFile.name.split('.').pop().toLowerCase();
+            if (!['webp', 'jpg', 'jpeg'].includes(extension) || imageFile.size > 300 * 1024) {
+                if (newIngredientFeedback) newIngredientFeedback.textContent = 'Choisissez une image .webp, .jpg ou .jpeg de 300 Ko maximum.';
                 newIngredientImageInput?.focus();
                 return;
             }
@@ -350,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             appendIngredientRow(duplicate.value);
-            if (newIngredientFeedback) newIngredientFeedback.textContent = `« ${name} » existe déjà dans la liste; il a été sélectionné dans une nouvelle ligne.`;
+            if (newIngredientFeedback) newIngredientFeedback.textContent = `« ${name} » existe déjà; l’ingrédient enregistré sera réutilisé sans remplacer son image.`;
         } else {
             if (nextNewIngredientIndex >= 50) {
                 if (newIngredientFeedback) newIngredientFeedback.textContent = 'Vous pouvez ajouter jusqu’à 50 nouveaux ingrédients à la fois.';
@@ -370,15 +368,23 @@ document.addEventListener('DOMContentLoaded', function () {
             nameField.type = 'hidden';
             nameField.name = `new_ingredients[${index}][name]`;
             nameField.value = name;
-            const imageField = document.createElement('input');
-            imageField.type = 'hidden';
-            imageField.name = `new_ingredients[${index}][image]`;
-            imageField.value = image;
-            definition.append(nameField, imageField);
+            definition.appendChild(nameField);
+            if (imageFile) {
+                const imageField = document.createElement('input');
+                imageField.type = 'file';
+                imageField.accept = '.webp,.jpg,.jpeg,image/webp,image/jpeg';
+                imageField.name = `new_ingredient_images[${index}]`;
+                imageField.className = 'hidden';
+                const transfer = new DataTransfer();
+                transfer.items.add(imageFile);
+                imageField.files = transfer.files;
+                definition.appendChild(imageField);
+            }
             newIngredientDefinitions.appendChild(definition);
 
             appendIngredientRow(`new:${index}`);
-            if (newIngredientFeedback) newIngredientFeedback.textContent = `« ${name} » a été ajouté à la liste. Renseignez sa quantité et sa mesure.`;
+            const imageNotice = imageFile ? ` Image « ${imageFile.name} » jointe.` : '';
+            if (newIngredientFeedback) newIngredientFeedback.textContent = `« ${name} » a été ajouté à la liste.${imageNotice} Renseignez sa quantité et sa mesure.`;
         }
         newIngredientNameInput.value = '';
         if (newIngredientImageInput) newIngredientImageInput.value = '';
@@ -386,13 +392,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.querySelector('[data-add-new-ingredient]')?.addEventListener('click', addNewIngredientToList);
-    [newIngredientNameInput, newIngredientImageInput].forEach(function (input) {
-        input?.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                addNewIngredientToList();
-            }
-        });
+    newIngredientNameInput?.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addNewIngredientToList();
+        }
     });
     // Ajoute la catégorie saisie comme case cochée; elle sera sauvegardée avec la recette.
     function addCategoryToList() {
