@@ -21,8 +21,8 @@ $recipeCardImagePath = static function (?string $image): string {
     return './assets/images/recettes/' . rawurlencode(basename($image));
 };
 ?>
-<section class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
-    <main class="w-full bg-surface min-h-[calc(100vh-20rem)]">
+<section class="bg-[#FBF5E6] font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+    <main class="w-full min-h-[calc(100vh-20rem)]">
         <div class="flex flex-col w-full">
             <section class="w-full bg-[#2F1B14] text-surface pt-25 pb-space-xl shadow-sm">
                 <div class="max-w-[1280px] mx-auto px-margin">

@@ -660,6 +660,11 @@ document.addEventListener('DOMContentLoaded', function () {
   if (read(STORE_OPEN) === 'true' || modal.getAttribute('data-auth-modal-auto-open') === 'true') {
     openModal();
   }
+  if (modal.getAttribute('data-auth-success') === 'true') {
+    remove(STORE_OPEN);
+    remove(STORE_TAB);
+    window.setTimeout(closeModal, 3000);
+  }
 });
 
 /* VALIDATION DES FORMULAIRES CONNEXION / INSCRIPTION (côté client — FE-61)
