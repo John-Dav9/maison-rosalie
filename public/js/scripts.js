@@ -782,6 +782,19 @@ document.addEventListener('DOMContentLoaded', function () {
     return true;
   }
 
+  // Vérifie que la case "J'accepte les conditions" est cochée (inscription)
+  function validateTermsAccepted(form) {
+    const terms = form.querySelector('[data-auth-terms]');
+    if (!terms) return true; // pas de case sur ce formulaire (ex: connexion)
+
+    if (!terms.checked) {
+      showError(form, 'accept_terms', 'Vous devez accepter les conditions pour vous inscrire.');
+      return false;
+    }
+    showValid(form, 'accept_terms');
+    return true;
+  }
+
   // Branche la validation sur chaque formulaire
   authForms.forEach(function (form) {
     const type  = form.getAttribute('data-auth-form');
@@ -803,6 +816,13 @@ document.addEventListener('DOMContentLoaded', function () {
       confirm.addEventListener('blur',  function () { validatePasswordConfirm(form); });
     }
 
+    // case d'acceptation des conditions (inscription uniquement) :
+    // on revalide dès qu'on coche/décoche pour effacer l'erreur tout de suite
+    const terms = form.querySelector('[data-auth-terms]');
+    if (terms) {
+      terms.addEventListener('change', function () { validateTermsAccepted(form); });
+    }
+
     // à l'envoi : on valide tout, on bloque si invalide
     form.addEventListener('submit', function (event) {
       let allValid = true;
@@ -811,6 +831,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!validateField(form, name, rules[name])) allValid = false;
       });
       if (confirm && !validatePasswordConfirm(form)) allValid = false;
+      if (terms && !validateTermsAccepted(form)) allValid = false;
 
       if (!allValid) {
         event.preventDefault();

@@ -133,6 +133,25 @@
                 </div>
                 <span class="auth-modal__error" data-error-for="password_confirm"></span>
             </div>
+
+            <!-- ACCEPTATION DES CONDITIONS (obligatoire)
+                 Sans cette case cochée, la validation JS bloque l'inscription.
+                 Les liens ouvrent le modal des mentions légales (data-legal-open).
+                 /!\ IMPORTANT (back-end) : à REVÉRIFIER côté PHP — refuser la
+                 création du compte si $_POST['accept_terms'] n'est pas présent
+                 (la validation JS ne suffit pas, elle peut être contournée). -->
+            <div class="auth-modal__field">
+                <label class="auth-modal__remember auth-modal__terms">
+                    <input type="checkbox" name="accept_terms" value="1" data-auth-terms>
+                    <span>J'accepte les
+                        <button type="button" class="auth-modal__link" data-legal-open="terms">conditions d'utilisation</button>
+                        et la
+                        <button type="button" class="auth-modal__link" data-legal-open="privacy">politique de confidentialité</button>.
+                    </span>
+                </label>
+                <span class="auth-modal__error" data-error-for="accept_terms"></span>
+            </div>
+
             <button type="submit" class="auth-modal__submit">Créer mon compte</button>
             <p class="auth-modal__switch">
                 Déjà inscrit ?
