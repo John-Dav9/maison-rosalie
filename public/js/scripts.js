@@ -570,8 +570,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const closeEls  = modal.querySelectorAll('[data-auth-close]');
   const tabs      = modal.querySelectorAll('.auth-modal__tab');
   const panels    = modal.querySelectorAll('.auth-modal__panel');
-  // les liens "Créer un compte" / "Se connecter" sous les formulaires
-  const switchLinks = modal.querySelectorAll('.auth-modal__link');
+  // les liens "Créer un compte" / "Se connecter" sous les formulaires.
+  // IMPORTANT : on exige [data-tab] pour ne PAS attraper les autres liens
+  // qui réutilisent la classe .auth-modal__link (ex. les liens vers les
+  // mentions légales dans la case d'acceptation, qui n'ont pas de data-tab).
+  // Sans ce filtre, un clic sur ces liens appellerait showTab(null) et
+  // viderait le modal (plus aucun panneau actif).
+  const switchLinks = modal.querySelectorAll('.auth-modal__link[data-tab]');
 
   // clés utilisées dans sessionStorage
   const STORE_OPEN = 'authModalOpen';  // 'true' si le modal doit rester ouvert
