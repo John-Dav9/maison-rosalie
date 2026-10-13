@@ -1,6 +1,7 @@
 # Ignorer le fichier de configuration contenant les accès réels
 config.php
 config.php.baack
+config.php.inligne
 
 # Ignorer les données sensible
 data/*
