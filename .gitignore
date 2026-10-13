@@ -4,4 +4,8 @@ config.php.baack
 config.php.inligne
 
 # Ignorer les données sensible
+<<<<<<< HEAD
+data/data-base.sql
+=======
 data/*
+>>>>>>> f033b93c41c86ef60a09e9ddc0e147cb26db9854
