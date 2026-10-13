@@ -13,6 +13,8 @@ require_once __DIR__ . '/../ContactText.php';
 /** Envoie les notifications du formulaire en texte brut via le transport mail configuré par PHP. */
 final class ContactMailer
 {
+    public const MAILBOX = 'choco5@webdev-cf2m.be';
+
     private Closure $transport;
 
     /** Le transport injectable permet de tester le message sans envoyer de vrai courriel. */
@@ -24,8 +26,10 @@ final class ContactMailer
     }
 
     /** Envoie un message de contact nettoyé à l'adresse fixe de réception. */
-    public function send(array $contact, string $recipient): bool
+    public function send(array $contact, ?string $recipient = null): bool
     {
+        // Le formulaire envoie toujours les notifications vers la boîte Maison Rosalie.
+        $recipient = self::MAILBOX;
         foreach (['name', 'email', 'message'] as $required) {
             if (!isset($contact[$required]) || !is_string($contact[$required])) {
                 return false;
@@ -52,12 +56,10 @@ final class ContactMailer
                 . "Adresse e-mail : {$email}\n"
                 . 'Sujet : ' . ($subjectText !== '' ? $subjectText : '(aucun)') . "\n\n"
                 . "Message :\n{$message}\n";
-            $headers = "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8";
-
-            $from = getenv('CONTACT_FROM_EMAIL');
-            if (is_string($from) && filter_var($from, FILTER_VALIDATE_EMAIL)) {
-                $headers .= "\r\nFrom: Maison Rosalie <{$from}>";
-            }
+            $headers = 'MIME-Version: 1.0' . chr(13) . chr(10)
+                . 'Content-Type: text/plain; charset=UTF-8' . chr(13) . chr(10)
+                . 'From: Maison Rosalie <' . self::MAILBOX . '>' . chr(13) . chr(10)
+                . 'Reply-To: ' . $email;
 
             return (bool) ($this->transport)($recipient, $subject, $body, $headers);
         } catch (Throwable $e) {
@@ -90,11 +92,9 @@ final class ContactMailer
             // Le sujet ASCII évite les en-têtes mal encodés et les injections CRLF.
             $subject = 'Re: Maison Rosalie contact message';
             $body = "Bonjour {$name},\n\n{$reply}\n\nCordialement,\nMaison Rosalie\n";
-            $headers = "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8";
-            $from = getenv('CONTACT_FROM_EMAIL');
-            if (is_string($from) && filter_var($from, FILTER_VALIDATE_EMAIL)) {
-                $headers .= "\r\nFrom: Maison Rosalie <{$from}>";
-            }
+            $headers = 'MIME-Version: 1.0' . chr(13) . chr(10)
+                . 'Content-Type: text/plain; charset=UTF-8' . chr(13) . chr(10)
+                . 'From: Maison Rosalie <' . self::MAILBOX . '>';
 
             return (bool) ($this->transport)($recipient, $subject, $body, $headers);
         } catch (Throwable $e) {
