@@ -86,7 +86,26 @@
                 <div class="auth-modal__field"><label for="registerEmail">Adresse email</label><input type="email" id="registerEmail" name="email" placeholder="vous@exemple.be" autocomplete="email"><span class="auth-modal__error" data-error-for="email"></span></div>
                 <div class="auth-modal__field"><label for="registerPassword">Mot de passe</label><div class="auth-modal__password"><input type="password" id="registerPassword" name="password" placeholder="••••••••" autocomplete="new-password"><button type="button" class="auth-modal__eye" data-auth-eye aria-label="Afficher le mot de passe" aria-pressed="false"><i class="fa-regular fa-eye-slash" aria-hidden="true"></i></button></div><span class="auth-modal__error" data-error-for="password"></span></div>
                 <div class="auth-modal__field"><label for="registerPasswordConfirm">Confirmer le mot de passe</label><div class="auth-modal__password"><input type="password" id="registerPasswordConfirm" name="password_confirm" placeholder="••••••••" autocomplete="new-password"><button type="button" class="auth-modal__eye" data-auth-eye aria-label="Afficher le mot de passe" aria-pressed="false"><i class="fa-regular fa-eye-slash" aria-hidden="true"></i></button></div><span class="auth-modal__error" data-error-for="password_confirm"></span></div>
-                <button type="submit" class="auth-modal__submit">Créer mon compte</button>
+    
+            <!-- ACCEPTATION DES CONDITIONS (obligatoire)
+                 Sans cette case cochée, la validation JS bloque l'inscription.
+                 Les liens ouvrent le modal des mentions légales (data-legal-open).
+                 /!\ IMPORTANT (back-end) : à REVÉRIFIER côté PHP — refuser la
+                 création du compte si $_POST['accept_terms'] n'est pas présent
+                 (la validation JS ne suffit pas, elle peut être contournée). -->
+            <div class="auth-modal__field">
+                <label class="auth-modal__remember auth-modal__terms">
+                    <input type="checkbox" name="accept_terms" value="1" data-auth-terms>
+                    <span>J'accepte les
+                        <button type="button" class="auth-modal__link" data-legal-open="terms">conditions d'utilisation</button>
+                        et la
+                        <button type="button" class="auth-modal__link" data-legal-open="privacy">politique de confidentialité</button>.
+                    </span>
+                </label>
+                <span class="auth-modal__error" data-error-for="accept_terms"></span>
+            </div>
+
+            <button type="submit" class="auth-modal__submit">Créer mon compte</button>
                 <p class="auth-modal__switch">Déjà inscrit ? <button type="button" class="auth-modal__link" data-tab="login">Se connecter</button></p>
             </form>
         <?php endif; ?>
