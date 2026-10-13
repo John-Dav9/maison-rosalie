@@ -107,7 +107,7 @@ $normalizeRows = static function ($rows, array $fields): array {
         return [];
     }
     $normalized = [];
-    foreach (array_slice($rows, 0, 50) as $row) {
+    foreach (array_slice($rows, 0, 50, true) as $index => $row) {
         if (!is_array($row)) {
             continue;
         }
@@ -116,9 +116,9 @@ $normalizeRows = static function ($rows, array $fields): array {
             $value = $row[$field] ?? '';
             $safeRow[$field] = is_scalar($value) ? (string) $value : '';
         }
-        $normalized[] = $safeRow;
+        $normalized[$index] = $safeRow;
     }
-    return array_values($normalized);
+    return $normalized;
 };
 
 $recipeFormValues = [
@@ -168,7 +168,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
     $recipeFormValues = [
         'recette_title' => $toFormString($_POST['recette_title'] ?? ''),
         'recette_description' => $toFormString($_POST['recette_description'] ?? ''),
-        'recette_image' => $toFormString($_POST['recette_image'] ?? ''),
+        'recette_image' => '',
         'recette_duration_prep' => $toFormString($_POST['recette_duration_prep'] ?? ''),
         'recette_duration_cook' => $toFormString($_POST['recette_duration_cook'] ?? ''),
         'recette_difficulty' => $toFormString($_POST['recette_difficulty'] ?? 'Facile'),
@@ -180,9 +180,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
         'new_category_options' => is_array($_POST['new_category_options'] ?? null)
             ? array_values(array_map($toFormString, array_slice($_POST['new_category_options'], 0, 50))) : [],
         'new_category' => $toFormString($_POST['new_category'] ?? ''),
-        'new_ingredients' => $normalizeRows($_POST['new_ingredients'] ?? null, ['name', 'image']),
+        'new_ingredients' => $normalizeRows($_POST['new_ingredients'] ?? null, ['name']),
         'new_ingredient_name' => $toFormString($_POST['new_ingredient_name'] ?? ''),
-        'new_ingredient_image' => $toFormString($_POST['new_ingredient_image'] ?? ''),
+        'new_ingredient_image' => '',
         'ingredients' => $normalizeRows($_POST['ingredients'] ?? null, ['id', 'quantite', 'unit']),
         'steps' => $normalizeRows($_POST['steps'] ?? null, ['title', 'description', 'image']),
     ];
@@ -198,9 +198,57 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
         $recipeFormFeedback = ['type' => 'error', 'message' => 'Le formulaire a expiré. Rechargez la page puis réessayez.'];
     } else {
         $errors = [];
+        $pendingUploads = [];
+        $storedUploads = [];
+        $getUploadedFile = static function (string $field, ?int $index = null): ?array {
+            $upload = $_FILES[$field] ?? null;
+            if (!is_array($upload) || !array_key_exists('error', $upload)) {
+                return null;
+            }
+            $file = [];
+            foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $key) {
+                $value = $upload[$key] ?? null;
+                if ($index !== null) {
+                    $value = is_array($value) ? ($value[$index] ?? null) : null;
+                }
+                $file[$key] = $value;
+            }
+            if ($file['error'] === UPLOAD_ERR_NO_FILE) {
+                return null;
+            }
+            return $file;
+        };
+        $queueImageUpload = static function (?array $file, string $folder) use (&$pendingUploads, &$errors): ?int {
+            if ($file === null) {
+                return null;
+            }
+            if (!is_int($file['error']) || $file['error'] !== UPLOAD_ERR_OK
+                || !is_string($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+                $errors[] = 'Un fichier image n’a pas pu être reçu correctement.';
+                return null;
+            }
+            if (!is_int($file['size']) || $file['size'] <= 0 || $file['size'] > 300 * 1024) {
+                $errors[] = 'Chaque image doit peser au maximum 300 Ko.';
+                return null;
+            }
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($file['tmp_name']);
+            $extensions = ['image/webp' => 'webp', 'image/jpeg' => 'jpg'];
+            if (!is_string($mime) || !isset($extensions[$mime])) {
+                $errors[] = 'Format d’image non accepté : utilisez une image JPEG ou WebP.';
+                return null;
+            }
+            $pendingUploads[] = [
+                'tmp_name' => $file['tmp_name'],
+                'folder' => $folder,
+                'extension' => $extensions[$mime],
+            ];
+            return array_key_last($pendingUploads);
+        };
         $title = trim($recipeFormValues['recette_title']);
         $description = trim($recipeFormValues['recette_description']);
-        $image = trim($recipeFormValues['recette_image']);
+        $image = '';
+        $recipeUploadIndex = $queueImageUpload($getUploadedFile('recette_image_file'), 'recettes');
         $prep = trim($recipeFormValues['recette_duration_prep']);
         $cook = trim($recipeFormValues['recette_duration_cook']);
         $difficulty = $recipeFormValues['recette_difficulty'];
@@ -211,9 +259,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
         }
         if ($description === '' || strlen($description) > 10000) {
             $errors[] = 'La description est obligatoire et limitée à 10 000 caractères.';
-        }
-        if (strlen($image) > 300) {
-            $errors[] = 'Le chemin de l’image ne doit pas dépasser 300 caractères.';
         }
         if ($prep === '' || strlen($prep) > 45 || $cook === '' || strlen($cook) > 45) {
             $errors[] = 'Les durées de préparation et de cuisson sont obligatoires (45 caractères maximum).';
@@ -252,6 +297,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
 
         // Contrôle les quantités numériques et n'accepte que les unités offertes par la liste.
         $allowedUnits = ['g', 'kg', 'mg', 'ml', 'cl', 'l', 'unité', 'pincée', 'c. à café', 'c. à soupe', 'sachet'];
+        $newIngredientUploadIndexes = [];
         $ingredients = [];
         foreach ($recipeFormValues['ingredients'] as $ingredient) {
             $selection = $ingredient['id'];
@@ -279,19 +325,18 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
                     break;
                 }
                 $ingredientName = trim($newIngredient['name']);
-                $ingredientImage = trim($newIngredient['image']);
-                $imageScheme = strtolower((string) parse_url($ingredientImage, PHP_URL_SCHEME));
-                $validImageLink = $ingredientImage === ''
-                    || (filter_var($ingredientImage, FILTER_VALIDATE_URL) !== false
-                        && in_array($imageScheme, ['http', 'https'], true));
-                if ($ingredientName === '' || strlen($ingredientName) > 100
-                    || strlen($ingredientImage) > 200 || !$validImageLink) {
-                    $errors[] = 'Le nom du nouvel ingrédient et son lien d’image ne sont pas valides.';
+                if ($ingredientName === '' || strlen($ingredientName) > 100) {
+                    $errors[] = 'Le nom du nouvel ingrédient doit contenir de 1 à 100 caractères.';
                     break;
                 }
+                $newIngredientUploadIndexes[$definitionIndex] = $queueImageUpload(
+                    $getUploadedFile('new_ingredient_images', $definitionIndex),
+                    'ingredients'
+                );
                 $ingredientData = [
                     'name' => $ingredientName,
-                    'image' => $ingredientImage === '' ? null : $ingredientImage,
+                    'image' => '',
+                    '_upload_index' => $newIngredientUploadIndexes[$definitionIndex],
                 ];
             } else {
                 $ingredientId = filter_var($selection, FILTER_VALIDATE_INT);
@@ -315,21 +360,31 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
             $errors[] = 'Ajoutez au moins un ingrédient avec quantité et mesure.';
         }
 
+        $stepUploadIndexes = [];
         $steps = [];
-        foreach ($recipeFormValues['steps'] as $step) {
+        foreach ($recipeFormValues['steps'] as $stepIndex => $step) {
             $stepTitle = trim($step['title']);
             $stepDescription = trim($step['description']);
-            $stepImage = trim($step['image']);
-            if ($stepTitle === '' && $stepDescription === '' && $stepImage === '') {
+            $stepImage = '';
+            $stepUploadIndexes[$stepIndex] = $queueImageUpload(
+                $getUploadedFile('step_images', is_numeric($stepIndex) ? (int) $stepIndex : null),
+                'etapes'
+            );
+            if ($stepTitle === '' && $stepDescription === '' && $stepImage === ''
+                && $stepUploadIndexes[$stepIndex] === null) {
                 continue;
             }
             if ($stepTitle === '' || strlen($stepTitle) > 100
-                || $stepDescription === '' || strlen($stepDescription) > 200
-                || strlen($stepImage) > 300) {
+                || $stepDescription === '' || strlen($stepDescription) > 200) {
                 $errors[] = 'Chaque étape doit avoir un titre et une description (200 caractères maximum).';
                 break;
             }
-            $steps[] = ['title' => $stepTitle, 'description' => $stepDescription, 'image' => $stepImage];
+            $steps[] = [
+                'title' => $stepTitle,
+                'description' => $stepDescription,
+                'image' => $stepImage,
+                '_upload_index' => $stepUploadIndexes[$stepIndex],
+            ];
         }
         if ($steps === []) {
             $errors[] = 'Ajoutez au moins une étape avec un titre et une description.';
@@ -338,29 +393,84 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
         if ($errors !== []) {
             $recipeFormFeedback = ['type' => 'error', 'message' => implode(' ', array_unique($errors))];
         } else {
-            $createdRecipe = $recipeManager->createRecipe([
-                'recette_title' => $title,
-                'recette_description' => $description,
-                'recette_image' => $image,
-                'recette_duration_prep' => $prep,
-                'recette_duration_cook' => $cook,
-                'recette_difficulty' => $difficulty,
-                'portions' => $portions,
-                'categories' => $categories,
-                'ingredients' => $ingredients,
-                'steps' => $steps,
-            ], (int) $_SESSION['user_id']);
+            $uploadPaths = [];
+            try {
+                foreach ($pendingUploads as $uploadIndex => $upload) {
+                    $destinationDirectory = BASE_URL . '/public/assets/images/' . $upload['folder'];
+                    if (!is_dir($destinationDirectory)
+                        && !mkdir($destinationDirectory, 0755, true) && !is_dir($destinationDirectory)) {
+                        throw new RuntimeException('Le dossier de destination des images est indisponible.');
+                    }
+                    $filename = bin2hex(random_bytes(16)) . '.' . $upload['extension'];
+                    $destination = $destinationDirectory . '/' . $filename;
+                    if (!move_uploaded_file($upload['tmp_name'], $destination)) {
+                        throw new RuntimeException('Impossible d’enregistrer une image téléversée.');
+                    }
+                    $storedUploads[] = $destination;
+                    $uploadPaths[$uploadIndex] = 'assets/images/' . $upload['folder'] . '/' . $filename;
+                }
+            } catch (Throwable $e) {
+                foreach ($storedUploads as $storedUpload) {
+                    if (is_file($storedUpload)) {
+                        unlink($storedUpload);
+                    }
+                }
+                error_log('Échec du téléversement des images de recette : ' . $e->getMessage());
+                $errors[] = 'Une image n’a pas pu être enregistrée. Vérifiez les dossiers d’images et réessayez.';
+            }
 
-            if ($createdRecipe === false) {
-                $recipeFormFeedback = ['type' => 'error', 'message' => 'La recette n’a pas pu être enregistrée. Vérifiez les champs puis réessayez.'];
+            if ($errors !== []) {
+                $recipeFormFeedback = ['type' => 'error', 'message' => implode(' ', array_unique($errors))];
             } else {
-                $_SESSION['admin_recipe_feedback'] = [
-                    'type' => 'success',
-                    'message' => 'La recette a été créée avec succès.',
-                    'slug' => $createdRecipe->getRecetteSlug(),
-                ];
-                header('Location: ./?pages=admin');
-                exit;
+                if ($recipeUploadIndex !== null) {
+                    $image = $uploadPaths[$recipeUploadIndex];
+                }
+                foreach ($ingredients as &$ingredientData) {
+                    if (array_key_exists('_upload_index', $ingredientData)) {
+                        $ingredientUploadIndex = $ingredientData['_upload_index'];
+                        $ingredientData['image'] = $ingredientUploadIndex === null
+                            ? null
+                            : $uploadPaths[$ingredientUploadIndex];
+                        unset($ingredientData['_upload_index']);
+                    }
+                }
+                unset($ingredientData);
+                foreach ($steps as &$stepData) {
+                    $stepUploadIndex = $stepData['_upload_index'];
+                    $stepData['image'] = $stepUploadIndex === null ? '' : $uploadPaths[$stepUploadIndex];
+                    unset($stepData['_upload_index']);
+                }
+                unset($stepData);
+
+                $createdRecipe = $recipeManager->createRecipe([
+                    'recette_title' => $title,
+                    'recette_description' => $description,
+                    'recette_image' => $image,
+                    'recette_duration_prep' => $prep,
+                    'recette_duration_cook' => $cook,
+                    'recette_difficulty' => $difficulty,
+                    'portions' => $portions,
+                    'categories' => $categories,
+                    'ingredients' => $ingredients,
+                    'steps' => $steps,
+                ], (int) $_SESSION['user_id']);
+
+                if ($createdRecipe === false) {
+                    foreach ($storedUploads as $storedUpload) {
+                        if (is_file($storedUpload)) {
+                            unlink($storedUpload);
+                        }
+                    }
+                    $recipeFormFeedback = ['type' => 'error', 'message' => 'La recette n’a pas pu être enregistrée. Vérifiez les champs puis réessayez.'];
+                } else {
+                    $_SESSION['admin_recipe_feedback'] = [
+                        'type' => 'success',
+                        'message' => 'La recette a été créée avec succès.',
+                        'slug' => $createdRecipe->getRecetteSlug(),
+                    ];
+                    header('Location: ./?pages=admin');
+                    exit;
+                }
             }
         }
     }
