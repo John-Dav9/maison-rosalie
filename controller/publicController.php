@@ -199,16 +199,14 @@ if (($_GET['pages'] ?? '') === 'contact' && ($_SERVER['REQUEST_METHOD'] ?? '') =
             $contactError = 'Vérifiez les champs du formulaire et réessayez.';
         } else {
             $_SESSION['contact_last_submitted_at'] = time();
-            $recipient = defined('CONTACT_RECIPIENT_EMAIL')
-                ? CONTACT_RECIPIENT_EMAIL
-                : 'maison.rosalie.chocolat@gmail.com';
+
             $mailer = new \model\manager\ContactMailer();
             $mailSent = $mailer->send([
                 'name' => $savedContact->getName(),
                 'email' => $savedContact->getEmail(),
                 'subject' => $savedContact->getSubject() ?? '',
                 'message' => $savedContact->getMessage(),
-            ], $recipient);
+            ]);
             $contactError = $mailSent
                 ? null
                 : 'Votre message est enregistré, mais la notification par courriel n’a pas pu être envoyée.';
