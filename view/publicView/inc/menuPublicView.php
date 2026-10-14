@@ -19,6 +19,7 @@ if (!$isPrivateMenu && isset($_SESSION['user_role_id']) && (int) $_SESSION['user
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <!-- Police manuscrite pour le logo / Footer /  Maison Rosalie -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
     <!-- lines pour la page liste des recettes -->
      <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">

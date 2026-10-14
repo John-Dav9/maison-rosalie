@@ -1,4 +1,3 @@
-
 <?php
 require_once "./../view/publicView/inc/menuPublicView.php";
 $escapeRecipeCard = static function ($value): string {
@@ -34,19 +33,19 @@ $recipeCardImagePath = static function (?string $image): string {
                     <div class="mt-space-lg bg-white/10 backdrop-blur-sm p-space-sm rounded-DEFAULT shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-sm">
                         <div class="relative w-full md:w-96 flex items-center"><span class="material-symbols-outlined absolute left-3 text-[#fed488] text-[20px] pointer-events-none">search</span><input aria-label="Rechercher une recette par son titre" class="w-full pl-10 pr-space-md py-2 bg-[#211a18]/95 text-surface font-body-sm text-body-sm rounded-DEFAULT focus:outline-none placeholder:text-outline-variant shadow-sm" id="recipeSearch" placeholder="Rechercher une recette..." type="text"></div>
                         <div class="flex items-center gap-space-sm w-full md:w-auto justify-end flex-wrap">
-                            <div class="relative inline-flex items-center"><select aria-label="Filtrer par catégorie" class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeCategoryFilter">
+                            <div class="relative flex w-full md:w-auto items-center"><select aria-label="Filtrer par catégorie" class="w-full md:w-auto appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeCategoryFilter">
                                     <option value="" selected="">Catégorie : Toutes les catégories</option>
                                     <?php foreach ($categories as $category): ?>
                                         <option value="<?= $escapeRecipeCard($category->getId()) ?>"><?= $escapeRecipeCard($category->getTitle()) ?></option>
                                     <?php endforeach; ?>
                                 </select><span class="material-symbols-outlined absolute right-2 text-[#fed488] text-[18px] pointer-events-none">expand_more</span></div>
-                            <div class="relative inline-flex items-center"><select aria-label="Filtrer par niveau" class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeDifficultyFilter">
+                            <div class="relative flex w-full md:w-auto items-center"><select aria-label="Filtrer par niveau" class="w-full md:w-auto appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeDifficultyFilter">
                                     <option value="" selected="">Niveau : Tous niveaux</option>
                                     <?php foreach ($difficultes as $difficulte): ?>
                                         <option value="<?= $escapeRecipeCard($difficulte) ?>"><?= $escapeRecipeCard($difficulte) ?></option>
                                     <?php endforeach; ?>
                                 </select><span class="material-symbols-outlined absolute right-2 text-[#fed488] text-[18px] pointer-events-none">expand_more</span></div>
-                            <div class="relative inline-flex items-center"><select aria-label="Trier les recettes" class="appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeSort">
+                            <div class="relative flex w-full md:w-auto items-center"><select aria-label="Trier les recettes" class="w-full md:w-auto appearance-none bg-[#211a18]/95 text-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-DEFAULT shadow-sm cursor-pointer focus:outline-none" id="recipeSort">
                                     <option value="recent" selected="" class="bg-[#211a18] text-surface">Trier par : Plus récents</option>
                                     <option value="oldest" class="bg-[#211a18] text-surface">Plus anciens</option>
                                     <option value="popular" class="bg-[#211a18] text-surface">Plus populaires</option>
@@ -82,7 +81,7 @@ $recipeCardImagePath = static function (?string $image): string {
                             $recipePrepText = $recette->getRecetteDurationPrep() ?? '';
                             $recipeCreatedAt = strtotime($recette->getRecetteDateCreate() ?? '') ?: 0;
                             ?>
-                            <article class="group bg-surface-container-lowest rounded-DEFAULT overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between" data-recipe-card data-recipe-title="<?= $escapeRecipeCard($recipeTitle) ?>" data-category-ids="<?= $escapeRecipeCard(implode(',', $categoryIds)) ?>" data-difficulty="<?= $escapeRecipeCard($recette->getRecetteDifficulty()) ?>" data-created-at="<?= $recipeCreatedAt ?>" data-preparation-time="<?= $escapeRecipeCard($recipePrepText) ?>" data-rating-count="<?= (int) $recipeRating['count'] ?>" data-rating-average="<?= $recipeRating['average'] === null ? '' : number_format((float) $recipeRating['average'], 6, '.', '') ?>" style="border: 1.5px solid rgb(139, 94, 60);">
+                            <article class="chocolat-card group bg-surface-container-lowest rounded-DEFAULT overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between" data-recipe-card data-recipe-title="<?= $escapeRecipeCard($recipeTitle) ?>" data-category-ids="<?= $escapeRecipeCard(implode(',', $categoryIds)) ?>" data-difficulty="<?= $escapeRecipeCard($recette->getRecetteDifficulty()) ?>" data-created-at="<?= $recipeCreatedAt ?>" data-preparation-time="<?= $escapeRecipeCard($recipePrepText) ?>" data-rating-count="<?= (int) $recipeRating['count'] ?>" data-rating-average="<?= $recipeRating['average'] === null ? '' : number_format((float) $recipeRating['average'], 6, '.', '') ?>" style="border: 1.5px solid rgb(139, 94, 60);">
                                 <div class="flex flex-col">
                                     <div class="relative m-2 overflow-hidden rounded-DEFAULT bg-surface-container aspect-square">
                                         <!-- Garder l’image même si la base ne contient pas encore de chemin. -->
@@ -126,7 +125,7 @@ $recipeCardImagePath = static function (?string $image): string {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
+                                <div class=" chocolat-article-bottom px-4 pb-4 pt-3 mt-1 flex items-center justify-between gap-2">
                                     <span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Recette n°<?= str_pad((string) $recipeId, 2, '0', STR_PAD_LEFT) ?></span>
                                     <a class="px-3 py-1.5 bg-[#2F1B14] text-on-primary hover:bg-secondary transition-colors font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT" data-path="<?= $escapeRecipeCard($recipeSlug) ?>" href="./?pages=recipe&amp;slug=<?= rawurlencode($recipeSlug) ?>">
                                         Voir la recette
@@ -138,7 +137,7 @@ $recipeCardImagePath = static function (?string $image): string {
                     <?php endif; ?>
                 </div>
             </section>
-            
+
             <!-- Newsletter & Culinary Note Callout (Editorial Section) -->
             <section class="w-full max-w-[1280px] mx-auto px-margin py-space-xl">
                 <div class="relative bg-surface-container rounded-DEFAULT p-space-xl overflow-hidden shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-lg">

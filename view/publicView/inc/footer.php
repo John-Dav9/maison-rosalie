@@ -3,7 +3,7 @@
 
       <!------ligne de séparation----->
       <hr class="mt-4 mb-6 border-white" />
-<div class="w-full grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-y-12 gap-x-12 text-center">
+      <div class="w-full grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-y-12 gap-x-12 text-center">
             <!--les colonnes -->
             <!-- Logo en image -->
             <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-24 mx-auto">
@@ -60,20 +60,20 @@
 
 
 
-                        <!-- ================= NEWSLETTER (version compacte) ================= -->
-         <div class="space-y-6">
-               <h3 class="text-[#C9A45C] font-bold mb-6">
-                     <i class="fa-regular fa-envelope mr-2"></i> Newsletter
-               </h3>
-               <p class="text-white text-sm">Recevez nos nouvelles recettes chaque mois.</p>
-               <form class="flex flex-col gap-2">
-                     <input type="email" placeholder="Votre adresse email"
-                           class="w-full bg-transparent border border-[#C9A45C] text-white placeholder-[#BFA58A] px-3 py-1.5 text-sm">
-                     <button type="submit" class="bg-[#C9A45C] text-[#2F1B14] font-bold px-4 py-1.5 text-sm">
-                           S'inscrire
-                     </button>
-               </form>
-         </div>
+            <!-- ================= NEWSLETTER (version compacte) ================= -->
+            <div class="space-y-6">
+                  <h3 class="text-[#C9A45C] font-bold mb-6">
+                        <i class="fa-regular fa-envelope mr-2"></i> Newsletter
+                  </h3>
+                  <p class="text-white text-sm">Recevez nos nouvelles recettes chaque mois.</p>
+                  <form class="flex flex-col gap-2">
+                        <input type="email" placeholder="Votre adresse email"
+                              class="w-full bg-transparent border border-[#C9A45C] text-white placeholder-[#BFA58A] px-3 py-1.5 text-sm">
+                        <button type="submit" class="bg-[#C9A45C] text-[#2F1B14] font-bold px-4 py-1.5 text-sm">
+                              S'inscrire
+                        </button>
+                  </form>
+            </div>
 
 
 

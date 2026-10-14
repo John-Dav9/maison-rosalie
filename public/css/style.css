@@ -11,8 +11,13 @@
 
 /* Variable CSS globale : la couleur dorée utilisée partout dans le héro.
    Définie dans :root pour être réutilisable dans d'autres sections si besoin. */
+
 :root {
     --hero-gold: #cda45e;
+}
+
+body {
+    font-family: 'Playfair Display', Georgia, serif;
 }
 
 /* Empêche la scrollbar horizontale.
@@ -407,7 +412,7 @@
      pour laisser de la place aux vignettes en bas */
     #hero .hero__content {
         position: absolute;
-        top: 5%;
+        top: 6rem;
         bottom: auto;
         right: 1rem;
         left: 1rem;
@@ -1119,7 +1124,8 @@ body:has(> .menu + section.bg-surface) {
     --nav-scrolled-bg: #fcf9f4;
 }
 
-#connexion, #deconnexion {
+#connexion,
+#deconnexion {
     background-color: #D4A373;
     border-radius: 15px;
     color: black;
@@ -1147,7 +1153,7 @@ body:has(> .menu + section.bg-surface) {
     margin: 0 auto;
     padding: 5rem 1.5rem 3.5rem;
     color: var(--contact-text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: inherit;
 }
 
 /* 1. EN-TÊTE : titre centré + logo à droite */
@@ -1459,7 +1465,7 @@ body:has(> .menu + section.bg-surface) {
     padding: 5rem 1.5rem 6rem;
     text-align: center;
     color: var(--err-text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: inherit;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1571,7 +1577,7 @@ body:has(> .menu + section.bg-surface) {
     background: linear-gradient(to bottom, #180E09, #21130D 55%, #1E120C);
     color: var(--tr-text);
     padding: 6rem 1.5rem;
-    font-family: 'Montserrat', 'Segoe UI', Tahoma, sans-serif;
+    font-family: inherit;
 }
 
 #top-recipes .top-recipes__inner {
@@ -1841,7 +1847,7 @@ body:has(> .menu + section.bg-surface) {
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: inherit;
 }
 
 /* Modal ouvert (classe ajoutée par le JS) */
@@ -2164,7 +2170,7 @@ body.auth-modal-open {
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: inherit;
 }
 
 /* Modal ouvert (classe ajoutée par le JS) */
@@ -2293,4 +2299,29 @@ body.auth-modal-open {
 /* Quand un modal (connexion OU légal) est ouvert, on bloque le scroll du fond */
 body.legal-modal-open {
     overflow: hidden;
+}
+
+@media screen and (max-width: 450px) {
+    .menu {
+        background-color: var(--nav-scrolled-bg);
+    }
+
+    footer {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+
+        .gap-y-12 {
+            row-gap: 2rem;
+        }
+
+        .gap-x-12 {
+            column-gap: 1rem;
+        }
+    }
+
+    .chocolat-article-bottom {
+        .text-label-sm {
+            font-weight: 200;
+        }
+    }
 }
