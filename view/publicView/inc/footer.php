@@ -3,10 +3,10 @@
 
       <!------ligne de séparation----->
       <hr class="mt-4 mb-6 border-white" />
-      <div class="w-full grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-y-12 gap-x-12 text-center">
+      <div class="w-full grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-y-6 sm:gap-y-12 gap-x-12 text-center">
             <!--les colonnes -->
             <!-- Logo en image -->
-            <img src="./assets/logo.svg" alt="Maison Rosalie" class="h-24 mx-auto">
+            <img src="./assets/logo.svg" alt="Maison Rosalie" class="col-span-2 md:col-span-1 h-36 md:h-24 mx-auto">
             <div class="space-y-6">
                   <!--Colonne 1 : navigation-->
                   <h3 class="text-[#C9A45C] font-bold mb-6">Navigation</h3>
@@ -82,7 +82,7 @@
       <!------ligne de séparation----->
       <hr class="mt-6 mb-3 border-white" />
       <!-----Copyright, centré ---->
-      <p class="text-center text-[#BFA58A] mb-3">
+      <p class="text-center text-[#BFA58A] text-[11px] sm:text-sm whitespace-nowrap mb-3">
             &lt&lt © 2026 Maison Rosalie - Tous droits réservés. &gt&gt
       </p>
 
