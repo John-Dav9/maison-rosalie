@@ -25,51 +25,51 @@ $recipeActionUrl = './?pages=recipe&slug=' . rawurlencode((string) $recipeSlug);
 require_once "./../view/publicView/inc/menuPublicView.php";
 ?>
  <!--=========Fond créme pour toute la section ================-->
- <section id="recettes" class="bg-[#FBF5E6] text-[#2F1B14] pb-16">
+ <section id="recettes" class="w-full max-w-full bg-[#FBF5E6] text-[#2F1B14] pb-16 px-3 sm:px-4">
 
     <!-- ===  ===========  En-tete de la page recette  ===-->
-    <div class="text-center py-20">
+    <div class="text-center px-2 py-12 sm:py-20">
        <a href="#" class="text-[#B8860B] underline font-['Playfair_Display']">L'atelier Maison Rosalie</a>
-       <h2 class="text-5xl font-bold font-['Playfair_Display'] mt-2">
+       <h2 class="text-3xl sm:text-5xl font-bold font-['Playfair_Display'] mt-2 break-words">
           <span class="text-[#C9A45C] text-xl">◆</span> <?= $escapeRecipeValue($recipeTitle) ?>
        </h2>
-       <p class="text-sm mt-4">
+       <p class="text-sm mt-4 max-w-2xl mx-auto break-words">
           <?= nl2br($escapeRecipeValue($recipe->getRecetteDescription())) ?>
        </p>
     </div>
 
     <!--  === ==========Boutons des catégories ========= -->
     <!--============= Le bouton foncé = la catégorie choisie ============-->
-    <div class="flex justify-center gap-5 mb-10">
+    <div class="flex flex-wrap justify-center gap-3 sm:gap-5 mb-8 sm:mb-10 px-2">
        <?php foreach ($categories as $category): ?>
-          <span class="categorie bg-[#F8EDD3] px-8 py-1 font-['Playfair_Display']"><?= $escapeRecipeValue($category->getTitle()) ?></span>
+          <span class="categorie bg-[#F8EDD3] px-4 sm:px-8 py-1 font-['Playfair_Display'] break-words"><?= $escapeRecipeValue($category->getTitle()) ?></span>
        <?php endforeach; ?>
     </div>
 
     <!-- ================= CARTE DE LA RECETTE ================= -->
-    <article class="max-w-6xl mx-auto bg-white border border-[#C9A45C] rounded-lg">
+    <article class="w-full max-w-6xl mx-auto bg-white border border-[#C9A45C] rounded-lg min-w-0">
 
        <!-- -----============== Partie du haut : image + infos =============----- -->
-       <div class="grid grid-cols-2 gap-8 p-6">
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 p-4 sm:p-6 min-w-0">
 
           <!--================Image de la recette ================-->
-          <img src="<?= $escapeRecipeValue($recipeImage) ?>" alt="<?= $escapeRecipeValue($recipeTitle) ?>" class="w-full h-72 object-cover border border-[#C9A45C] mt-8">
+          <img src="<?= $escapeRecipeValue($recipeImage) ?>" alt="<?= $escapeRecipeValue($recipeTitle) ?>" class="w-full h-56 sm:h-72 object-cover border border-[#C9A45C] mt-0 md:mt-8">
 
           <!-- ==============Infos de la recette ============-->
-          <div>
+          <div class="min-w-0">
              <!--============= Étiquette Moyen, en haut à droite============== -->
              <p class="text-right">
                 <span class="bg-[#F8EDD3] px-6 py-2 font-bold font-['Playfair_Display']"><?= $escapeRecipeValue($recipe->getRecetteDifficulty()) ?></span>
              </p>
 
              <!-- ==============Titre ==============-->
-             <h3 class="text-3xl font-bold font-['Playfair_Display'] mt-4"><?= $escapeRecipeValue($recipeTitle) ?></h3>
+             <h3 class="text-2xl sm:text-3xl font-bold font-['Playfair_Display'] mt-4 break-words"><?= $escapeRecipeValue($recipeTitle) ?></h3>
 
              <!-- Description issue de la recette sélectionnée. -->
-             <p class="text-xs mt-2"><?= nl2br($escapeRecipeValue($recipe->getRecetteDescription())) ?></p>
+             <p class="text-sm mt-2 break-words"><?= nl2br($escapeRecipeValue($recipe->getRecetteDescription())) ?></p>
 
              <!-- Remplit chaque étoile selon la moyenne; sans vote, les cinq restent vides. -->
-             <p class="inline-flex items-center gap-0.5 text-2xl mt-2" aria-label="<?= $recipeRatingCount > 0 ? 'Moyenne de ' . number_format((float) $recipeRatingAverage, 1, ',', '') . ' sur 5, ' . $recipeRatingCount . ' ' . ($recipeRatingCount > 1 ? 'notes' : 'note') : 'Aucune note' ?>">
+             <p class="inline-flex flex-wrap items-center gap-0.5 text-2xl mt-2" aria-label="<?= $recipeRatingCount > 0 ? 'Moyenne de ' . number_format((float) $recipeRatingAverage, 1, ',', '') . ' sur 5, ' . $recipeRatingCount . ' ' . ($recipeRatingCount > 1 ? 'notes' : 'note') : 'Aucune note' ?>">
                 <?php for ($starIndex = 1; $starIndex <= 5; $starIndex++): ?>
                    <?php $starFill = max(0, min(100, ($recipeRatingValue - ($starIndex - 1)) * 100)); ?>
                    <span class="relative inline-block leading-none text-[#8B5E3C]" aria-hidden="true">
@@ -83,28 +83,28 @@ require_once "./../view/publicView/inc/menuPublicView.php";
              </p>
 
              <!-- ==============Les 3 cases : temps de préparation, temps total, difficulté ==================-->
-             <div class="grid grid-cols-3 gap-3 mt-4 text-center">
+             <div class="grid grid-cols-3 gap-2 sm:gap-3 mt-4 text-center min-w-0">
                 <div class="border border-[#C9A45C] py-3">
-                   <p class="text-xs">TEMPS PREP</p>
+                   <p class="text-[10px] sm:text-xs leading-tight break-words">TEMPS PREP</p>
                    <p class="font-bold font-['Playfair_Display']"><?= $escapeRecipeValue($recipe->getRecetteDurationPrep()) ?></p>
                 </div>
                 <div class="border border-[#C9A45C] py-3">
-                   <p class="text-xs">CUISSON</p>
+                   <p class="text-[10px] sm:text-xs leading-tight break-words">CUISSON</p>
                    <p class="font-bold font-['Playfair_Display']"><?= $escapeRecipeValue($recipe->getRecetteDurationCook()) ?></p>
                 </div>
                 <div class="border border-[#C9A45C] py-3">
-                   <p class="text-xs">DIFFICULTÉ</p>
+                   <p class="text-[10px] sm:text-xs leading-tight break-words">DIFFICULTÉ</p>
                    <p class="font-bold font-['Playfair_Display']"><?= $escapeRecipeValue($recipe->getRecetteDifficulty()) ?></p>
                 </div>
              </div>
 
              <!-- ====== Portions : boutons =========- et + -->
-             <div class="flex justify-between items-center bg-[#F8EDD3] border border-[#C9A45C] p-4 mt-6">
-                <div>
-                   <p class="text-xs font-bold">RENDEMENT DE LA RECETTE / PORTIONS</p>
-                   <p class="text-xs mt-2">Cliquez pour changer les portions</p>
+             <div class="flex flex-wrap justify-between items-center gap-3 bg-[#F8EDD3] border border-[#C9A45C] p-3 sm:p-4 mt-6 min-w-0">
+                <div class="min-w-0 flex-1">
+                   <p class="text-xs font-bold break-words">RENDEMENT DE LA RECETTE / PORTIONS</p>
+                   <p class="text-xs mt-2 break-words">Cliquez pour changer les portions</p>
                 </div>
-                <div class="flex items-center gap-2 bg-white border border-[#C9A45C] rounded-full px-2 py-1">
+                <div class="flex shrink-0 items-center gap-2 bg-white border border-[#C9A45C] rounded-full px-2 py-1">
                    <button id="moins" class="bg-[#F8EDD3] px-2">−</button>
                    <span class="font-bold font-['Playfair_Display']"><span id="portions"><?= $recipePortions ?></span> Pers</span>
                    <button id="plus" class="bg-[#F8EDD3] px-2">+</button>
@@ -113,17 +113,17 @@ require_once "./../view/publicView/inc/menuPublicView.php";
           </div>
        </div>
        <!-- =========Les Ingredients =======---->
-       <section class="border-t border-[#C9A45C] p-6">
+       <section class="border-t border-[#C9A45C] p-4 sm:p-6 min-w-0">
           <!------ ====== Titre + ajusté pour x personnes ============  --->
-          <div class="flex justify-between items-center mb-4">
-             <h3 class="text-3xl font-bold font-['Playfair_Display']">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4 min-w-0">
+             <h3 class="text-2xl sm:text-3xl font-bold font-['Playfair_Display'] break-words">
                 <i class="fa-solid fa-basket-shopping text-[#C9A45C] text-xl"></i>Les ingrédients
              </h3>
-             <p class="text-sm">ajusté pour <b><span id="portions-texte"><?= $recipePortions ?></span> <span id="portions-label"><?= $recipePortions === 1 ? 'personne' : 'personnes' ?></span></b></p>
+             <p class="text-sm break-words">ajusté pour <b><span id="portions-texte"><?= $recipePortions ?></span> <span id="portions-label"><?= $recipePortions === 1 ? 'personne' : 'personnes' ?></span></b></p>
           </div>
 
           <!-- Carrousel : les cartes défilent de gauche à droite -->
-          <div id="carrousel" class=" flex gap-4 overflow-x-auto scroll-smooth">
+          <div id="carrousel" class="flex min-w-0 max-w-full gap-4 overflow-x-auto scroll-smooth">
 
              <!-- Les ingrédients, quantités et visuels proviennent de la recette choisie. -->
              <?php foreach ($recipeIngredients as $ingredient): ?>
@@ -155,8 +155,8 @@ require_once "./../view/publicView/inc/menuPublicView.php";
        </section>
 
        <!---=========Les étapes de la recette ==========-->
-       <section class="border-t border-[#C9A45C] p-6">
-          <h3 class="text-3xl font-bold font-['Playfair_Display'] mb-6">
+       <section class="border-t border-[#C9A45C] p-4 sm:p-6 min-w-0">
+          <h3 class="text-2xl sm:text-3xl font-bold font-['Playfair_Display'] mb-6 break-words">
              <i class="fa-solid fa-list-ol text-[#C9A45C] text"></i> Les étapes
           </h3>
           <!-- Les étapes affichées sont celles de cette recette, dans l'ordre du manager. -->
@@ -165,14 +165,14 @@ require_once "./../view/publicView/inc/menuPublicView.php";
                 <p>Les étapes de cette recette ne sont pas encore renseignées.</p>
              <?php else: ?>
                 <?php foreach ($recipeSteps as $step): ?>
-                   <label class="etape relative flex gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer">
+                   <label class="etape relative flex items-start gap-3 bg-[#FBF5E6] border border-[#E5C98A] p-3 cursor-pointer min-w-0">
                       <input type="checkbox" class="mt-1">
-                      <div>
+                      <div class="min-w-0 flex-1 break-words">
                          <p class="text-sm text-[#B8860B]">ÉTAPE <?= (int) $step->getNbStep() ?></p>
                          <?php if ($step->getTitle()): ?><p class="font-bold"><?= $escapeRecipeValue($step->getTitle()) ?></p><?php endif; ?>
                          <p><?= nl2br($escapeRecipeValue($step->getDescription())) ?></p>
                          <?php $stepImage = $recipeImagePath($step->getImage(), 'etapes'); ?>
-                         <?php if ($stepImage !== ''): ?><img src="<?= $escapeRecipeValue($stepImage) ?>" alt="Illustration de l'étape <?= (int) $step->getNbStep() ?>" class="mt-3 max-h-64 object-cover"><?php endif; ?>
+                         <?php if ($stepImage !== ''): ?><img src="<?= $escapeRecipeValue($stepImage) ?>" alt="Illustration de l'étape <?= (int) $step->getNbStep() ?>" class="mt-3 max-h-64 max-w-full object-cover"><?php endif; ?>
                       </div>
                    </label>
                 <?php endforeach; ?>
@@ -183,12 +183,12 @@ require_once "./../view/publicView/inc/menuPublicView.php";
  </section>
 
  <!-- ================= SECTION COMMENTAIRES ================= -->
- <section id="commentaires" class="bg-[#FBF5E6] text-[#2F1B14] pb-16">
-    <article class="max-w-6xl mx-auto bg-white border border-[#C9A45C] rounded-lg px-12 py-6">
+ <section id="commentaires" class="w-full max-w-full bg-[#FBF5E6] text-[#2F1B14] pb-16 px-3 sm:px-4">
+    <article class="w-full max-w-6xl mx-auto bg-white border border-[#C9A45C] rounded-lg px-4 sm:px-12 py-6 min-w-0">
 
        <!-- En-tête des retours réellement enregistrés pour cette recette. -->
        <div class="text-center">
-          <h2 class="text-5xl font-bold font-['Playfair_Display']">
+          <h2 class="text-3xl sm:text-5xl font-bold font-['Playfair_Display'] break-words">
              Commentaires et critiques<span class="text-[#B8860B] text-sm">◆</span>
           </h2>
           <p class="text-sm mt-2">Vos commentaires et réactions sont toujours les bienvenus.</p>
@@ -205,7 +205,7 @@ require_once "./../view/publicView/inc/menuPublicView.php";
              <p class="bg-[#FBF5E6] border border-[#E5C98A] p-4 text-center">Aucun commentaire pour le moment.</p>
           <?php else: ?>
              <?php foreach ($comments as $comment): ?>
-                <article class="flex gap-4 bg-[#FBF5E6] border border-[#E5C98A] p-4 rounded-md">
+                <article class="flex gap-3 sm:gap-4 bg-[#FBF5E6] border border-[#E5C98A] p-3 sm:p-4 rounded-md min-w-0">
                    <div class="w-12 h-12 shrink-0 rounded-full flex items-center justify-center" aria-hidden="true">
                       <i class="fa-regular fa-user text-2xl text-[#2F1B14]"></i>
                    </div>
@@ -219,7 +219,7 @@ require_once "./../view/publicView/inc/menuPublicView.php";
                       <?php if ($comment->getSubject()): ?>
                          <p class="font-semibold mt-2"><?= $escapeRecipeValue($comment->getSubject()) ?></p>
                       <?php endif; ?>
-                      <p class="text-sm mt-2 whitespace-pre-line"><?= $escapeRecipeValue($comment->getMessage()) ?></p>
+                      <p class="text-sm mt-2 whitespace-pre-line break-words"><?= $escapeRecipeValue($comment->getMessage()) ?></p>
 
                       <?php if ($currentUserId > 0 && $currentUserId === (int) $comment->getUsersId()): ?>
                          <details class="mt-3">
@@ -247,7 +247,7 @@ require_once "./../view/publicView/inc/menuPublicView.php";
        </div>
        <!-- Les deux actions sont de vrais formulaires, protégés côté serveur et par jeton CSRF. -->
        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <div class="bg-[#FBF5E6] border border-[#E5C98A] p-6 rounded-md">
+          <div class="min-w-0 bg-[#FBF5E6] border border-[#E5C98A] p-4 sm:p-6 rounded-md">
              <h3 class="text-lg font-bold font-['Playfair_Display'] mb-3">Laisser un commentaire</h3>
              <?php if ($currentUserId > 0): ?>
                 <form action="<?= $escapeRecipeValue($recipeActionUrl) ?>" method="post" class="space-y-3">
@@ -264,7 +264,7 @@ require_once "./../view/publicView/inc/menuPublicView.php";
              <?php endif; ?>
           </div>
 
-          <div class="bg-[#FBF5E6] border border-[#E5C98A] p-6 rounded-md">
+          <div class="min-w-0 bg-[#FBF5E6] border border-[#E5C98A] p-4 sm:p-6 rounded-md">
              <h3 class="text-lg font-bold font-['Playfair_Display'] mb-3">Votre note</h3>
              <?php if ($currentUserId > 0): ?>
                 <form action="<?= $escapeRecipeValue($recipeActionUrl) ?>" method="post" class="space-y-3">
