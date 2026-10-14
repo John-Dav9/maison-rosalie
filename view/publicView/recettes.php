@@ -91,9 +91,6 @@ $recipeCardImagePath = static function (?string $image): string {
                                                 <span class="px-2 py-0.5 bg-surface/90 backdrop-blur-sm text-on-surface font-label-sm text-label-sm uppercase tracking-wider rounded-DEFAULT shadow-sm"><?= $escapeRecipeCard($categoryLabel) ?></span>
                                             </div>
                                         <?php endif; ?>
-                                        <button aria-label="Aperçu rapide de <?= $escapeRecipeCard($recipeTitle) ?>" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-surface/85 backdrop-blur-sm text-on-surface hover:bg-surface hover:text-secondary flex items-center justify-center transition-colors shadow-sm" type="button">
-                                            <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                        </button>
                                     </div>
                                     <div class="px-4 pt-2 pb-1 flex flex-col">
                                         <div class="flex items-center justify-between text-outline text-body-sm mb-1">
@@ -147,11 +144,6 @@ $recipeCardImagePath = static function (?string $image): string {
                         <p class="font-body-md text-body-md text-on-surface-variant">
                             Pour une brillance miroir et une cassure nette, respectez scrupuleusement la courbe de cristallisation : fonte à 50°C, descente à 27°C, puis remontée précise à 31°C avant moulage.
                         </p>
-                    </div>
-                    <div class="z-10 shrink-0">
-                        <a class="px-space-lg py-space-sm bg-primary text-on-primary hover:bg-secondary font-label-md text-label-md uppercase tracking-wider rounded-DEFAULT transition-colors inline-block shadow-sm" data-path="la-maison" href="#">
-                            Découvrir les fiches techniques
-                        </a>
                     </div>
                 </div>
             </section>
