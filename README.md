@@ -1,4 +1,4 @@
-# 🍫 La Maison Rosalie — Guide complet du site
+# 🍫 La Maison Rosalie — Guide complet du site (Projet d'équipe du cf2m)
 
 Bienvenue dans la documentation de **La Maison Rosalie**, un site de recettes au chocolat. Ce document est écrit pour être compréhensible même si vous ne connaissez pas la programmation. Il explique à quoi sert le site, comment ses différentes parties fonctionnent, comment installer le projet et comment sa base de données est organisée.
 
